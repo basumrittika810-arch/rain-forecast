@@ -1,0 +1,65 @@
+## 1. Precision metadata, all messages
+  packing=grid_ccsds bits=0 E=0 D=0 R=0.0: steps 0..0 (1 messages)
+  packing=grid_ccsds bits=12 E=-14 D=0 R=0.0: steps 3..6 (2 messages)
+  packing=grid_ccsds bits=12 E=-13 D=0 R=0.0: steps 9..129 (41 messages)
+  packing=grid_ccsds bits=12 E=-12 D=0 R=0.0: steps 132..258 (24 messages)
+
+  Why E changes: with 12 bits the largest storable integer is 4095, so max value must be <= 4095 * 2^E
+  step   3: max=  130.737 mm, increment=0.0610 mm, max/increment= 2142.0 (limit 4095)
+  step   6: max=  245.483 mm, increment=0.0610 mm, max/increment= 4022.0 (limit 4095)
+  step   9: max=  298.340 mm, increment=0.1221 mm, max/increment= 2444.0 (limit 4095)  <-- E changed here
+  step 129: max=  486.816 mm, increment=0.1221 mm, max/increment= 3988.0 (limit 4095)
+  step 132: max=  514.160 mm, increment=0.2441 mm, max/increment= 2106.0 (limit 4095)  <-- E changed here
+  step 258: max=  845.459 mm, increment=0.2441 mm, max/increment= 3463.0 (limit 4095)
+
+  Every stored value an exact integer multiple of its own increment?
+  max |value/increment - nearest integer| over all 67 non-constant messages = 0.0
+
+## 2. Negative differences vs threshold options (nothing altered)
+
+  Consecutive intervals (67):
+      3->6   increments 0.0610/0.0610 mm:    278 negatives (TN box 0), largest 0.0610 mm = 1.00 x finer increment
+      6->9   increments 0.0610/0.1221 mm:  43439 negatives (TN box 12), largest 0.0610 mm = 1.00 x finer increment
+      9->12  increments 0.1221/0.1221 mm:    684 negatives (TN box 0), largest 0.1221 mm = 1.00 x finer increment
+    129->132 increments 0.1221/0.2441 mm: 120914 negatives (TN box 56), largest 0.1221 mm = 1.00 x finer increment
+    246->252 increments 0.2441/0.2441 mm:   3478 negatives (TN box 0), largest 0.2441 mm = 1.00 x finer increment
+    TOTAL negatives 168793 (TN box 68). Would be BLOCKED under: (a) finer increment: 0, (b) coarser: 0, (c) mean: 0
+    Real examples inside the Tamil Nadu box:
+        6->9   at 13.50N 80.25E: 0.061035 -> 0.000000 mm, diff -0.061035 mm (= -1 x 0.0610)
+        6->9   at 13.25N 80.25E: 0.061035 -> 0.000000 mm, diff -0.061035 mm (= -1 x 0.0610)
+        6->9   at 11.25N 77.25E: 0.061035 -> 0.000000 mm, diff -0.061035 mm (= -1 x 0.0610)
+        6->9   at 9.75N 76.25E: 0.061035 -> 0.000000 mm, diff -0.061035 mm (= -1 x 0.0610)
+        6->9   at 9.25N 77.50E: 0.183105 -> 0.122070 mm, diff -0.061035 mm (= -1 x 0.0610)
+        6->9   at 9.00N 76.25E: 0.061035 -> 0.000000 mm, diff -0.061035 mm (= -1 x 0.0610)
+        6->9   at 9.00N 77.25E: 0.061035 -> 0.000000 mm, diff -0.061035 mm (= -1 x 0.0610)
+        6->9   at 9.00N 77.50E: 0.061035 -> 0.000000 mm, diff -0.061035 mm (= -1 x 0.0610)
+
+  Daily periods (11):
+    114->138 increments 0.1221/0.2441 mm:  41847 negatives (TN box 32), largest 0.1221 mm = 1.00 x finer increment
+    234->258 increments 0.2441/0.2441 mm:   1676 negatives (TN box 0), largest 0.2441 mm = 1.00 x finer increment
+    TOTAL negatives 43523 (TN box 32). Would be BLOCKED under: (a) finer increment: 0, (b) coarser: 0, (c) mean: 0
+    Real examples inside the Tamil Nadu box:
+      114->138 at 13.50N 79.25E: 0.366211 -> 0.244141 mm, diff -0.122070 mm (= -1 x 0.1221)
+      114->138 at 13.50N 79.75E: 3.295898 -> 3.173828 mm, diff -0.122070 mm (= -1 x 0.1221)
+      114->138 at 13.25N 77.75E: 0.122070 -> 0.000000 mm, diff -0.122070 mm (= -1 x 0.1221)
+      114->138 at 13.25N 78.25E: 0.122070 -> 0.000000 mm, diff -0.122070 mm (= -1 x 0.1221)
+      114->138 at 13.25N 78.75E: 1.342773 -> 1.220703 mm, diff -0.122070 mm (= -1 x 0.1221)
+      114->138 at 13.25N 79.75E: 1.586914 -> 1.464844 mm, diff -0.122070 mm (= -1 x 0.1221)
+      114->138 at 13.00N 77.75E: 0.122070 -> 0.000000 mm, diff -0.122070 mm (= -1 x 0.1221)
+      114->138 at 12.75N 79.75E: 0.854492 -> 0.732422 mm, diff -0.122070 mm (= -1 x 0.1221)
+
+## 3. Grid geometry
+  latitudes exact multiples of 0.25: True; longitudes: True
+  strict box : lat 8.25..13.5 (22) x lon 76.25..80.25 (17) = 374 points
+  +0.125 margin: lat 8.0..13.5 (23) x lon 76.25..80.25 (17) = 391 points
+  extra latitudes with margin: [np.float64(8.0)]; extra longitudes: []
+
+  Snapping examples: rule floor(x*4+0.5)/4 vs Python round(x*4)/4
+  Chennai                (13.0825, 80.275) -> half-up (13.0, 80.25)  python-round (13.0, 80.25) | stored in strict: True, with margin: True
+  Coimbatore             (11.00083, 76.96333) -> half-up (11.0, 77.0)  python-round (11.0, 77.0) | stored in strict: True, with margin: True
+  Madurai                (9.9252, 78.1198) -> half-up (10.0, 78.0)  python-round (10.0, 78.0) | stored in strict: True, with margin: True
+  tie lat 13.125         (13.125, 80.0) -> half-up (13.25, 80.0)  python-round (13.0, 80.0)  DIFFERENT | stored in strict: True, with margin: True
+  tie lat 13.375         (13.375, 80.0) -> half-up (13.5, 80.0)  python-round (13.5, 80.0) | stored in strict: True, with margin: True
+  tie lon 80.125         (12.0, 80.125) -> half-up (12.0, 80.25)  python-round (12.0, 80.0)  DIFFERENT | stored in strict: True, with margin: True
+  near south edge 8.09   (8.09, 77.5) -> half-up (8.0, 77.5)  python-round (8.0, 77.5) | stored in strict: False, with margin: True
+  near east edge 80.33   (12.0, 80.33) -> half-up (12.0, 80.25)  python-round (12.0, 80.25) | stored in strict: True, with margin: True

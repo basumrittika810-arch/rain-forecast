@@ -251,3 +251,24 @@ Decision maker: Mrittika Basu (project owner). Claude (AI assistant) proposes, e
   negative invalid failed 2 tests. The original code was restored (hash identical) and 43/43 pass.
 - **Design detail fixed by tests:** a missing *intermediate* step makes only its two intervals unavailable (no merged
   6-h interval); days are unaffected. The day = sum-of-intervals check skips days with unavailable intervals.
+
+## D-014: Real-data check of the threshold and grid proposals (evidence only)
+- **Timestamp:** 2026-11-12
+- **Status:** Verified evidence; **proposals still awaiting owner decision; nothing implemented**
+- **Script/output:** `scripts/inspect_precision.py` → `docs/inspection/precision_and_grid_20261111T00Z.txt`
+  (run 2026-11-11 00z, steps 0–258; raw file SHA-256 unchanged before and after).
+- **Precision metadata (all 68 messages):** `grid_ccsds`, 12 bits, D=0, R=0. E = −14 (steps 3–6), −13 (9–129),
+  −12 (132–258); step 0 is a constant field. E is set so that the field maximum fits in 12 bits (≤ 4095 increments):
+  at step 6 the max is 4022 increments, so step 9 moves to a coarser E. **The maximum is global**, so Tamil Nadu's
+  precision depends on rain anywhere on Earth and will differ between runs. The threshold must be read per message,
+  never fixed. Every stored value is an exact multiple of its increment (max deviation 0.0).
+- **Negatives vs options:** all 168,793 interval negatives and 43,523 daily-total negatives are exactly one finer
+  increment. Blocked under (a) finer increment: 0; (b) coarser: 0; (c) mean: 0. **This run cannot tell the options
+  apart**; (a) is the strictest one that passes. Tamil Nadu box: 68 interval negatives (6→9: 12; 129→132: 56)
+  and 32 daily negatives (period 114→138 = 16 Nov), e.g. 13.50N 79.75E: 3.296 → 3.174 mm. So dips are not only at
+  near-zero totals.
+- **Grid:** all coordinates are exact multiples of 0.25. Strict box: 22 × 17 = 374 points (lat 8.25–13.5,
+  lon 76.25–80.25). With a 0.125° margin: 391 points, adding only the lat 8.0 row. A location at 8.09N (inside the box)
+  snaps to 8.0, which is stored only with the margin.
+- **Tie rule:** Python `round` sends 13.125 → 13.0 and 80.125 → 80.0 (round-half-to-even); `floor(x*4+0.5)/4`
+  sends them to 13.25 and 80.25 (always north/east). Chennai, Coimbatore and Madurai snap identically under both.
