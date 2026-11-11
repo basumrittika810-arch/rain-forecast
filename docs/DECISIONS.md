@@ -106,3 +106,17 @@ Decision maker: Mrittika Basu (project owner). Claude (AI assistant) proposes, e
 - **Integrity:** SHA-256 identical before and after inspection; no files written to `data/raw`.
 - **Decisions deferred to joint review:** daily-aggregation boundaries, handling of negative interval
   differences, pilot region.
+
+## D-005: Daily rainfall analysis (recommendation pending owner decision)
+- **Timestamp:** 2026-11-11 ~17:00 UTC
+- **Status:** Findings verified as labelled; recommendations **not yet decided**
+- **Report:** `docs/DAILY_RAINFALL_ANALYSIS.md`
+- **New verified facts:** the 00z run on the server has 85 steps (0–144 by 3, 150–360 by 6); step 147 → 404;
+  all 00 UTC and 18 UTC day-boundary steps exist; 03 UTC boundaries stop at 123 h. Run files `Last-Modified`
+  07:34 UTC (13:04 IST). `tp` for steps ≤ 240 h = 33.3 MB.
+- **Documentation conflict found:** the installed `ecmwf-opendata` README says HRES steps go to 240 h; the official
+  ECMWF pages and the server show 360 h. The server is taken as the authority for what exists.
+- **Client behaviour:** a missing step file raises an HTTP error; a missing `tp` inside an existing file only
+  produces a warning (quiet failure). Our completeness check covers this.
+- **Recommended (pending):** daily window 23:30→23:30 IST (18→18 UTC); daily total = end − start reading;
+  no interpolation of missing boundary steps.

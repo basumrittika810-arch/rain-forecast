@@ -1,0 +1,80 @@
+
+=== Bay of Bengal, heaviest point in box: lat=12.5, lon=83.25 ===
+  stored cumulative tp (m, exact)      = mm (x1000)
+  0->0  h : 0.000000000000 m =    0.000 mm   (stored in steps of 1000.0000 mm)
+  0->3  h : 0.000061035156 m =    0.061 mm   (stored in steps of 0.0610 mm)
+  0->6  h : 0.000061035156 m =    0.061 mm   (stored in steps of 0.0610 mm)
+  0->144h : 0.604980468750 m =  604.980 mm   (stored in steps of 0.2441 mm)
+  0->150h : 0.644042968750 m =  644.043 mm   (stored in steps of 0.2441 mm)
+  0->240h : 0.699951171875 m =  699.951 mm   (stored in steps of 0.2441 mm)
+  interval = later cumulative - earlier cumulative
+    0->3  h (  3 h):    0.061 -    0.000 =    0.061 mm   avg rate   0.020 mm/h
+    3->6  h (  3 h):    0.061 -    0.061 =    0.000 mm   avg rate   0.000 mm/h
+    6->144h (138 h):  604.980 -    0.061 =  604.919 mm   avg rate   4.383 mm/h
+  144->150h (  6 h):  644.043 -  604.980 =   39.062 mm   avg rate   6.510 mm/h
+  150->240h ( 90 h):  699.951 -  644.043 =   55.908 mm   avg rate   0.621 mm/h
+    0->240h (240 h):  699.951 -    0.000 =  699.951 mm   avg rate   2.916 mm/h
+
+=== Grid point nearest Chennai (13.08N, 80.27E): lat=13.0, lon=80.25 ===
+  stored cumulative tp (m, exact)      = mm (x1000)
+  0->0  h : 0.000000000000 m =    0.000 mm   (stored in steps of 1000.0000 mm)
+  0->3  h : 0.000000000000 m =    0.000 mm   (stored in steps of 0.0610 mm)
+  0->6  h : 0.000000000000 m =    0.000 mm   (stored in steps of 0.0610 mm)
+  0->144h : 0.003417968750 m =    3.418 mm   (stored in steps of 0.2441 mm)
+  0->150h : 0.003417968750 m =    3.418 mm   (stored in steps of 0.2441 mm)
+  0->240h : 0.026123046875 m =   26.123 mm   (stored in steps of 0.2441 mm)
+  interval = later cumulative - earlier cumulative
+    0->3  h (  3 h):    0.000 -    0.000 =    0.000 mm   avg rate   0.000 mm/h
+    3->6  h (  3 h):    0.000 -    0.000 =    0.000 mm   avg rate   0.000 mm/h
+    6->144h (138 h):    3.418 -    0.000 =    3.418 mm   avg rate   0.025 mm/h
+  144->150h (  6 h):    3.418 -    3.418 =    0.000 mm   avg rate   0.000 mm/h
+  150->240h ( 90 h):   26.123 -    3.418 =   22.705 mm   avg rate   0.252 mm/h
+    0->240h (240 h):   26.123 -    0.000 =   26.123 mm   avg rate   0.109 mm/h
+
+=== Assam, near Guwahati (3->6 h decrease seen): lat=26.25, lon=91.25 ===
+  stored cumulative tp (m, exact)      = mm (x1000)
+  0->0  h : 0.000000000000 m =    0.000 mm   (stored in steps of 1000.0000 mm)
+  0->3  h : 0.000061035156 m =    0.061 mm   (stored in steps of 0.0610 mm)
+  0->6  h : 0.000000000000 m =    0.000 mm   (stored in steps of 0.0610 mm)
+  0->144h : 0.017578125000 m =   17.578 mm   (stored in steps of 0.2441 mm)
+  0->150h : 0.017822265625 m =   17.822 mm   (stored in steps of 0.2441 mm)
+  0->240h : 0.018066406250 m =   18.066 mm   (stored in steps of 0.2441 mm)
+  interval = later cumulative - earlier cumulative
+    0->3  h (  3 h):    0.061 -    0.000 =    0.061 mm   avg rate   0.020 mm/h
+    3->6  h (  3 h):    0.000 -    0.061 =   -0.061 mm   avg rate  -0.020 mm/h
+    6->144h (138 h):   17.578 -    0.000 =   17.578 mm   avg rate   0.127 mm/h
+  144->150h (  6 h):   17.822 -   17.578 =    0.244 mm   avg rate   0.041 mm/h
+  150->240h ( 90 h):   18.066 -   17.822 =    0.244 mm   avg rate   0.003 mm/h
+    0->240h (240 h):   18.066 -    0.000 =   18.066 mm   avg rate   0.075 mm/h
+
+=== Jharkhand (6->144 h decrease of 2 increments): lat=23.25, lon=84.75 ===
+  stored cumulative tp (m, exact)      = mm (x1000)
+  0->0  h : 0.000000000000 m =    0.000 mm   (stored in steps of 1000.0000 mm)
+  0->3  h : 0.000000000000 m =    0.000 mm   (stored in steps of 0.0610 mm)
+  0->6  h : 0.000122070312 m =    0.122 mm   (stored in steps of 0.0610 mm)
+  0->144h : 0.000000000000 m =    0.000 mm   (stored in steps of 0.2441 mm)
+  0->150h : 0.000000000000 m =    0.000 mm   (stored in steps of 0.2441 mm)
+  0->240h : 0.003906250000 m =    3.906 mm   (stored in steps of 0.2441 mm)
+  interval = later cumulative - earlier cumulative
+    0->3  h (  3 h):    0.000 -    0.000 =    0.000 mm   avg rate   0.000 mm/h
+    3->6  h (  3 h):    0.122 -    0.000 =    0.122 mm   avg rate   0.041 mm/h
+    6->144h (138 h):    0.000 -    0.122 =   -0.122 mm   avg rate  -0.001 mm/h
+  144->150h (  6 h):    0.000 -    0.000 =    0.000 mm   avg rate   0.000 mm/h
+  150->240h ( 90 h):    3.906 -    0.000 =    3.906 mm   avg rate   0.043 mm/h
+    0->240h (240 h):    3.906 -    0.000 =    3.906 mm   avg rate   0.016 mm/h
+
+=== Eastern UP, near Varanasi (6->144 h decrease): lat=25.5, lon=82.75 ===
+  stored cumulative tp (m, exact)      = mm (x1000)
+  0->0  h : 0.000000000000 m =    0.000 mm   (stored in steps of 1000.0000 mm)
+  0->3  h : 0.000000000000 m =    0.000 mm   (stored in steps of 0.0610 mm)
+  0->6  h : 0.000061035156 m =    0.061 mm   (stored in steps of 0.0610 mm)
+  0->144h : 0.000000000000 m =    0.000 mm   (stored in steps of 0.2441 mm)
+  0->150h : 0.000000000000 m =    0.000 mm   (stored in steps of 0.2441 mm)
+  0->240h : 0.000000000000 m =    0.000 mm   (stored in steps of 0.2441 mm)
+  interval = later cumulative - earlier cumulative
+    0->3  h (  3 h):    0.000 -    0.000 =    0.000 mm   avg rate   0.000 mm/h
+    3->6  h (  3 h):    0.061 -    0.000 =    0.061 mm   avg rate   0.020 mm/h
+    6->144h (138 h):    0.000 -    0.061 =   -0.061 mm   avg rate  -0.000 mm/h
+  144->150h (  6 h):    0.000 -    0.000 =    0.000 mm   avg rate   0.000 mm/h
+  150->240h ( 90 h):    0.000 -    0.000 =    0.000 mm   avg rate   0.000 mm/h
+    0->240h (240 h):    0.000 -    0.000 =    0.000 mm   avg rate   0.000 mm/h
