@@ -328,3 +328,27 @@ Decision maker: Mrittika Basu (project owner). Claude (AI assistant) proposes, e
   `data/tmp` empty; nothing rejected. A second run logged "already fetched; nothing to do" and the stored file was unchanged.
 - **Limitation:** no real last-good published forecast exists yet (publishing is Step 2), so "last good unchanged" is
   proven by the tests with a simulated last-good run and `latest.json`, and in the real run only for pre-existing files.
+
+## D-017: Pipeline Step 2, compute + build JSON + check + publish
+- **Timestamp:** 2026-11-12
+- **Status:** Implemented and tested; real run published
+- **Files:** `pipeline/publish.py`, `tests/test_publish.py` (19 tests).
+- **Behaviour:** verify the run's GRIB checksum against its manifest → read the 391 region points (ecCodes) → per point,
+  `compute.py` intervals/days with per-step packing increments → any `invalid` blocks publication → JSON (J1) → checks:
+  required fields; exact set of grid points; 11 days / 67 intervals spanning start→258 h without gaps; durations (3 h to
+  144 h, then 6 h; days end 23:30 IST, first partial); status rules (ok: mm = raw ≥ 0; adjusted: mm 0, raw within
+  threshold; unavailable: nulls + reason); rates = mm/hours; day = sum of intervals (exact); **independent spot check**
+  of 3 points (first, middle, last) recomputed from the GRIB by a separate simple reader; older-than-published run refused.
+  Then write `<run>.json.tmp` → `os.replace` → `<run>.json`, same for `latest.json`. Re-publishing the same run is a no-op.
+- **Tests:** written first (collection error before code), 19/19 passed on first implementation. Mutation check:
+  disabling the spot check failed exactly its test; disabling the threshold check in the JSON failed exactly its test;
+  code restored (hash identical). Full suite **122 passed**.
+- **Real run:** `python -m pipeline.publish data\runs\20261111T00Z` → 391 points, **4,270,791 bytes** (compact JSON;
+  above the earlier 3–4 MB estimate), 6 s, quality ok, adjusted 76 intervals / 32 days, unavailable 0.
+  `20261111T00Z.json` = `latest.json` (identical hash).
+- **Worked check, Chennai grid point 13.00,80.25, 20 Nov:** GRIB 0-234 h = 0.02587890625 m, 0-210 h = 0.013916015625 m →
+  25.87890625 − 13.916015625 = **11.962890625 mm** = JSON `raw_mm`, and matches D-007's independent verification.
+- **Inconsistency flagged for the owner (not changed):** D-006 6.4 says to publish valid periods and mark the two days
+  around a missing boundary step unavailable. Step 1 (owner instruction, D-016) rejects any run that lacks a step, so in
+  practice the partial-publication path cannot occur. The code supports it (tested in `compute.py`). Current effective
+  behaviour is the stricter "reject the whole run, keep the previous forecast". **Owner decision needed.**

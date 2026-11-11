@@ -42,6 +42,12 @@ See `docs/DECISIONS.md` (D-001).
 # and move it to data/runs/<run>/. Rejected downloads go to data/rejected/ with reason.txt.
 # Does not publish anything and never touches data/processed/ (latest.json).
 .\.venv\Scripts\python.exe -m pipeline.fetch
+
+# Step 2: compute rainfall for the region from a fetched run, build the JSON, run all checks,
+# then write data/processed/<run>.json and atomically replace data/processed/latest.json.
+# Publishes nothing if any check fails; never replaces a newer forecast with an older one.
+.\.venv\Scripts\python.exe -m pipeline.publish                        # newest run in data/runs
+.\.venv\Scripts\python.exe -m pipeline.publish data\runs\20261111T00Z  # a specific run
 ```
 
 ## Investigation commands
