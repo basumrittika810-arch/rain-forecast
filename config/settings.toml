@@ -1,0 +1,20 @@
+# Central configuration for the rain-forecast application.
+# The processing code reads the region from here; change it here only.
+
+[region]
+name = "Tamil Nadu"
+status = "provisional pilot region (decision D-008)"
+
+# Rectangular bounding box in decimal degrees (north latitude, east longitude), inclusive.
+# Source: Tamil Nadu Agricultural University (TNAU) Agritech Portal, "Tamil Nadu at a glance",
+#   section "1. GEOGRAPHICAL POSITION":
+#   "North Latitude Between 8° 5' and 13° 35'" / "East Longitude Between 76° 15' and 80° 20'"
+#   https://agritech.tnau.ac.in/agriculture/agri_agricultureataglance_tnataglance.html
+#   (read 2026-11-12). Conversion: degrees + minutes/60.
+lat_min = 8.083333   # 8° 5'  N
+lat_max = 13.583333  # 13° 35' N
+lon_min = 76.25      # 76° 15' E
+lon_max = 80.333333  # 80° 20' E
+
+# Note: a rectangle also covers areas outside the state (parts of Kerala, Karnataka,
+# Andhra Pradesh, northern Sri Lanka and sea). Whether to mask those out is a later decision.

@@ -182,3 +182,22 @@ Decision maker: Mrittika Basu (project owner). Claude (AI assistant) proposes, e
   27.34375 mm, matching `verify_run.py`. No reinstall was needed.
 - Added folders `pipeline/`, `api/`, `web/`, `tests/`. Existing `scripts/` (investigation and verification tools) kept unchanged.
 - Added FastAPI + Uvicorn (API) and pytest (tests). Runtime and dev dependencies are pinned separately.
+
+## D-010: Tamil Nadu region configuration
+- **Timestamp:** 2026-11-12
+- **Status:** Done; source documented; tests pass
+- **Config:** `config/settings.toml` `[region]`: lat 8.083333–13.583333 N, lon 76.25–80.333333 E (inclusive).
+  Loaded and validated by `pipeline/config.py` (`load_region()`); no coordinates are hardcoded in processing code.
+- **Source:** TNAU Agritech Portal, "Tamil Nadu at a glance", §1 Geographical Position: "North Latitude Between
+  8° 5' and 13° 35'" / "East Longitude Between 76° 15' and 80° 20'"
+  (https://agritech.tnau.ac.in/agriculture/agri_agricultureataglance_tnataglance.html, read directly 2026-11-12).
+  A search snippet attributes the same figures to tnbb.tn.gov.in, but that page refused connection, so it is
+  not cited as verified. Some education sites give 8°4' / 76°18' (variants, not used).
+- **Format choice:** TOML, read with Python's built-in `tomllib`, so no new dependency.
+- **Checks (`tests/test_config.py`, 16 passed on first run):** Chennai (13.0825, 80.275), Coimbatore (11.00083, 76.96333),
+  Madurai (9.9252, 78.1198) inside; Kolkata (22.5675, 88.37) outside (Wikipedia infobox coordinates). Edges are
+  inclusive. Invalid configs are rejected (missing section or key, swapped bounds, out-of-range, 0–360
+  longitude, non-numeric, boolean, empty name).
+- **Known limitations (open):** the rectangle also covers parts of Kerala, Karnataka, Andhra Pradesh, northern
+  Sri Lanka and sea. Chennai is only ~6 km inside the east edge. The source gives the extent to the nearest
+  minute. Selecting grid cells for this box (0.25° grid) is a pipeline decision still to make.

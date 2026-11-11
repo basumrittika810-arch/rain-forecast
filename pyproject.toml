@@ -1,0 +1,4 @@
+[tool.pytest.ini_options]
+# Make `pipeline` and `api` importable from tests regardless of how pytest is launched.
+pythonpath = ["."]
+testpaths = ["tests"]
