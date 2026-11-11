@@ -1,7 +1,7 @@
 # Daily Rainfall Calculation: Analysis and Recommendation
 
 - **Date:** 2026-11-11 (~17:00 UTC / 22:30 IST)
-- **Status:** analysis and recommendation for owner review. **Nothing here is implemented, and no decisions are final.**
+- **Status:** analysis complete; **owner decisions taken 2026-11-11 18:13 UTC (see §6)**. Nothing is implemented yet.
 - **Data used:** run 2026-11-11 00 UTC. Sample GRIB `data/raw/20261111T00Z/…` (unchanged, SHA-256 identical
   before and after); server metadata only (directory listing, `.index` files, HTTP headers); no new GRIB data downloaded.
 - **Evidence files:** `docs/inspection/run_steps_20261111T00Z.txt`,
@@ -223,3 +223,120 @@ yet. The mechanics are identical, e.g. day 12 Nov under A′ = tp(42 h) − tp(1
 | 11 | IMD 08:30 convention (only if we want to cite it) | Find an IMD source |
 
 *Process note:* one inline command failed on PowerShell quoting (no data involved) and was re-run via Bash.
+
+**Correction to §5 #6:** "~11 boundary steps ≈ 6 MB" covered only one day-window option. Both options
+together needed 22 steps ≈ 11.4 MB (computed from `.index` lengths). This is superseded by decision 6.3 below.
+
+## 6. Owner decisions (Mrittika Basu, 2026-11-11 18:13 UTC / 23:43 IST)
+
+| # | Decision | Owner's reasoning | Differs from assistant recommendation? |
+|---|---|---|---|
+| 6.1 | **Daily window 23:30 → 23:30 IST (18 → 18 UTC)**, labelled with the IST calendar date | Keeps rainfall on the correct calendar date as closely as the data allows. 05:30 would move early-morning rain to the previous date, which could mislead a farmer. 23:30 limits the mismatch to 30 min. | No |
+| 6.2 | **Horizon extended to 258 h**: one initial partial period (00→18 UTC on the run date, i.e. 05:30→23:30 IST) **plus 10 complete 24-h periods** (18→42, …, 234→258). The partial period must be shown transparently as partial, not as a full day. | More useful daily forecast; worth the small extension beyond 240 h | Yes: assistant had suggested staying within 240 h. Owner chose the extension. |
+| 6.3 | **Download all available steps through 258 h** (verify the actual list; include 246, 252, 258) | Verify the complete dataset now rather than discover gaps later; enables checks on both daily totals and 3-/6-h amounts | No |
+| 6.4 | **Missing boundary → publish valid periods; mark the affected periods unavailable.** A missing boundary affects both adjacent periods, which must be identified. **Never fill with zero or estimates.** If the update itself fails, keep the previous validated forecast. | One or two missing days shouldn't discard an otherwise usable forecast | Yes: assistant had suggested rejecting the whole run. Owner chose partial publication. |
+| 6.5 | **Output both daily totals and interval-level (3-h/6-h) rainfall**; average rates may be computed using the **actual** interval duration, without implying when within an interval the rain fell | Daily overview plus timing information gives a better user experience | Yes: assistant had suggested daily totals only for the MVP. Owner chose both. |
+| 6.6 | **Negative-value handling: left open** until the full-run evidence is reviewed | — | — |
+
+Consequences recorded for implementation (not yet implemented):
+- Required steps: 0–144 every 3 h and 150–258 every 6 h, **68 steps expected** (to be verified against the server, §7).
+- Daily boundaries: steps 0 (start of partial period), 18, 42, 66, 90, 114, 138, 162, 186, 210, 234, 258.
+- Interval durations change from 3 h to 6 h at step 144, so rates must use each interval's own duration.
+- Negative values will appear more often at interval level than in daily totals (3→6 h example in §4).
+  That makes decision 6.6 more important now that 6.5 includes interval output.
+
+## 7. Full-run verification (run 2026-11-11 00 UTC, steps 0–258)
+
+- **Run:** 2026-11-11 ~18:15–18:25 UTC
+- **Download:** `scripts/download_run.py 20261111 00 258` → `data/raw/20261111T00Z/tp_steps_0-258.grib2`,
+  35,139,859 bytes, SHA-256 `6de90b3f…cbc6f3132`, 55 s, read-only
+- **Verification:** `scripts/verify_run.py`. Full output in `docs/inspection/verify_run_20261111T00Z_0-258.txt`.
+  Nothing was clamped or altered.
+
+### 7.1 Step list [V]
+- Server listing re-checked at 18:15 UTC: still 85 steps (0–360). **68 steps ≤ 258 h, identical to the
+  expected cadence** 0–144 by 3 (49) + 150–258 by 6 (19). The script would have stopped before downloading on any mismatch.
+- Intervals: **48 × 3 h** (0→3 … 141→144), **19 × 6 h** (144→150 … 252→258). All 12 daily boundaries are present.
+
+### 7.2 Metadata, every one of the 68 messages [V]: all PASS
+`shortName=tp`, `units=m`, `stepType=accum`, **`startStep=0`**, `stepRange=0-N`, `lengthOfTimeRange=N`,
+template 8 / statistical processing 1, same initialisation (2026-11-11 00:00 UTC = 05:30 IST),
+validity = init + step, identical grid, no bitmap or missing values, D=0, R=0.
+**This closes open item §5 #6: accumulation from initialisation is verified for every step used.**
+
+### 7.3 Independent consistency [V]
+- Steps 0, 3, 6, 144, 150, 240 are **bit-identical** to the separately downloaded sample.
+- **Telescoping:** for all 11 daily periods, (end − start) equals the sum of the consecutive interval
+  differences **exactly** (max difference 0) on all 1,038,240 grid points.
+- Original sample file SHA-256 unchanged (`42570d62…a35308`).
+
+### 7.4 Packing increment by step [V]
+| From step | E | Increment |
+|---|---|---|
+| 0 | 0 (constant field) | — |
+| 3 | −14 | 0.061 mm |
+| 9 | −13 | 0.122 mm |
+| 132 | −12 | 0.244 mm |
+
+### 7.5 Negative differences: evidence only, nothing altered [V]
+- **Intervals:** 168,793 negative values out of 67 × 1,038,240 (0.24 %); India box 2,528. They occur in only
+  **5 of 67 intervals**:
+
+  | Interval | Increments (earlier → later) | Global | India box | Most negative | Largest earlier total at a negative point |
+  |---|---|---|---|---|---|
+  | 3→6 | 0.061 → 0.061 (same) | 278 | 3 | −0.061 mm | 4.3 mm |
+  | 6→9 | 0.061 → 0.122 (**change**) | 43,439 | 321 | −0.061 mm | 45.6 mm |
+  | 9→12 | 0.122 → 0.122 (same) | 684 | 12 | −0.122 mm | 19.9 mm |
+  | 129→132 | 0.122 → 0.244 (**change**) | 120,914 | 2,087 | −0.122 mm | 394.4 mm |
+  | 246→252 | 0.244 → 0.244 (same) | 3,478 | 105 | −0.244 mm | 341.1 mm |
+
+- **Every negative is exactly one increment of the finer field of the pair.** None exceeds one increment of
+  either field.
+- **96 % of negatives sit at the two increment changes** (6→9, 129→132). [H] Independent rounding of two
+  readings to different increment sizes can produce an apparent decrease of up to one fine increment even
+  when the true total rose. The observed magnitudes fit that bound.
+- **Same-increment negatives** (3→6, 9→12, 246→252) cannot come from the final rounding alone [O]; cause
+  unresolved (possibly an earlier processing or quantisation stage). They are also exactly one increment.
+- **Negatives also occur where totals are large** (e.g. 394 mm → one increment lower), not only in near-dry
+  areas. This corrects the earlier impression from the 6-step sample.
+- **Daily periods:** negatives in **2 of 11** periods: 114→138 (contains the 129→132 change): 41,847 global /
+  1,332 box, min −0.122 mm; and 234→258 (contains 246→252): 1,676 / 90, min −0.244 mm. **Daily aggregation
+  does not remove negatives.**
+
+### 7.6 India box daily totals (mm), for scale [V]
+Partial 11 Nov: mean 2.96, max 88.5 · full days 12–21 Nov: means 2.0–4.6, maxima 60.6–483.3
+(max 483.3 mm on 16 Nov; earlier inspection placed the heaviest rain over the Bay of Bengal).
+
+### 7.7 Worked example: grid point 13.0°N 80.25°E (nearest Chennai), real values
+| Date (window 23:30→23:30 IST) | Daily total |
+|---|---|
+| 11 Nov (**partial**, 05:30→23:30) | 0.000 mm |
+| 12 Nov | 0.366 |
+| 13 Nov | 2.808 |
+| 14 Nov | 0.122 |
+| 15 Nov | 0.000 |
+| 16 Nov | 0.122 |
+| 17 Nov | 0.000 |
+| 18 Nov | 7.568 |
+| 19 Nov | 2.930 |
+| 20 Nov | 11.963 |
+| 21 Nov | 1.465 |
+Interval detail example (20 Nov): 10.986 mm fell in the 6-h interval 19 Nov 23:30 → 20 Nov 05:30 IST
+(average 1.83 mm/h). The data cannot say *when* within those 6 h it fell.
+
+### 7.8 Still open after verification
+1. **Negative-value policy (6.6):** evidence now available (above). To decide: whether "exactly ≤ 1 increment
+   of the finer field" counts as an acceptable rounding artefact, what is done with it (as-is / set to 0 and
+   logged / display-only), and whether anything larger fails the run.
+2. **Run-to-run variation:** the steps where the increment changes depend on each run's field maxima, so
+   negatives will fall at different steps in other runs. Checks must run on every run, not be hardcoded.
+   Verify on at least one more run.
+3. **Cause of same-increment decreases:** unresolved. ECMWF guidance on negative precipitation not yet found.
+4. **Partial first period display:** the run appeared at 13:04 IST, when 7.5 h of the 18-h partial period
+   had already passed. Interval data makes it possible to show only the remaining intervals; to decide.
+5. **Rate presentation:** mm/h averages over 3 h vs 6 h intervals; UI wording so a 6-h average is not
+   read as a constant rate.
+6. **Publication timing / retention** for other runs (one observation so far: 07:34 UTC).
+7. **Pilot region, nearest-grid-point rule, land/sea.**
+8. **00z only vs 00z and 12z:** a 12z run would use boundary steps 6, 30, …, 246, 270 (all exist up to 360 h).
+   Not yet decided.

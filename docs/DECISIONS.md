@@ -120,3 +120,39 @@ Decision maker: Mrittika Basu (project owner). Claude (AI assistant) proposes, e
   produces a warning (quiet failure). Our completeness check covers this.
 - **Recommended (pending):** daily window 23:30→23:30 IST (18→18 UTC); daily total = end − start reading;
   no interpolation of missing boundary steps.
+
+## D-006: Owner decisions on daily rainfall
+- **Timestamp:** 2026-11-11 18:13 UTC (23:43 IST)
+- **Status:** Decided (owner). Details and reasoning in `docs/DAILY_RAINFALL_ANALYSIS.md` §6.
+- **Decisions:**
+  1. Daily window **23:30→23:30 IST (18→18 UTC)**.
+  2. Horizon **258 h**: initial partial period (05:30→23:30 IST on the run date) plus 10 complete
+     24-h periods. The partial period must be presented as partial.
+  3. Download **all available steps through 258 h** and verify the actual step list and metadata.
+  4. Missing boundary: **publish valid periods**, mark both affected periods unavailable, never fill with
+     zero or estimates; keep the previous validated forecast if the update fails.
+  5. Output **daily totals and 3-/6-h interval rainfall**; rates use the actual interval duration and
+     must not imply timing within an interval.
+  6. Negative-value handling **left open**.
+- **Where the owner differed from the assistant's recommendation:** horizon (assistant: stay within 240 h),
+  missing boundary (assistant: reject the whole run), output (assistant: daily totals only for MVP).
+  The owner's reasons: a more useful daily forecast; don't discard a usable forecast for one or two gaps;
+  timing information improves the user experience.
+- **Correction:** the earlier "boundary steps ≈ 6 MB" estimate covered one window option only; both
+  options needed 11.4 MB.
+
+## D-007: Full-run download and verification (00 UTC 2026-11-11, steps 0–258)
+- **Timestamp:** 2026-11-11 ~18:15–18:25 UTC
+- **Status:** Verified (details in `docs/DAILY_RAINFALL_ANALYSIS.md` §7 and
+  `docs/inspection/verify_run_20261111T00Z_0-258.txt`)
+- **Evidence:** server listing re-checked: 68 steps ≤ 258 h, matching the expected cadence. Downloaded 35.1 MB,
+  SHA-256 `6de90b3f713cbdc191689e21659a7216a421f4c376af0a15f971f89cbc6f3132`. All 68 messages pass the metadata rules
+  (incl. `startStep=0`), so accumulation from initialisation is now verified for every step used. Shared steps are
+  bit-identical to the sample. Telescoping equality is exact for all 11 daily periods.
+- **Negative differences (unaltered):** 5 of 67 intervals, 0.24 % of interval values. Every one is exactly one
+  increment of the finer field. 96 % occur at increment changes (6→9, 129→132). They also occur where totals are
+  large, which corrects the earlier impression that they were limited to near-dry points. They appear in 2 of 11
+  daily periods (min −0.244 mm).
+- **Negative-value handling remains open (owner decision 6.6).**
+- **Process notes:** a truncated-output command gave exit 255 (pipe closed early) and was re-run in full.
+  `2>&1` in PowerShell displayed ECMWF's informational stderr notice as an error; nothing failed.

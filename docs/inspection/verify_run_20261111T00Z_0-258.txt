@@ -1,0 +1,114 @@
+## A. Integrity
+  manifest sha256: 6de90b3f713cbdc191689e21659a7216a421f4c376af0a15f971f89cbc6f3132
+  computed sha256: 6de90b3f713cbdc191689e21659a7216a421f4c376af0a15f971f89cbc6f3132
+  PASS: checksum matches manifest
+
+## B. Per-message metadata rules
+  messages: 68; file order ascending by step: True
+  PASS: shortName == tp
+  PASS: units == m
+  PASS: stepType == accum
+  PASS: startStep == 0
+  PASS: stepRange == '0-N' (or '0' at step 0)
+  PASS: lengthOfTimeRange == endStep
+  PASS: template 8, statistical processing 1 (accumulation)
+  PASS: same initialisation time
+  PASS: validity == init + endStep
+  PASS: identical grid
+  PASS: no bitmap / no missing
+  PASS: decimalScaleFactor 0, referenceValue 0
+  initialisation: 2026-11-11 00:00 UTC = 2026-11-11 05:30 IST
+
+## C. Step list and interval durations
+  PASS: steps == 0..144 by 3 + 150..258 by 6 (68 steps)
+  3 h intervals: 48 (from 0->3 to 141->144)
+  6 h intervals: 19 (from 144->150 to 252->258)
+  daily boundaries present: True
+
+## H. Packing increment (2^binaryScaleFactor) by step
+  from step   0: E=0, increment = 1000.0000 mm, bitsPerValue=0
+  from step   3: E=-14, increment = 0.0610 mm, bitsPerValue=12
+  from step   9: E=-13, increment = 0.1221 mm, bitsPerValue=12
+  from step 132: E=-12, increment = 0.2441 mm, bitsPerValue=12
+
+## D. Steps shared with the earlier sample file are bit-identical
+  PASS: step 0 identical to sample
+  PASS: step 3 identical to sample
+  PASS: step 6 identical to sample
+  PASS: step 144 identical to sample
+  PASS: step 150 identical to sample
+  PASS: step 240 identical to sample
+
+## E. Negative differences, consecutive intervals (later - earlier); values NOT altered
+  intervals examined: 67; grid points per interval: 1038240
+  total negative interval values: global 168793, India box 2528
+  largest negative, in increments of the COARSER field of the pair: 1
+  largest negative, in increments of the FINER field of the pair:   1
+  per interval with negatives: a->b  n_global  n_box  min(mm)  min/coarse_inc  min/fine_inc  max earlier value at neg pts (mm)
+      3->6      278     3   -0.061   1.00   1.00    4.333
+      6->9    43439   321   -0.061   0.50   1.00   45.593
+      9->12     684    12   -0.122   1.00   1.00   19.897
+    129->132 120914  2087   -0.122   0.50   1.00  394.409
+    246->252   3478   105   -0.244   1.00   1.00  341.064
+  intervals with no negatives (62): 0->3, 12->15, 15->18, 18->21, 21->24, 24->27, 27->30, 30->33, 33->36, 36->39, 39->42, 42->45, 45->48, 48->51, 51->54, 54->57, 57->60, 60->63, 63->66, 66->69, 69->72, 72->75, 75->78, 78->81, 81->84, 84->87, 87->90, 90->93, 93->96, 96->99, 99->102, 102->105, 105->108, 108->111, 111->114, 114->117, 117->120, 120->123, 123->126, 126->129, 132->135, 135->138, 138->141, 141->144, 144->150, 150->156, 156->162, 162->168, 168->174, 174->180, 180->186, 186->192, 192->198, 198->204, 204->210, 210->216, 216->222, 222->228, 228->234, 234->240, 240->246, 252->258
+
+## F. Daily periods (18 UTC = 23:30 IST boundaries); values NOT altered
+    0->18  (18 h, PARTIAL) IST 11 Nov 05:30 -> 11 Nov 23:30: neg global=0, box=0 | box mm: mean=2.96 p90=10.25 max=88.50
+   18->42  (24 h, full   ) IST 11 Nov 23:30 -> 12 Nov 23:30: neg global=0, box=0 | box mm: mean=4.05 p90=14.16 max=88.26
+   42->66  (24 h, full   ) IST 12 Nov 23:30 -> 13 Nov 23:30: neg global=0, box=0 | box mm: mean=2.59 p90=9.03 max=75.32
+   66->90  (24 h, full   ) IST 13 Nov 23:30 -> 14 Nov 23:30: neg global=0, box=0 | box mm: mean=3.06 p90=11.11 max=76.54
+   90->114 (24 h, full   ) IST 14 Nov 23:30 -> 15 Nov 23:30: neg global=0, box=0 | box mm: mean=4.60 p90=14.89 max=247.56
+  114->138 (24 h, full   ) IST 15 Nov 23:30 -> 16 Nov 23:30: neg global=41847, box=1332, min=-0.122 mm (0.50 coarse inc) | box mm: mean=3.88 p90=9.16 max=483.28
+  138->162 (24 h, full   ) IST 16 Nov 23:30 -> 17 Nov 23:30: neg global=0, box=0 | box mm: mean=3.29 p90=5.62 max=289.31
+  162->186 (24 h, full   ) IST 17 Nov 23:30 -> 18 Nov 23:30: neg global=0, box=0 | box mm: mean=3.26 p90=7.81 max=199.22
+  186->210 (24 h, full   ) IST 18 Nov 23:30 -> 19 Nov 23:30: neg global=0, box=0 | box mm: mean=2.46 p90=5.13 max=287.84
+  210->234 (24 h, full   ) IST 19 Nov 23:30 -> 20 Nov 23:30: neg global=0, box=0 | box mm: mean=2.05 p90=6.10 max=266.60
+  234->258 (24 h, full   ) IST 20 Nov 23:30 -> 21 Nov 23:30: neg global=1676, box=90, min=-0.244 mm (1.00 coarse inc) | box mm: mean=2.48 p90=9.77 max=60.55
+
+## G. Telescoping: (end - start) == sum of consecutive interval differences (whole globe, exact)
+  PASS:   0->18  exact equality=True, max |difference|=0
+  PASS:  18->42  exact equality=True, max |difference|=0
+  PASS:  42->66  exact equality=True, max |difference|=0
+  PASS:  66->90  exact equality=True, max |difference|=0
+  PASS:  90->114 exact equality=True, max |difference|=0
+  PASS: 114->138 exact equality=True, max |difference|=0
+  PASS: 138->162 exact equality=True, max |difference|=0
+  PASS: 162->186 exact equality=True, max |difference|=0
+  PASS: 186->210 exact equality=True, max |difference|=0
+  PASS: 210->234 exact equality=True, max |difference|=0
+  PASS: 234->258 exact equality=True, max |difference|=0
+
+## I. Worked example at grid point (13.0, 80.25) (nearest Chennai); values NOT altered
+  Daily periods:
+    11 Nov (11 Nov 05:30->11 Nov 23:30 IST, 18 h):    0.000 -    0.000 =    0.000 mm
+    12 Nov (11 Nov 23:30->12 Nov 23:30 IST, 24 h):    0.366 -    0.000 =    0.366 mm
+    13 Nov (12 Nov 23:30->13 Nov 23:30 IST, 24 h):    3.174 -    0.366 =    2.808 mm
+    14 Nov (13 Nov 23:30->14 Nov 23:30 IST, 24 h):    3.296 -    3.174 =    0.122 mm
+    15 Nov (14 Nov 23:30->15 Nov 23:30 IST, 24 h):    3.296 -    3.296 =    0.000 mm
+    16 Nov (15 Nov 23:30->16 Nov 23:30 IST, 24 h):    3.418 -    3.296 =    0.122 mm
+    17 Nov (16 Nov 23:30->17 Nov 23:30 IST, 24 h):    3.418 -    3.418 =    0.000 mm
+    18 Nov (17 Nov 23:30->18 Nov 23:30 IST, 24 h):   10.986 -    3.418 =    7.568 mm
+    19 Nov (18 Nov 23:30->19 Nov 23:30 IST, 24 h):   13.916 -   10.986 =    2.930 mm
+    20 Nov (19 Nov 23:30->20 Nov 23:30 IST, 24 h):   25.879 -   13.916 =   11.963 mm
+    21 Nov (20 Nov 23:30->21 Nov 23:30 IST, 24 h):   27.344 -   25.879 =    1.465 mm
+  Intervals with non-zero or negative rain:
+     39->42  (3 h, IST 12 Nov 20:30->23:30):    0.366 mm  avg 0.122 mm/h
+     42->45  (3 h, IST 12 Nov 23:30->02:30):    0.732 mm  avg 0.244 mm/h
+     45->48  (3 h, IST 13 Nov 02:30->05:30):    1.099 mm  avg 0.366 mm/h
+     51->54  (3 h, IST 13 Nov 08:30->11:30):    0.977 mm  avg 0.326 mm/h
+     66->69  (3 h, IST 13 Nov 23:30->02:30):    0.122 mm  avg 0.041 mm/h
+    126->129 (3 h, IST 16 Nov 11:30->14:30):    0.122 mm  avg 0.041 mm/h
+    162->168 (6 h, IST 17 Nov 23:30->05:30):    1.953 mm  avg 0.326 mm/h
+    168->174 (6 h, IST 18 Nov 05:30->11:30):    1.221 mm  avg 0.203 mm/h
+    174->180 (6 h, IST 18 Nov 11:30->17:30):    3.906 mm  avg 0.651 mm/h
+    180->186 (6 h, IST 18 Nov 17:30->23:30):    0.488 mm  avg 0.081 mm/h
+    186->192 (6 h, IST 18 Nov 23:30->05:30):    0.244 mm  avg 0.041 mm/h
+    192->198 (6 h, IST 19 Nov 05:30->11:30):    0.732 mm  avg 0.122 mm/h
+    198->204 (6 h, IST 19 Nov 11:30->17:30):    1.221 mm  avg 0.203 mm/h
+    204->210 (6 h, IST 19 Nov 17:30->23:30):    0.732 mm  avg 0.122 mm/h
+    210->216 (6 h, IST 19 Nov 23:30->05:30):   10.986 mm  avg 1.831 mm/h
+    216->222 (6 h, IST 20 Nov 05:30->11:30):    0.244 mm  avg 0.041 mm/h
+    222->228 (6 h, IST 20 Nov 11:30->17:30):    0.732 mm  avg 0.122 mm/h
+    234->240 (6 h, IST 20 Nov 23:30->05:30):    0.244 mm  avg 0.041 mm/h
+    240->246 (6 h, IST 21 Nov 05:30->11:30):    0.244 mm  avg 0.041 mm/h
+    246->252 (6 h, IST 21 Nov 11:30->17:30):    0.977 mm  avg 0.163 mm/h
