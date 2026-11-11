@@ -272,3 +272,31 @@ Decision maker: Mrittika Basu (project owner). Claude (AI assistant) proposes, e
   snaps to 8.0, which is stored only with the margin.
 - **Tie rule:** Python `round` sends 13.125 → 13.0 and 80.125 → 80.0 (round-half-to-even); `floor(x*4+0.5)/4`
   sends them to 13.25 and 80.25 (always north/east). Chennai, Coimbatore and Madurai snap identically under both.
+
+## D-015: Negative threshold (option C), tie rule, grid margin
+- **Timestamp:** 2026-11-12
+- **Status:** Decided (owner) and implemented with tests
+- **Owner decisions:**
+  1. **Threshold option C:** `(q1 + q2) / 2`, derived per pair from the two readings' own packing increments.
+     Owner's reasoning: it accounts for the maximum possible rounding error in both readings, rather than tolerating
+     only the smaller error. (The assistant had recommended option A, the finer increment.)
+  2. **Exact ties go north/east:** `floor(x / 0.25 + 0.5) * 0.25`.
+  3. **Grid margin:** store 391 grid points (box + 0.125°, adding the 8.0N row). The application bounding box stays unchanged.
+- **Rounding-mode check (owner asked before implementing):** GRIB metadata defines decoding only; it **does not
+  record the encoder's rounding mode**, so the metadata alone cannot confirm round-to-nearest. Empirical test
+  (`scripts/inspect_rounding.py` → `docs/inspection/rounding_mode_20261111T00Z.txt`) at the two increment-doubling pairs,
+  on points whose earlier value lies between coarse marks: 6→9 h 16 % down / 80 % up; 129→132 h 33 % / 65 %. The shares
+  are stable when requiring 12–72 h of no change afterwards. This rules out always-down (up share would fall towards 0)
+  and always-up (no downs would occur). **Consistent with round-to-nearest; not proven.** The up/down imbalance is
+  unexplained. All observed dips (≤ 1 finer increment) are within option C regardless.
+- **Correction found during implementation (by reasoning, before any test caught it):** step 0 is a constant field
+  (bitsPerValue 0, E=0). Using 2^E would give an increment of 1000 mm and a 0→3 h threshold of ~500 mm. A constant field
+  is exact, so its increment is defined as **0** (`packing_increment_mm(..., bits_per_value=0) = 0`); the 0→3 h threshold
+  is then q3/2. Test added: a 1 mm dip at 0→3 h is invalid.
+- **Implementation:** `pipeline/compute.py` (`packing_increment_mm`, `negative_threshold_mm`; `build_intervals`/`build_days`
+  take per-step increments and raise if a negative appears without them), `pipeline/grid.py` (`snap_to_grid`,
+  `region_grid_points`). Tests: `tests/test_compute.py`, `tests/test_grid.py`; tests failed before code existed
+  (collection errors), then **77/77 passed**.
+- **Real-data check (not a unit test; raw file SHA-256 unchanged):** 391 Tamil Nadu points from run 2026-11-11 00z with
+  increments read per message: intervals 26,121 ok / 76 adjusted / **0 invalid**; days 4,269 ok / 32 adjusted / **0 invalid**;
+  day ≠ sum(intervals): 0.

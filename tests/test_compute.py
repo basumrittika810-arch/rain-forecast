@@ -20,6 +20,8 @@ from pipeline.compute import (
     expected_steps,
     interval_rain,
     m_to_mm,
+    negative_threshold_mm,
+    packing_increment_mm,
     rate_mm_per_h,
 )
 
@@ -219,22 +221,112 @@ def test_missing_value_is_unavailable_not_zero():
     assert classify(None, ONE_INC) == (None, "unavailable")
 
 
+# Increments as in the real run (D-014): E=-14 for steps 3-6, -13 for 9-129, -12 for 132-258.
+FINE, MID, COARSE = 0.06103515625, 0.1220703125, 0.244140625
+# Step 0 is a constant field (bitsPerValue = 0): its values are exact, so its increment is 0.
+REAL_INCREMENTS = {s: (0.0 if s == 0 else FINE if s <= 6 else MID if s <= 129 else COARSE) for s in STEPS}
+
+
 def test_raw_negative_is_kept_while_display_is_zero():
-    # Dataset B: reading drops by one increment between 6 h and 9 h (seen in real data, D-007).
+    # Dataset B: reading drops by one fine increment between 6 h and 9 h (seen in real data, D-007).
     cum = {s: 0.0 for s in STEPS}
-    cum[6] = ONE_INC
-    iv = {(i["start_step"], i["end_step"]): i for i in build_intervals(cum, STEPS, threshold_mm=ONE_INC)}
+    cum[6] = FINE
+    iv = {(i["start_step"], i["end_step"]): i for i in build_intervals(cum, STEPS, increments=REAL_INCREMENTS)}
     i = iv[(6, 9)]
-    assert (i["raw_mm"], i["mm"], i["status"], i["mm_per_h"]) == (-ONE_INC, 0.0, "adjusted", 0.0)
+    assert (i["raw_mm"], i["mm"], i["status"], i["mm_per_h"]) == (-FINE, 0.0, "adjusted", 0.0)
 
 
 def test_invalid_value_blocks_publication():
     cum = {s: 0.0 for s in STEPS}
-    cum[6] = 3 * ONE_INC                      # drops by three steps at 6 -> 9 h
-    iv = build_intervals(cum, STEPS, threshold_mm=ONE_INC)
+    cum[6] = 3 * FINE                         # drops by three fine steps at 6 -> 9 h
+    iv = build_intervals(cum, STEPS, increments=REAL_INCREMENTS)
     assert [i["status"] for i in iv].count("invalid") == 1
     with pytest.raises(ValueError, match="invalid"):
         assert_publishable([i["status"] for i in iv])
+
+
+# ---------------------------------------------------------------- 5c. threshold from GRIB precision (D-015)
+
+@pytest.mark.parametrize("E, D, bits, expected_mm", [
+    (-14, 0, 12, 0.06103515625),   # 2^-14 m = 0.06103515625 mm
+    (-13, 0, 12, 0.1220703125),    # 2^-13 m
+    (-12, 0, 12, 0.244140625),     # 2^-12 m
+    (0, 1, 12, 100.0),             # 2^0 m / 10^1 = 0.1 m = 100 mm (decimal scaling)
+    (0, 0, 0, 0.0),                # constant field (real step 0): exact values, no rounding
+])
+def test_packing_increment_from_metadata(E, D, bits, expected_mm):
+    assert packing_increment_mm(E, D, bits) == expected_mm
+
+
+@pytest.mark.parametrize("q1, q2, expected", [
+    (FINE, FINE, FINE),                # same increment -> that increment
+    (FINE, MID, 0.091552734375),       # (0.06103515625 + 0.1220703125) / 2, worked by hand
+    (MID, COARSE, 0.18310546875),      # (0.1220703125 + 0.244140625) / 2
+    (COARSE, COARSE, COARSE),
+])
+def test_threshold_is_mean_of_the_two_increments(q1, q2, expected):
+    assert negative_threshold_mm(q1, q2) == expected
+    assert negative_threshold_mm(q2, q1) == expected   # order does not matter
+
+
+def test_threshold_with_an_exact_constant_field():
+    # 0 -> 3 h: step 0 exact (0), step 3 rounded to FINE -> max error FINE/2.
+    assert negative_threshold_mm(0.0, FINE) == 0.030517578125
+    assert negative_threshold_mm(0.0, 0.0) == 0.0     # two exact fields: no negative is acceptable
+
+
+def test_threshold_rejects_negative_increments():
+    with pytest.raises(ValueError):
+        negative_threshold_mm(-FINE, FINE)
+
+
+def test_constant_first_field_does_not_allow_large_dips():
+    cum = {s: 0.0 for s in STEPS}
+    cum[0] = 1.0                        # impossible: 1 mm at the start, then 0 at 3 h (dip of 1 mm)
+    iv = {(i["start_step"], i["end_step"]): i for i in build_intervals(cum, STEPS, increments=REAL_INCREMENTS)}
+    assert iv[(0, 3)]["status"] == "invalid"
+
+
+def test_transition_pair_one_fine_step_allowed_two_blocked():
+    # 6 -> 9 h: increments FINE -> MID, threshold 0.0915527...
+    cum = {s: 0.0 for s in STEPS}
+    cum[6] = FINE                       # dip of 1 fine step (0.061) -> allowed
+    iv = {(i["start_step"], i["end_step"]): i for i in build_intervals(cum, STEPS, increments=REAL_INCREMENTS)}
+    assert iv[(6, 9)]["status"] == "adjusted"
+    cum[6] = 2 * FINE                   # dip of 0.122 > 0.0915 -> blocked
+    iv = {(i["start_step"], i["end_step"]): i for i in build_intervals(cum, STEPS, increments=REAL_INCREMENTS)}
+    assert iv[(6, 9)]["status"] == "invalid"
+
+
+def test_same_increment_pair_exactly_one_step_allowed():
+    # 246 -> 252 h: both COARSE, threshold = 0.244140625 (inclusive); real data had dips of exactly this size.
+    cum = {s: 0.0 for s in STEPS}
+    for s in STEPS:
+        if s <= 246:
+            cum[s] = COARSE if s >= 132 else 0.0
+    iv = {(i["start_step"], i["end_step"]): i for i in build_intervals(cum, STEPS, increments=REAL_INCREMENTS)}
+    assert (iv[(246, 252)]["raw_mm"], iv[(246, 252)]["status"]) == (-COARSE, "adjusted")
+
+
+def test_real_daily_dip_is_adjusted():
+    # Real example (D-014): 13.50N 79.75E, day 114 -> 138 h (16 Nov):
+    # 3.2958984375 mm (27 x MID) -> 3.173828125 mm (13 x COARSE): dip 0.1220703125 <= threshold 0.18310546875.
+    cum = {s: 0.0 for s in STEPS}
+    for s in STEPS:
+        if 114 <= s < 138:
+            cum[s] = 3.2958984375
+        elif s >= 138:
+            cum[s] = 3.173828125
+    days = {d["date"].isoformat(): d for d in build_days(cum, daily_periods(INIT, 258), increments=REAL_INCREMENTS)}
+    d = days["2026-11-16"]
+    assert (d["raw_mm"], d["mm"], d["status"]) == (-0.1220703125, 0.0, "adjusted")
+
+
+def test_negative_without_increments_is_an_error_not_a_guess():
+    cum = {s: 0.0 for s in STEPS}
+    cum[6] = FINE
+    with pytest.raises(ValueError):
+        build_intervals(cum, STEPS)          # no increments given -> must not silently pick a threshold
 
 
 def test_ok_adjusted_and_unavailable_do_not_block_publication():

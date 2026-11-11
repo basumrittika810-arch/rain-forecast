@@ -1,0 +1,21 @@
+GRIB metadata does not record the encoder's rounding mode; testing it from the data.
+
+Pair 6->9 h (increment 0.0610 -> 0.1221 mm), quiet points with odd earlier value: 47601
+  change in fine increments: -1: 7711, +1: 38102, +3: 1249, +5: 265, +7: 87, +9: 49, +11: 37, +13: 31, +15: 6, +17: 9, +19: 7, +21: 8, +23: 6, +25: 3, +27: 5, +29: 8, +31: 3, +33: 3, +35: 1, +37: 4, +45: 1, +49: 1, +57: 1, +83: 1, +113: 1, +141: 1, +221: 1
+  down (-1): 7711 (16.2%)   up (+1): 38102 (80.0%)   other: 1788
+  expected: round-down ~100% down; round-up ~100% up; nearest = a mix of both
+  Longer dry period after the pair (later value unchanged up to step X):
+    dry for 12 h after: points  20309  down   3458 ( 17.0%)  up  16347 ( 80.5%)
+    dry for 24 h after: points  10756  down   1953 ( 18.2%)  up   8600 ( 80.0%)
+    dry for 48 h after: points   4996  down    922 ( 18.5%)  up   4004 ( 80.1%)
+    dry for 72 h after: points   2932  down    547 ( 18.7%)  up   2351 ( 80.2%)
+
+Pair 129->132 h (increment 0.1221 -> 0.2441 mm), quiet points with odd earlier value: 230894
+  change in fine increments: -1: 76509, +1: 149110, +3: 4277, +5: 482, +7: 202, +9: 96, +11: 57, +13: 38, +15: 33, +17: 16, +19: 9, +21: 15, +23: 6, +25: 7, +27: 6, +29: 5, +31: 2, +33: 3, +35: 5, +37: 3, +39: 3, +41: 2, +43: 2, +45: 1, +51: 1, +67: 1, +71: 1, +83: 1, +101: 1
+  down (-1): 76509 (33.1%)   up (+1): 149110 (64.6%)   other: 5275
+  expected: round-down ~100% down; round-up ~100% up; nearest = a mix of both
+  Longer dry period after the pair (later value unchanged up to step X):
+    dry for 12 h after: points 162251  down  51444 ( 31.7%)  up 107747 ( 66.4%)
+    dry for 24 h after: points 116055  down  36600 ( 31.5%)  up  77100 ( 66.4%)
+    dry for 48 h after: points  74568  down  24330 ( 32.6%)  up  48279 ( 64.7%)
+    dry for 72 h after: points  54638  down  18330 ( 33.5%)  up  35971 ( 65.8%)

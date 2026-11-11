@@ -5,8 +5,9 @@ hand-checkable numbers. Verified facts this relies on (docs/DECISIONS.md D-004, 
   * tp is in metres and accumulated from forecast start (startStep = 0) at every step;
   * steps are 0..144 every 3 h, then 150.. every 6 h.
 
-Not implemented here (awaiting owner approval): deriving the negative-value threshold from
-GRIB packing metadata. Functions below take the threshold as an argument.
+Negative-value threshold (D-015): for a difference between two readings with packing increments
+q1 and q2, the threshold is (q1 + q2) / 2, the largest error two round-to-nearest readings can add up to.
+Increments come from each message's own GRIB metadata (packing_increment_mm).
 """
 
 import datetime as dt
@@ -24,6 +25,39 @@ def m_to_mm(metres):
 def expected_steps(horizon_hours: int) -> list[int]:
     """HRES open-data steps up to the horizon: every 3 h to 144 h, then every 6 h."""
     return list(range(0, min(horizon_hours, 144) + 1, 3)) + list(range(150, horizon_hours + 1, 6))
+
+
+def packing_increment_mm(binary_scale_factor: int, decimal_scale_factor: int, bits_per_value: int) -> float:
+    """Spacing between representable values of one GRIB message, in mm.
+
+    Decoded value = (R + k * 2^E) / 10^D metres, so neighbouring values differ by 2^E / 10^D metres.
+    A constant field (bitsPerValue = 0) stores no rounded values at all, so its increment is 0.
+    """
+    for name, v in (("binary_scale_factor", binary_scale_factor), ("decimal_scale_factor", decimal_scale_factor),
+                    ("bits_per_value", bits_per_value)):
+        if isinstance(v, bool) or not isinstance(v, int):
+            raise ValueError(f"{name} must be an integer, got {v!r}")
+    if bits_per_value < 0:
+        raise ValueError(f"bits_per_value must be >= 0, got {bits_per_value}")
+    if bits_per_value == 0:
+        return 0.0
+    return MM_PER_M * 2.0 ** binary_scale_factor / 10.0 ** decimal_scale_factor
+
+
+def negative_threshold_mm(q1_mm: float, q2_mm: float) -> float:
+    """Largest negative difference attributable to rounding of two readings: (q1 + q2) / 2 (D-015)."""
+    if q1_mm < 0 or q2_mm < 0:
+        raise ValueError(f"increments must be >= 0, got {q1_mm}, {q2_mm}")
+    return (q1_mm + q2_mm) / 2
+
+
+def _pair_threshold(increments, a: int, b: int):
+    if increments is None:
+        return None
+    missing = [s for s in (a, b) if s not in increments]
+    if missing:
+        raise ValueError(f"no packing increment for step(s) {missing}")
+    return negative_threshold_mm(increments[a], increments[b])
 
 
 def interval_rain(cum: dict, start_step: int, end_step: int):
@@ -63,14 +97,18 @@ def _missing_reason(cum: dict, *steps: int) -> str:
     return "missing step " + ", ".join(f"{s} h" for s in steps if s not in cum)
 
 
-def build_intervals(cum: dict, steps: list[int], threshold_mm=None) -> list[dict]:
-    """One entry per consecutive pair of expected steps."""
+def build_intervals(cum: dict, steps: list[int], increments: dict | None = None) -> list[dict]:
+    """One entry per consecutive pair of expected steps.
+
+    increments: {step: packing increment in mm}. Required as soon as any difference is negative.
+    """
     if any(b <= a for a, b in zip(steps, steps[1:])):
         raise ValueError(f"steps must be strictly increasing: {steps}")
     out = []
     for a, b in zip(steps, steps[1:]):
         raw = interval_rain(cum, a, b)
-        mm, status = classify(raw, threshold_mm)
+        threshold = _pair_threshold(increments, a, b) if raw is not None and raw < 0 else None
+        mm, status = classify(raw, threshold)
         entry = {"start_step": a, "end_step": b, "hours": b - a, "raw_mm": raw, "mm": mm,
                  "mm_per_h": rate_mm_per_h(mm, b - a), "status": status}
         if status == "unavailable":
@@ -97,12 +135,14 @@ def daily_periods(init_utc: dt.datetime, horizon_hours: int) -> list[dict]:
     return periods
 
 
-def build_days(cum: dict, periods: list[dict], threshold_mm=None) -> list[dict]:
+def build_days(cum: dict, periods: list[dict], increments: dict | None = None) -> list[dict]:
     """Daily total = cumulative at period end - cumulative at period start (only the two boundaries)."""
     out = []
     for p in periods:
         raw = interval_rain(cum, p["start_step"], p["end_step"])
-        mm, status = classify(raw, threshold_mm)
+        threshold = (_pair_threshold(increments, p["start_step"], p["end_step"])
+                     if raw is not None and raw < 0 else None)
+        mm, status = classify(raw, threshold)
         entry = {**p, "raw_mm": raw, "mm": mm, "status": status}
         if status == "unavailable":
             entry["reason"] = _missing_reason(cum, p["start_step"], p["end_step"])
