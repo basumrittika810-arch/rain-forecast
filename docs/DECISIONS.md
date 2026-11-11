@@ -352,3 +352,34 @@ Decision maker: Mrittika Basu (project owner). Claude (AI assistant) proposes, e
   around a missing boundary step unavailable. Step 1 (owner instruction, D-016) rejects any run that lacks a step, so in
   practice the partial-publication path cannot occur. The code supports it (tested in `compute.py`). Current effective
   behaviour is the stricter "reject the whole run, keep the previous forecast". **Owner decision needed.**
+
+## D-018: Partial publication when a step is missing; 00 UTC only (supersedes D-016's whole-run rejection)
+- **Timestamp:** 2026-11-11 22:53 UTC (2026-11-12 04:23 IST)
+- **Status:** Decided (owner). **Not implemented yet** (change list below).
+- **Context:** D-006 6.4 said to publish valid periods and mark the two days around a missing boundary step unavailable.
+  D-016 (Step 1) rejects any run lacking a step, so 6.4 could never take effect (flagged in D-017).
+- **Decision (replaces 6.4 and the missing-step rejection in D-016):** partial publication.
+  - Principle: **don't discard valid information because other information is unavailable, and never present
+    unavailable information as valid.**
+  - Still validate every available file; verify all readings belong to the same run and the same grid.
+  - Still **reject runs that are corrupt or inconsistent** (unreadable or truncated GRIB, wrong variable or units,
+    window not from step 0, other run, grid mismatch, duplicates, unexpected steps, missing or negative stored values,
+    unknown packing).
+  - A **missing step** no longer rejects the run. Only the periods that need it are marked `unavailable` (null, never 0,
+    with a reason): a missing day-boundary step affects its two adjacent days; any missing step affects its two intervals.
+- **Run frequency:** **00 UTC only** for now. Adding 12 UTC runs is **deferred**, only if time allows after deployment.
+- **Owner's reasoning:** farmers need fresh data. The assistant's evidence that a missing file is most likely a delivery
+  problem is a hypothesis, not proof that the rest of the run is correct, hence keep validating everything that is
+  available. Partial publication already avoids farmers being stuck with very old forecasts, and staying on 00 UTC
+  keeps the work small before the deadline.
+- **Differs from the assistant's recommendation:** the assistant's first choice was "add 12 UTC runs and keep the strict
+  rule" (a rejection would then cost ~12 h of freshness instead of ~24 h). For a 00 UTC-only setup, the assistant had
+  advised partial publication, which matches this decision. The assistant also conceded that its earlier claim
+  ("a missing step makes the other days untrustworthy") was an assumption without evidence.
+- **Staleness (from D-016/D-017 observations, one publication time 07:34 UTC):** 00 UTC only, normal worst ~31.5 h; with
+  partial publication a delivery gap no longer forces a ~55.5 h-old forecast.
+- **Open questions to settle before implementing (assistant proposals in brackets):**
+  1. When is a run treated as "partial" rather than "still uploading"? [accept missing steps only after init + 10 h,
+     i.e. ~2.5 h after the observed 07:34 UTC completion; before that keep waiting]
+  2. Minimum content to publish at all? [at least one complete day available; otherwise keep the previous forecast]
+  3. May a later complete download of the same run replace a partial one? [yes, only if it has fewer missing steps]
