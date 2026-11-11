@@ -35,7 +35,16 @@ modules of `eccodes` and `pandas` are blocked at import time
 (`DLL load failed ... An Application Control policy has blocked this file`).
 See `docs/DECISIONS.md` (D-001).
 
-## Useful commands (available now)
+## Pipeline commands
+
+```powershell
+# Step 1: find the newest complete 00 UTC run, download tp (steps 0-258) to data/tmp/, validate,
+# and move it to data/runs/<run>/. Rejected downloads go to data/rejected/ with reason.txt.
+# Does not publish anything and never touches data/processed/ (latest.json).
+.\.venv\Scripts\python.exe -m pipeline.fetch
+```
+
+## Investigation commands
 
 ```powershell
 # Which recent run has tp for the sample steps

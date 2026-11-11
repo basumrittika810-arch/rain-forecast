@@ -300,3 +300,31 @@ Decision maker: Mrittika Basu (project owner). Claude (AI assistant) proposes, e
 - **Real-data check (not a unit test; raw file SHA-256 unchanged):** 391 Tamil Nadu points from run 2026-11-11 00z with
   increments read per message: intervals 26,121 ok / 76 adjusted / **0 invalid**; days 4,269 ok / 32 adjusted / **0 invalid**;
   day ≠ sum(intervals): 0.
+
+## D-016: Pipeline Step 1, fetch + validate (no publishing)
+- **Timestamp:** 2026-11-12 (local) / 2026-11-11 ~21:46 UTC
+- **Status:** Implemented and tested; real run verified
+- **Files:** `pipeline/validate.py`, `pipeline/fetch.py`, `tests/test_fetch_validate.py` (26 tests),
+  `tests/gribfactory.py` (synthetic tp GRIB2 runs via ecCodes samples; no network needed).
+- **Behaviour:** download into `data/tmp/<run>_<id>/` → validate (all 68 steps 0–258 present once, nothing extra; tp/228,
+  units m, accumulation template 8/processing 1, startStep 0, hours, same initialisation, validity = init + step, expected
+  grid, packing in {grid_ccsds, grid_simple}, no missing values, no negative or non-finite stored values; readable file)
+  → write manifest, make GRIB read-only → atomic rename to new `data/runs/<run>/`. Any failure moves the temp folder to
+  `data/rejected/…` with `reason.txt` (kept for investigation, not deleted) and raises. An existing run folder is never
+  overwritten (refused before downloading). `data/processed/` / `latest.json` are never touched.
+- **Scope choice:** only 00 UTC runs are considered (`RUN_HOURS = (0,)`) because the 00z/12z question is undecided and
+  the 23:30 IST / 258 h design was set for 00z. **Open decision.**
+- **Bug found by the tests (real, fixed):** on Windows, rejecting an incomplete or corrupt download failed with
+  `PermissionError: Access is denied` when moving the temp folder. Cause: ecCodes passes the Python file to C through a
+  duplicated handle that closes only when the file object is freed, and the raised error's traceback kept it alive.
+  Fix: all reading happens in `_scan()`, which always returns normally before the caller raises. Two tests failed before
+  the fix; all pass after.
+- **Factory finding:** in template-8 GRIB, `dataDate` must be set before the step, otherwise the end-of-interval (validity)
+  time stays stale. Added as a validation test (inconsistent validity rejected).
+- **Test results:** 103 passed (26 new).
+- **Real run:** latest complete run 20261111T00Z (12 Nov 00z not yet published at 21:46 UTC); 35,139,859 bytes in 66 s;
+  validation passed (68 messages; increments 0, 0.061, 0.122, 0.244 mm). SHA-256 `6de90b3f…` is **identical to the
+  independent manual download (D-007)**. Pre-existing `data/` files byte-identical before/after; no `latest.json` created;
+  `data/tmp` empty; nothing rejected. A second run logged "already fetched; nothing to do" and the stored file was unchanged.
+- **Limitation:** no real last-good published forecast exists yet (publishing is Step 2), so "last good unchanged" is
+  proven by the tests with a simulated last-good run and `latest.json`, and in the real run only for pre-existing files.
