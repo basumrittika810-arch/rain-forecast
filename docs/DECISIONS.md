@@ -383,3 +383,16 @@ Decision maker: Mrittika Basu (project owner). Claude (AI assistant) proposes, e
      i.e. ~2.5 h after the observed 07:34 UTC completion; before that keep waiting]
   2. Minimum content to publish at all? [at least one complete day available; otherwise keep the previous forecast]
   3. May a later complete download of the same run replace a partial one? [yes, only if it has fewer missing steps]
+
+## D-019: Partial publication deferred until after deployment
+- **Timestamp:** 2026-11-12
+- **Status:** Decided (owner)
+- **Decision:** implementing D-018 (partial publication) is **deferred until after deployment**. Until then the strict
+  rule from D-016 stays live: a run with any missing step is rejected and the previous validated forecast stays
+  published (clearly dated). D-018 remains the agreed target behaviour and is the **first enhancement after deployment**.
+- **Owner's reasoning:** deployment is the bigger risk to the deadline, and a missing step has never been observed
+  (every run checked so far had all 68 steps).
+- **Estimates given (assistant, not measured):** minimal partial publication ~1–1.5 h; replacing a partial run with a
+  later complete one (D-018 Q3) +~45 min. Q3 is to be deferred even when D-018 is implemented.
+- **Still open for when D-018 is implemented:** D-018 Q1 (waiting period before accepting missing steps), Q2 (minimum
+  content to publish).
