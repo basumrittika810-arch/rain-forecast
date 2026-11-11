@@ -238,3 +238,16 @@ Decision maker: Mrittika Basu (project owner). Claude (AI assistant) proposes, e
     update could mix today's and yesterday's forecasts.
 - **Accepted trade-off:** J1 does not scale to very large regions (all India ≈ 150 MB est.). If that ever happens,
   only the JSON writer and loader change, not the rainfall calculations.
+
+## D-013: Rainfall arithmetic tests and minimal implementation
+- **Timestamp:** 2026-11-12
+- **Status:** Done (tests first, then code); threshold derivation and grid tie-breaking are **proposals only**, not implemented
+- **Files:** `tests/test_compute.py` (27 tests, hand-derived expected values on artificial data), `pipeline/compute.py`
+  (pure functions: m→mm, intervals, 23:30 IST daily periods incl. 18-h partial first day, daily totals from the two
+  boundary readings, missing → `unavailable` (never 0), D-008 classification with the threshold passed in,
+  publish gate, day = sum-of-intervals check).
+- **Evidence:** the tests were run before the code existed (collection error: module missing), then 43/43 passed
+  (27 new + 16 config). Mutation check: changing the day boundary to 00 UTC failed 4 tests; making an exactly-one-step
+  negative invalid failed 2 tests. The original code was restored (hash identical) and 43/43 pass.
+- **Design detail fixed by tests:** a missing *intermediate* step makes only its two intervals unavailable (no merged
+  6-h interval); days are unaffected. The day = sum-of-intervals check skips days with unavailable intervals.
