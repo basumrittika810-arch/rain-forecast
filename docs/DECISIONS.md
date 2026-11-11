@@ -56,3 +56,38 @@ Decision maker: Mrittika Basu (project owner). Claude (AI assistant) proposes, e
   succeeds; ecCodes C library 2.50.0; `python -m cfgrib selfcheck` → "Found: ecCodes v2.50.0. Your system is ready."
 - **Consequence to remember:** this setup relies on Smart App Control being off. Another Windows
   machine with it on will hit the same error (noted in README).
+
+## D-002: Geographic subsetting is not available; variable subsetting is
+- **Timestamp:** 2026-11-11 ~21:40 IST
+- **Status:** Verified at client level; ECMWF documentation not yet read
+- **Evidence (source of installed `ecmwf-opendata` 0.3.35, `ecmwf/opendata/client.py`):**
+  - `area` is in the `POSPROCESSING` set (lines 507–516). When it is passed, the client only logs
+    "MARS post-processing keywords ... not supported" (line 535); it does not crop.
+  - Data URLs are static file paths
+    (`{date}/{HH}z/ifs/0p25/oper/{date}{HH}0000-{step}h-oper-fc.grib2`, lines 35–38), not queries.
+  - Each GRIB file has a `.index` JSON-lines sidecar with `_offset`/`_length` per message. The client
+    downloads only the requested parameter's bytes (lines 311–357).
+- **Consequence:** download global `tp` fields (parameter-only byte ranges) and crop to the region locally.
+- **Also observed:** the client's `latest()` checks only that step files exist (HTTP HEAD), not that
+  `tp` is inside them (lines 197–210). Our own stricter check is in `scripts/check_availability.py`.
+
+## D-003: Initial sample downloaded (2026-11-11 00 UTC run)
+- **Timestamp:** 2026-11-11 16:09 UTC (21:39 IST)
+- **Status:** Verified (download and structural completeness only; **no value interpretation yet**)
+- **Availability check** (`scripts/check_availability.py`, run at 16:09 UTC):
+  - 2026-11-11 **12 UTC**: HTTP 404 for all six sample steps, i.e. not yet published ~4 h after nominal time.
+  - 2026-11-11 **00 UTC**: `.index` HTTP 200 for steps 0, 3, 6, 144, 150, 240; exactly one `tp` entry each.
+    Step files contain 191 messages (194 at step 0); step-0 `tp` entry `_length` = 224 bytes.
+  - Chosen: the 00 UTC run (newest run with `tp` for all sample steps).
+- **Download** (`scripts/download_sample.py 20261111 00`):
+  - File `data/raw/20261111T00Z/tp_steps_0-3-6-144-150-240.grib2`, 2,244,314 bytes,
+    SHA-256 `42570d628ec5f210630e97ed8afd957f3d413a5856d6d0e6b243ec4232a35308`; marked read-only.
+  - ecCodes lists 6 messages, all `shortName=tp`, with `stepRange` = `0`, `0-3`, `0-6`, `0-144`,
+    `0-150`, `0-240`.
+  - Client printed the licence notice: **CC BY 4.0, attribution to ECMWF required** (documented by
+    ECMWF's own client; to be shown in the UI).
+- **Provisional / not yet concluded:**
+  - The `stepRange` values starting at `0` *suggest* accumulation from forecast start. This is **not
+    yet verified**; it must be checked against the `stepType`/units keys, the values, and ECMWF documentation.
+  - Size estimate for a full run: ~0.45 MB per step × ~65 steps ≈ 30 MB. This is an extrapolation,
+    not measured. (The earlier P1 estimate of 100–150 MB was too high.)
