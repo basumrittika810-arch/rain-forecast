@@ -154,5 +154,31 @@ Decision maker: Mrittika Basu (project owner). Claude (AI assistant) proposes, e
   large, which corrects the earlier impression that they were limited to near-dry points. They appear in 2 of 11
   daily periods (min −0.244 mm).
 - **Negative-value handling remains open (owner decision 6.6).**
-- **Process notes:** a truncated-output command gave exit 255 (pipe closed early) and was re-run in full.
+- **Process notes (D-007):** a truncated-output command gave exit 255 (pipe closed early) and was re-run in full.
   `2>&1` in PowerShell displayed ECMWF's informational stderr notice as an error; nothing failed.
+
+## D-008: Negative-difference rule and provisional pilot region
+- **Timestamp:** 2026-11-12
+- **Status:** Decided (owner)
+- **Negative differences:**
+  - The original GRIB data and the raw calculated differences stay **untouched** (stored as computed).
+  - A negative difference whose magnitude is **within one verified rounding step** is **displayed as 0 mm**,
+    and the adjustment is **logged** (count and magnitude).
+  - A negative difference **larger than that** flags the affected data and **blocks publication** of that forecast;
+    the previous validated forecast stays live.
+  - The threshold is **derived from the actual data precision** of each run (the packing increment 2^E of the
+    fields involved), **not hardcoded** (e.g. not 0.1 mm). Evidence basis: D-007 (all observed negatives = exactly
+    one increment of the finer field of the pair).
+  - Open for implementation: precisely which increment defines "one rounding step" for a pair with different
+    increments (finer vs coarser). D-007 observed max = one *finer* increment. To be settled with tests before use.
+- **Pilot region:** **Tamil Nadu (provisional)**, kept **configurable** via a central config file so it can change.
+  Its bounding box still has to be defined and checked against a cited source when the config is created.
+
+## D-009: Project structure and dependencies for the application
+- **Timestamp:** 2026-11-12
+- **Status:** Done (setup only, no application code)
+- Before any change, the existing venv (Python 3.12.10, ecCodes 2.50.0, cfgrib 0.9.15.1) was confirmed to read
+  `tp_steps_0-258.grib2`: 68 messages via ecCodes; cfgrib reads 68×721×1440; value at 13.0N 80.25E, step 258 =
+  27.34375 mm, matching `verify_run.py`. No reinstall was needed.
+- Added folders `pipeline/`, `api/`, `web/`, `tests/`. Existing `scripts/` (investigation and verification tools) kept unchanged.
+- Added FastAPI + Uvicorn (API) and pytest (tests). Runtime and dev dependencies are pinned separately.
