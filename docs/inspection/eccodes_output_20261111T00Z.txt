@@ -1,0 +1,599 @@
+# ecCodes inspection of tp_steps_0-3-6-144-150-240.grib2
+ecCodes C library 2.50.0, eccodes-python 2.50.0
+Messages: 6
+
+## 1. Metadata per message (verbatim ecCodes keys)
+
+--- message 1 ---
+  edition                              = 2
+  centre                               = ecmf
+  shortName                            = tp
+  name                                 = Total precipitation
+  paramId                              = 228
+  units                                = m
+  cfName                               = unknown
+  cfVarName                            = tp
+  typeOfLevel                          = surface
+  level                                = 0
+  dataType                             = fc
+  typeOfProcessedData                  = fc
+  stepType                             = accum
+  stepUnits                            = 1
+  stepRange                            = 0
+  startStep                            = 0
+  endStep                              = 0
+  forecastTime                         = 0
+  productDefinitionTemplateNumber      = 8
+  typeOfStatisticalProcessing          = 1
+  lengthOfTimeRange                    = 0
+  indicatorOfUnitForTimeRange          = 1
+  dataDate                             = 20261111
+  dataTime                             = 0
+  validityDate                         = 20261111
+  validityTime                         = 0
+  gridType                             = regular_ll
+  Ni                                   = 1440
+  Nj                                   = 721
+  numberOfDataPoints                   = 1038240
+  numberOfValues                       = 1038240
+  latitudeOfFirstGridPointInDegrees    = 90.0
+  longitudeOfFirstGridPointInDegrees   = 180.0
+  latitudeOfLastGridPointInDegrees     = -90.0
+  longitudeOfLastGridPointInDegrees    = 179.75
+  iDirectionIncrementInDegrees         = 0.25
+  jDirectionIncrementInDegrees         = 0.25
+  iScansNegatively                     = 0
+  jScansPositively                     = 0
+  jPointsAreConsecutive                = 0
+  packingType                          = grid_ccsds
+  bitsPerValue                         = 0
+  referenceValue                       = 0.0
+  binaryScaleFactor                    = 0
+  decimalScaleFactor                   = 0
+  bitmapPresent                        = 0
+  numberOfMissing                      = 0
+  missingValue                         = 9999
+  minimum                              = 0.0
+  maximum                              = 0.0
+  average                              = 0.0
+
+--- message 2 ---
+  edition                              = 2
+  centre                               = ecmf
+  shortName                            = tp
+  name                                 = Total precipitation
+  paramId                              = 228
+  units                                = m
+  cfName                               = unknown
+  cfVarName                            = tp
+  typeOfLevel                          = surface
+  level                                = 0
+  dataType                             = fc
+  typeOfProcessedData                  = fc
+  stepType                             = accum
+  stepUnits                            = 1
+  stepRange                            = 0-3
+  startStep                            = 0
+  endStep                              = 3
+  forecastTime                         = 0
+  productDefinitionTemplateNumber      = 8
+  typeOfStatisticalProcessing          = 1
+  lengthOfTimeRange                    = 3
+  indicatorOfUnitForTimeRange          = 1
+  dataDate                             = 20261111
+  dataTime                             = 0
+  validityDate                         = 20261111
+  validityTime                         = 300
+  gridType                             = regular_ll
+  Ni                                   = 1440
+  Nj                                   = 721
+  numberOfDataPoints                   = 1038240
+  numberOfValues                       = 1038240
+  latitudeOfFirstGridPointInDegrees    = 90.0
+  longitudeOfFirstGridPointInDegrees   = 180.0
+  latitudeOfLastGridPointInDegrees     = -90.0
+  longitudeOfLastGridPointInDegrees    = 179.75
+  iDirectionIncrementInDegrees         = 0.25
+  jDirectionIncrementInDegrees         = 0.25
+  iScansNegatively                     = 0
+  jScansPositively                     = 0
+  jPointsAreConsecutive                = 0
+  packingType                          = grid_ccsds
+  bitsPerValue                         = 12
+  referenceValue                       = 0.0
+  binaryScaleFactor                    = -14
+  decimalScaleFactor                   = 0
+  bitmapPresent                        = 0
+  numberOfMissing                      = 0
+  missingValue                         = 9999
+  minimum                              = 0.0
+  maximum                              = 0.1307373046875
+  average                              = 0.00029934004103022305
+
+--- message 3 ---
+  edition                              = 2
+  centre                               = ecmf
+  shortName                            = tp
+  name                                 = Total precipitation
+  paramId                              = 228
+  units                                = m
+  cfName                               = unknown
+  cfVarName                            = tp
+  typeOfLevel                          = surface
+  level                                = 0
+  dataType                             = fc
+  typeOfProcessedData                  = fc
+  stepType                             = accum
+  stepUnits                            = 1
+  stepRange                            = 0-6
+  startStep                            = 0
+  endStep                              = 6
+  forecastTime                         = 0
+  productDefinitionTemplateNumber      = 8
+  typeOfStatisticalProcessing          = 1
+  lengthOfTimeRange                    = 6
+  indicatorOfUnitForTimeRange          = 1
+  dataDate                             = 20261111
+  dataTime                             = 0
+  validityDate                         = 20261111
+  validityTime                         = 600
+  gridType                             = regular_ll
+  Ni                                   = 1440
+  Nj                                   = 721
+  numberOfDataPoints                   = 1038240
+  numberOfValues                       = 1038240
+  latitudeOfFirstGridPointInDegrees    = 90.0
+  longitudeOfFirstGridPointInDegrees   = 180.0
+  latitudeOfLastGridPointInDegrees     = -90.0
+  longitudeOfLastGridPointInDegrees    = 179.75
+  iDirectionIncrementInDegrees         = 0.25
+  jDirectionIncrementInDegrees         = 0.25
+  iScansNegatively                     = 0
+  jScansPositively                     = 0
+  jPointsAreConsecutive                = 0
+  packingType                          = grid_ccsds
+  bitsPerValue                         = 12
+  referenceValue                       = 0.0
+  binaryScaleFactor                    = -14
+  decimalScaleFactor                   = 0
+  bitmapPresent                        = 0
+  numberOfMissing                      = 0
+  missingValue                         = 9999
+  minimum                              = 0.0
+  maximum                              = 0.2454833984375
+  average                              = 0.0006038005591945263
+
+--- message 4 ---
+  edition                              = 2
+  centre                               = ecmf
+  shortName                            = tp
+  name                                 = Total precipitation
+  paramId                              = 228
+  units                                = m
+  cfName                               = unknown
+  cfVarName                            = tp
+  typeOfLevel                          = surface
+  level                                = 0
+  dataType                             = fc
+  typeOfProcessedData                  = fc
+  stepType                             = accum
+  stepUnits                            = 1
+  stepRange                            = 0-144
+  startStep                            = 0
+  endStep                              = 144
+  forecastTime                         = 0
+  productDefinitionTemplateNumber      = 8
+  typeOfStatisticalProcessing          = 1
+  lengthOfTimeRange                    = 144
+  indicatorOfUnitForTimeRange          = 1
+  dataDate                             = 20261111
+  dataTime                             = 0
+  validityDate                         = 20261117
+  validityTime                         = 0
+  gridType                             = regular_ll
+  Ni                                   = 1440
+  Nj                                   = 721
+  numberOfDataPoints                   = 1038240
+  numberOfValues                       = 1038240
+  latitudeOfFirstGridPointInDegrees    = 90.0
+  longitudeOfFirstGridPointInDegrees   = 180.0
+  latitudeOfLastGridPointInDegrees     = -90.0
+  longitudeOfLastGridPointInDegrees    = 179.75
+  iDirectionIncrementInDegrees         = 0.25
+  jDirectionIncrementInDegrees         = 0.25
+  iScansNegatively                     = 0
+  jScansPositively                     = 0
+  jPointsAreConsecutive                = 0
+  packingType                          = grid_ccsds
+  bitsPerValue                         = 12
+  referenceValue                       = 0.0
+  binaryScaleFactor                    = -12
+  decimalScaleFactor                   = 0
+  bitmapPresent                        = 0
+  numberOfMissing                      = 0
+  missingValue                         = 9999
+  minimum                              = 0.0
+  maximum                              = 0.60498046875
+  average                              = 0.015315075864187832
+
+--- message 5 ---
+  edition                              = 2
+  centre                               = ecmf
+  shortName                            = tp
+  name                                 = Total precipitation
+  paramId                              = 228
+  units                                = m
+  cfName                               = unknown
+  cfVarName                            = tp
+  typeOfLevel                          = surface
+  level                                = 0
+  dataType                             = fc
+  typeOfProcessedData                  = fc
+  stepType                             = accum
+  stepUnits                            = 1
+  stepRange                            = 0-150
+  startStep                            = 0
+  endStep                              = 150
+  forecastTime                         = 0
+  productDefinitionTemplateNumber      = 8
+  typeOfStatisticalProcessing          = 1
+  lengthOfTimeRange                    = 150
+  indicatorOfUnitForTimeRange          = 1
+  dataDate                             = 20261111
+  dataTime                             = 0
+  validityDate                         = 20261117
+  validityTime                         = 600
+  gridType                             = regular_ll
+  Ni                                   = 1440
+  Nj                                   = 721
+  numberOfDataPoints                   = 1038240
+  numberOfValues                       = 1038240
+  latitudeOfFirstGridPointInDegrees    = 90.0
+  longitudeOfFirstGridPointInDegrees   = 180.0
+  latitudeOfLastGridPointInDegrees     = -90.0
+  longitudeOfLastGridPointInDegrees    = 179.75
+  iDirectionIncrementInDegrees         = 0.25
+  jDirectionIncrementInDegrees         = 0.25
+  iScansNegatively                     = 0
+  jScansPositively                     = 0
+  jPointsAreConsecutive                = 0
+  packingType                          = grid_ccsds
+  bitsPerValue                         = 12
+  referenceValue                       = 0.0
+  binaryScaleFactor                    = -12
+  decimalScaleFactor                   = 0
+  bitmapPresent                        = 0
+  numberOfMissing                      = 0
+  missingValue                         = 9999
+  minimum                              = 0.0
+  maximum                              = 0.64404296875
+  average                              = 0.015937241054422627
+
+--- message 6 ---
+  edition                              = 2
+  centre                               = ecmf
+  shortName                            = tp
+  name                                 = Total precipitation
+  paramId                              = 228
+  units                                = m
+  cfName                               = unknown
+  cfVarName                            = tp
+  typeOfLevel                          = surface
+  level                                = 0
+  dataType                             = fc
+  typeOfProcessedData                  = fc
+  stepType                             = accum
+  stepUnits                            = 1
+  stepRange                            = 0-240
+  startStep                            = 0
+  endStep                              = 240
+  forecastTime                         = 0
+  productDefinitionTemplateNumber      = 8
+  typeOfStatisticalProcessing          = 1
+  lengthOfTimeRange                    = 240
+  indicatorOfUnitForTimeRange          = 1
+  dataDate                             = 20261111
+  dataTime                             = 0
+  validityDate                         = 20261121
+  validityTime                         = 0
+  gridType                             = regular_ll
+  Ni                                   = 1440
+  Nj                                   = 721
+  numberOfDataPoints                   = 1038240
+  numberOfValues                       = 1038240
+  latitudeOfFirstGridPointInDegrees    = 90.0
+  longitudeOfFirstGridPointInDegrees   = 180.0
+  latitudeOfLastGridPointInDegrees     = -90.0
+  longitudeOfLastGridPointInDegrees    = 179.75
+  iDirectionIncrementInDegrees         = 0.25
+  jDirectionIncrementInDegrees         = 0.25
+  iScansNegatively                     = 0
+  jScansPositively                     = 0
+  jPointsAreConsecutive                = 0
+  packingType                          = grid_ccsds
+  bitsPerValue                         = 12
+  referenceValue                       = 0.0
+  binaryScaleFactor                    = -12
+  decimalScaleFactor                   = 0
+  bitmapPresent                        = 0
+  numberOfMissing                      = 0
+  missingValue                         = 9999
+  minimum                              = 0.0
+  maximum                              = 0.7890625
+  average                              = 0.02568664809444649
+
+## 2. Grid geometry (from message 1, checked identical across messages)
+  identical grid in all messages: True
+  Ni (columns, longitudes) = 1440, Nj (rows, latitudes) = 721, Ni*Nj = 1038240
+  distinct latitudes : 721, first=90.0, last=-90.0, order=north->south (descending)
+  distinct longitudes: 1440, first=-180.0, last=179.75
+  unique latitude spacing  : [0.25]
+  unique longitude spacing : [0.25]
+  longitude convention     : -180..180 (min=-180.0, max=179.75)
+
+  India inspection box {'lat_min': 6.0, 'lat_max': 38.0, 'lon_min': 68.0, 'lon_max': 98.0}
+    latitudes in box : 129 (38.0 .. 6.0)
+    longitudes in box: 121 (68.0 .. 98.0)
+    grid points in box: 15609
+
+## 3. Value statistics (native units as declared in 'units' key)
+
+  step 0 h (stepRange=0)
+    GLOBAL: n=1038240 finite=1038240 nan=0
+      min=0 max=0 mean=0
+      p50=0 p90=0 p95=0 p99=0 p99.9=0
+      exactly zero: 1038240 (100.00%)   negative: 0
+      area-weighted (cos lat) global mean = 0  [display-only x1000 = 0.0000 mm if unit is m]
+    INDIA BOX: n=15609 finite=15609 nan=0
+      min=0 max=0 mean=0
+      p50=0 p90=0 p95=0 p99=0 p99.9=0
+      exactly zero: 15609 (100.00%)   negative: 0
+
+  step 3 h (stepRange=0-3)
+    GLOBAL: n=1038240 finite=1038240 nan=0
+      min=0 max=0.130737305 mean=0.000299340041
+      p50=0 p90=0.000549316406 p95=0.00134277344 p99=0.00524902344 p99.9=0.0144042969
+      exactly zero: 565794 (54.50%)   negative: 0
+      area-weighted (cos lat) global mean = 0.000363646672  [display-only x1000 = 0.3636 mm if unit is m]
+    INDIA BOX: n=15609 finite=15609 nan=0
+      min=0 max=0.049621582 mean=0.000492645094
+      p50=0 p90=0.00115966797 p95=0.00274658203 p99=0.00848388672 p99.9=0.0159038086
+      exactly zero: 10145 (64.99%)   negative: 0
+
+  step 6 h (stepRange=0-6)
+    GLOBAL: n=1038240 finite=1038240 nan=0
+      min=0 max=0.245483398 mean=0.000603800559
+      p50=6.10351562e-05 p90=0.00128173828 p95=0.00286865234 p99=0.00964355469 p99.9=0.0255126953
+      exactly zero: 449408 (43.29%)   negative: 0
+      area-weighted (cos lat) global mean = 0.000736252703  [display-only x1000 = 0.7363 mm if unit is m]
+    INDIA BOX: n=15609 finite=15609 nan=0
+      min=0 max=0.0563964844 mean=0.000957433537
+      p50=0 p90=0.00238037109 p95=0.00506591797 p99=0.0148876953 p99.9=0.0310332031
+      exactly zero: 8170 (52.34%)   negative: 0
+
+  step 144 h (stepRange=0-144)
+    GLOBAL: n=1038240 finite=1038240 nan=0
+      min=0 max=0.604980469 mean=0.0153150759
+      p50=0.00756835938 p90=0.0395507812 p95=0.0561523438 p99=0.0983886719 p99.9=0.1835354
+      exactly zero: 58128 (5.60%)   negative: 0
+      area-weighted (cos lat) global mean = 0.0186469325  [display-only x1000 = 18.6469 mm if unit is m]
+    INDIA BOX: n=15609 finite=15609 nan=0
+      min=0 max=0.604980469 mean=0.0219792255
+      p50=0.001953125 p90=0.0827636719 p95=0.104980469 p99=0.179931641 p99.9=0.343265625
+      exactly zero: 4348 (27.86%)   negative: 0
+
+  step 150 h (stepRange=0-150)
+    GLOBAL: n=1038240 finite=1038240 nan=0
+      min=0 max=0.644042969 mean=0.0159372411
+      p50=0.00805664062 p90=0.041015625 p95=0.0581054688 p99=0.101318359 p99.9=0.188720703
+      exactly zero: 55841 (5.38%)   negative: 0
+      area-weighted (cos lat) global mean = 0.0193938911  [display-only x1000 = 19.3939 mm if unit is m]
+    INDIA BOX: n=15609 finite=15609 nan=0
+      min=0 max=0.644042969 mean=0.0227891642
+      p50=0.001953125 p90=0.0847167969 p95=0.107666016 p99=0.185039063 p99.9=0.367119141
+      exactly zero: 4328 (27.73%)   negative: 0
+
+  step 240 h (stepRange=0-240)
+    GLOBAL: n=1038240 finite=1038240 nan=0
+      min=0 max=0.7890625 mean=0.0256866481
+      p50=0.0148925781 p90=0.064453125 p95=0.08984375 p99=0.152587891 p99.9=0.266113281
+      exactly zero: 35426 (3.41%)   negative: 0
+      area-weighted (cos lat) global mean = 0.0314773351  [display-only x1000 = 31.4773 mm if unit is m]
+    INDIA BOX: n=15609 finite=15609 nan=0
+      min=0 max=0.699951172 mean=0.0328837042
+      p50=0.00341796875 p90=0.118652344 p95=0.1484375 p99=0.265605469 p99.9=0.424349609
+      exactly zero: 3147 (20.16%)   negative: 0
+
+## 4. Negative values in the stored fields
+  step   0 h: negative count global=0, India box=0
+  step   3 h: negative count global=0, India box=0
+  step   6 h: negative count global=0, India box=0
+  step 144 h: negative count global=0, India box=0
+  step 150 h: negative count global=0, India box=0
+  step 240 h: negative count global=0, India box=0
+  any negative value in any message: False
+
+## 5. Step-to-step differences  (later - earlier), per grid point
+   If tp is accumulated from initialisation, later >= earlier everywhere (up to packing precision).
+   If tp is per-interval, decreases would be common wherever rain eases off.
+    0->3   h GLOBAL: decreases=0 (0.0000%), unchanged=565794, increases=472446, min diff=0, max diff=0.130737305
+    0->3   h INDIA : decreases=0 (0.0000%), unchanged=10145, increases=5464, min diff=0, max diff=0.049621582
+    3->6   h GLOBAL: decreases=278 (0.0268%), unchanged=543939, increases=494023, min diff=-6.10351562e-05, max diff=0.175476074
+      decreasing points (first 10 of 278):
+        lat=76.25 lon=62.25 3h=0.000183105469 6h=0.000122070312 diff=-6.10351562e-05
+        lat=67.0 lon=-151.75 3h=6.10351562e-05 6h=0 diff=-6.10351562e-05
+        lat=65.0 lon=45.25 3h=0.00048828125 6h=0.000427246094 diff=-6.10351562e-05
+        lat=64.5 lon=41.75 3h=0.000244140625 6h=0.000183105469 diff=-6.10351562e-05
+        lat=63.5 lon=-150.25 3h=6.10351562e-05 6h=0 diff=-6.10351562e-05
+        lat=60.5 lon=-133.75 3h=0.000122070312 6h=6.10351562e-05 diff=-6.10351562e-05
+        lat=59.0 lon=-133.25 3h=0.000122070312 6h=6.10351562e-05 diff=-6.10351562e-05
+        lat=59.0 lon=97.0 3h=0.000183105469 6h=0.000122070312 diff=-6.10351562e-05
+        lat=58.25 lon=-114.75 3h=6.10351562e-05 6h=0 diff=-6.10351562e-05
+        lat=57.5 lon=-162.75 3h=6.10351562e-05 6h=0 diff=-6.10351562e-05
+      distinct decrease magnitudes: -6.10351562e-05 (x278)
+      decreases by latitude band: [-90,-60): 9, [-60,-30): 69, [-30,0): 98, [0,30): 45, [30,60): 51, [60,90): 6
+    3->6   h INDIA : decreases=3 (0.0192%), unchanged=9033, increases=6573, min diff=-6.10351562e-05, max diff=0.0437011719
+      India-box decreasing points (all 3, showing up to 60):
+        lat=33.25 lon=75.25 3h=0.000244140625 6h=0.000183105469 diff=-6.10351562e-05
+        lat=26.25 lon=91.25 3h=6.10351562e-05 6h=0 diff=-6.10351562e-05
+        lat=18.75 lon=88.0 3h=6.10351562e-05 6h=0 diff=-6.10351562e-05
+    6->144 h GLOBAL: decreases=978 (0.0942%), unchanged=57693, increases=979569, min diff=-0.000122070312, max diff=0.604919434
+      decreasing points (first 10 of 978):
+        lat=82.5 lon=-82.25 6h=6.10351562e-05 144h=0 diff=-6.10351562e-05
+        lat=82.5 lon=-47.5 6h=6.10351562e-05 144h=0 diff=-6.10351562e-05
+        lat=82.5 lon=-46.75 6h=6.10351562e-05 144h=0 diff=-6.10351562e-05
+        lat=82.5 lon=-46.5 6h=6.10351562e-05 144h=0 diff=-6.10351562e-05
+        lat=82.5 lon=-46.25 6h=6.10351562e-05 144h=0 diff=-6.10351562e-05
+        lat=82.25 lon=-82.25 6h=6.10351562e-05 144h=0 diff=-6.10351562e-05
+        lat=82.25 lon=-82.0 6h=6.10351562e-05 144h=0 diff=-6.10351562e-05
+        lat=82.25 lon=-81.75 6h=6.10351562e-05 144h=0 diff=-6.10351562e-05
+        lat=82.0 lon=-84.0 6h=6.10351562e-05 144h=0 diff=-6.10351562e-05
+        lat=82.0 lon=-83.75 6h=6.10351562e-05 144h=0 diff=-6.10351562e-05
+      distinct decrease magnitudes: -0.000122070312 (x110), -6.10351562e-05 (x868)
+      decreases by latitude band: [-90,-60): 31, [-60,-30): 44, [-30,0): 120, [0,30): 185, [30,60): 530, [60,90): 68
+    6->144 h INDIA : decreases=58 (0.3716%), unchanged=4314, increases=11237, min diff=-0.000122070312, max diff=0.604919434
+      India-box decreasing points (all 58, showing up to 60):
+        lat=33.0 lon=82.25 6h=6.10351562e-05 144h=0 diff=-6.10351562e-05
+        lat=33.0 lon=83.0 6h=6.10351562e-05 144h=0 diff=-6.10351562e-05
+        lat=33.0 lon=83.25 6h=6.10351562e-05 144h=0 diff=-6.10351562e-05
+        lat=33.0 lon=83.75 6h=6.10351562e-05 144h=0 diff=-6.10351562e-05
+        lat=32.75 lon=81.75 6h=6.10351562e-05 144h=0 diff=-6.10351562e-05
+        lat=32.75 lon=83.25 6h=6.10351562e-05 144h=0 diff=-6.10351562e-05
+        lat=32.5 lon=81.5 6h=6.10351562e-05 144h=0 diff=-6.10351562e-05
+        lat=32.25 lon=81.75 6h=6.10351562e-05 144h=0 diff=-6.10351562e-05
+        lat=32.25 lon=90.0 6h=6.10351562e-05 144h=0 diff=-6.10351562e-05
+        lat=32.25 lon=90.5 6h=6.10351562e-05 144h=0 diff=-6.10351562e-05
+        lat=32.0 lon=81.75 6h=6.10351562e-05 144h=0 diff=-6.10351562e-05
+        lat=32.0 lon=88.75 6h=6.10351562e-05 144h=0 diff=-6.10351562e-05
+        lat=31.75 lon=72.75 6h=6.10351562e-05 144h=0 diff=-6.10351562e-05
+        lat=31.75 lon=73.0 6h=0.000122070312 144h=0 diff=-0.000122070312
+        lat=31.75 lon=73.5 6h=0.000305175781 144h=0.000244140625 diff=-6.10351562e-05
+        lat=31.5 lon=73.75 6h=6.10351562e-05 144h=0 diff=-6.10351562e-05
+        lat=31.5 lon=82.5 6h=6.10351562e-05 144h=0 diff=-6.10351562e-05
+        lat=31.5 lon=82.75 6h=6.10351562e-05 144h=0 diff=-6.10351562e-05
+        lat=31.25 lon=87.75 6h=6.10351562e-05 144h=0 diff=-6.10351562e-05
+        lat=30.75 lon=92.25 6h=6.10351562e-05 144h=0 diff=-6.10351562e-05
+        lat=30.5 lon=81.25 6h=6.10351562e-05 144h=0 diff=-6.10351562e-05
+        lat=30.5 lon=92.25 6h=6.10351562e-05 144h=0 diff=-6.10351562e-05
+        lat=29.5 lon=86.5 6h=6.10351562e-05 144h=0 diff=-6.10351562e-05
+        lat=29.25 lon=89.25 6h=6.10351562e-05 144h=0 diff=-6.10351562e-05
+        lat=29.25 lon=91.25 6h=0.000305175781 144h=0.000244140625 diff=-6.10351562e-05
+        lat=29.0 lon=89.25 6h=6.10351562e-05 144h=0 diff=-6.10351562e-05
+        lat=29.0 lon=89.5 6h=6.10351562e-05 144h=0 diff=-6.10351562e-05
+        lat=29.0 lon=90.0 6h=0.000122070312 144h=0 diff=-0.000122070312
+        lat=28.75 lon=88.25 6h=6.10351562e-05 144h=0 diff=-6.10351562e-05
+        lat=28.75 lon=89.5 6h=6.10351562e-05 144h=0 diff=-6.10351562e-05
+        lat=28.75 lon=89.75 6h=6.10351562e-05 144h=0 diff=-6.10351562e-05
+        lat=28.5 lon=82.25 6h=6.10351562e-05 144h=0 diff=-6.10351562e-05
+        lat=26.0 lon=83.25 6h=6.10351562e-05 144h=0 diff=-6.10351562e-05
+        lat=25.75 lon=83.25 6h=6.10351562e-05 144h=0 diff=-6.10351562e-05
+        lat=25.75 lon=83.5 6h=6.10351562e-05 144h=0 diff=-6.10351562e-05
+        lat=25.75 lon=84.0 6h=6.10351562e-05 144h=0 diff=-6.10351562e-05
+        lat=25.5 lon=82.25 6h=6.10351562e-05 144h=0 diff=-6.10351562e-05
+        lat=25.5 lon=82.5 6h=6.10351562e-05 144h=0 diff=-6.10351562e-05
+        lat=25.5 lon=82.75 6h=6.10351562e-05 144h=0 diff=-6.10351562e-05
+        lat=25.5 lon=83.25 6h=6.10351562e-05 144h=0 diff=-6.10351562e-05
+        lat=25.25 lon=82.5 6h=6.10351562e-05 144h=0 diff=-6.10351562e-05
+        lat=25.25 lon=83.0 6h=6.10351562e-05 144h=0 diff=-6.10351562e-05
+        lat=25.25 lon=83.25 6h=6.10351562e-05 144h=0 diff=-6.10351562e-05
+        lat=25.0 lon=82.0 6h=6.10351562e-05 144h=0 diff=-6.10351562e-05
+        lat=25.0 lon=82.25 6h=6.10351562e-05 144h=0 diff=-6.10351562e-05
+        lat=25.0 lon=82.5 6h=0.000305175781 144h=0.000244140625 diff=-6.10351562e-05
+        lat=24.75 lon=83.0 6h=6.10351562e-05 144h=0 diff=-6.10351562e-05
+        lat=24.75 lon=92.75 6h=6.10351562e-05 144h=0 diff=-6.10351562e-05
+        lat=23.5 lon=85.25 6h=6.10351562e-05 144h=0 diff=-6.10351562e-05
+        lat=23.25 lon=84.75 6h=0.000122070312 144h=0 diff=-0.000122070312
+        lat=22.75 lon=85.25 6h=6.10351562e-05 144h=0 diff=-6.10351562e-05
+        lat=21.75 lon=86.0 6h=6.10351562e-05 144h=0 diff=-6.10351562e-05
+        lat=18.75 lon=84.25 6h=6.10351562e-05 144h=0 diff=-6.10351562e-05
+        lat=12.25 lon=74.25 6h=6.10351562e-05 144h=0 diff=-6.10351562e-05
+        lat=11.75 lon=70.75 6h=0.000305175781 144h=0.000244140625 diff=-6.10351562e-05
+        lat=11.25 lon=71.0 6h=6.10351562e-05 144h=0 diff=-6.10351562e-05
+        lat=11.25 lon=73.75 6h=0.000305175781 144h=0.000244140625 diff=-6.10351562e-05
+        lat=11.0 lon=73.0 6h=0.000793457031 144h=0.000732421875 diff=-6.10351562e-05
+  144->150 h GLOBAL: decreases=0 (0.0000%), unchanged=577480, increases=460760, min diff=0, max diff=0.12890625
+  144->150 h INDIA : decreases=0 (0.0000%), unchanged=12180, increases=3429, min diff=0, max diff=0.0537109375
+  150->240 h GLOBAL: decreases=0 (0.0000%), unchanged=135790, increases=902450, min diff=0, max diff=0.785644531
+  150->240 h INDIA : decreases=0 (0.0000%), unchanged=8457, increases=7152, min diff=0, max diff=0.380371094
+
+## 6. Packing precision (smallest representable increment per message)
+   simple packing: value = (R + X * 2^E) / 10^D  ->  step size = 2^E / 10^D
+  step   0 h: E=0 D=0 R=0.0 bits=0 -> increment = 1
+  step   3 h: E=-14 D=0 R=0.0 bits=12 -> increment = 6.1e-05
+  step   6 h: E=-14 D=0 R=0.0 bits=12 -> increment = 6.1e-05
+  step 144 h: E=-12 D=0 R=0.0 bits=12 -> increment = 0.000244
+  step 150 h: E=-12 D=0 R=0.0 bits=12 -> increment = 0.000244
+  step 240 h: E=-12 D=0 R=0.0 bits=12 -> increment = 0.000244
+
+## 7. Are decoded values exact integer multiples of the packing increment?
+  step   0 h: max |k - round(k)| = 0  (0 => every value = R + integer * 1); max integer k = 0, 2^bits - 1 = 0
+  step   3 h: max |k - round(k)| = 0  (0 => every value = R + integer * 6.1e-05); max integer k = 2142, 2^bits - 1 = 4095
+  step   6 h: max |k - round(k)| = 0  (0 => every value = R + integer * 6.1e-05); max integer k = 4022, 2^bits - 1 = 4095
+  step 144 h: max |k - round(k)| = 0  (0 => every value = R + integer * 0.000244); max integer k = 2478, 2^bits - 1 = 4095
+  step 150 h: max |k - round(k)| = 0  (0 => every value = R + integer * 0.000244); max integer k = 2638, 2^bits - 1 = 4095
+  step 240 h: max |k - round(k)| = 0  (0 => every value = R + integer * 0.000244); max integer k = 3232, 2^bits - 1 = 4095
+
+## 8. Heaviest accumulations in the India inspection box (top 10 grid points)
+  step 3 h:
+    lat=  19.0 lon=  94.0 value=0.049621582
+    lat= 18.75 lon= 93.75 value=0.0476074219
+    lat= 18.75 lon=  94.0 value=0.0438842773
+    lat= 18.75 lon=  93.5 value=0.0314331055
+    lat=  19.0 lon= 93.75 value=0.0296630859
+    lat=  18.5 lon= 93.75 value=0.0211181641
+    lat=  17.5 lon= 94.25 value=0.0209350586
+    lat= 17.25 lon= 93.75 value=0.0197143555
+    lat= 19.25 lon= 96.75 value=0.0192260742
+    lat= 17.25 lon=  93.5 value=0.0187988281
+  step 6 h:
+    lat= 18.75 lon=  94.0 value=0.0563964844
+    lat=  17.5 lon= 92.75 value=0.0546264648
+    lat=  19.0 lon=  94.0 value=0.0536499023
+    lat= 18.75 lon= 93.75 value=0.0495605469
+    lat= 18.75 lon= 94.25 value=0.047668457
+    lat=  18.5 lon= 93.75 value=0.0458984375
+    lat=  18.5 lon=  94.0 value=0.042175293
+    lat=  19.0 lon=  96.5 value=0.0375976562
+    lat= 18.75 lon= 96.25 value=0.03515625
+    lat= 19.25 lon= 96.75 value=0.0334472656
+  step 144 h:
+    lat=  12.5 lon= 83.25 value=0.604980469
+    lat= 12.25 lon= 83.25 value=0.48046875
+    lat= 10.75 lon= 82.75 value=0.476318359
+    lat= 12.75 lon=  83.5 value=0.469238281
+    lat= 13.25 lon= 83.75 value=0.439697266
+    lat=  11.5 lon=  83.0 value=0.422119141
+    lat=  12.5 lon=  83.5 value=0.411132812
+    lat=  12.0 lon= 83.25 value=0.402099609
+    lat= 11.25 lon=  83.0 value=0.401611328
+    lat=  12.0 lon=  83.0 value=0.394287109
+  step 150 h:
+    lat=  12.5 lon= 83.25 value=0.644042969
+    lat= 12.25 lon= 83.25 value=0.506347656
+    lat= 12.75 lon=  83.5 value=0.492675781
+    lat= 10.75 lon= 82.75 value=0.480224609
+    lat= 13.25 lon= 83.75 value=0.46875
+    lat=  11.5 lon=  83.0 value=0.437744141
+    lat=  12.5 lon=  83.5 value=0.433349609
+    lat=  12.0 lon= 83.25 value=0.424072266
+    lat= 11.25 lon=  83.0 value=0.416503906
+    lat=  12.0 lon=  83.0 value=0.411376953
+  step 240 h:
+    lat=  12.5 lon= 83.25 value=0.699951172
+    lat= 13.25 lon= 83.75 value=0.561279297
+    lat= 12.25 lon= 83.25 value=0.555175781
+    lat= 12.75 lon=  83.5 value=0.545898438
+    lat= 10.75 lon= 82.75 value=0.508300781
+    lat=  12.5 lon=  83.5 value=0.472900391
+    lat=  11.5 lon=  83.0 value=0.471435547
+    lat=  12.0 lon= 83.25 value=0.463867188
+    lat= 12.75 lon= 83.25 value=0.459228516
+    lat=  13.5 lon=  84.0 value=0.458984375
+
+  India box: number of grid points whose accumulation exceeds a threshold
+  (thresholds expressed in the file unit; e.g. 0.001 = 1 mm if unit is m)
+  step   3 h: >=0.001: 1759, >=0.01: 92, >=0.05: 0, >=0.1: 0, >=0.2: 0
+  step   6 h: >=0.001: 2877, >=0.01: 345, >=0.05: 3, >=0.1: 0, >=0.2: 0
+  step 144 h: >=0.001: 8885, >=0.01: 5066, >=0.05: 2724, >=0.1: 904, >=0.2: 105
+  step 150 h: >=0.001: 8930, >=0.01: 5148, >=0.05: 2806, >=0.1: 982, >=0.2: 113
+  step 240 h: >=0.001: 10046, >=0.01: 5966, >=0.05: 3340, >=0.1: 2257, >=0.2: 373

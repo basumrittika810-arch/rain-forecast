@@ -1,0 +1,131 @@
+# cfgrib inspection of tp_steps_0-3-6-144-150-240.grib2
+cfgrib 0.9.15.1, xarray 2026.9.0, ecCodes 2.50.0
+
+## 1. Dataset as cfgrib presents it
+<xarray.Dataset> Size: 25MB
+Dimensions:     (step: 6, latitude: 721, longitude: 1440)
+Coordinates:
+  * step        (step) timedelta64[ns] 48B 00:00:00 ... 10 days 00:00:00
+    valid_time  (step) datetime64[ns] 48B ...
+  * latitude    (latitude) float64 6kB 90.0 89.75 89.5 ... -89.5 -89.75 -90.0
+  * longitude   (longitude) float64 12kB -180.0 -179.8 -179.5 ... 179.5 179.8
+    time        datetime64[ns] 8B ...
+    surface     float64 8B ...
+Data variables:
+    tp          (step, latitude, longitude) float32 25MB ...
+Attributes:
+    GRIB_edition:            2
+    GRIB_centre:             ecmf
+    GRIB_centreDescription:  European Centre for Medium-Range Weather Forecasts
+    GRIB_subCentre:          0
+    Conventions:             CF-1.7
+    institution:             European Centre for Medium-Range Weather Forecasts
+    history:                 2026-11-11T21:53 GRIB to CDM+CF via cfgrib-0.9.1...
+
+## 2. Attributes of variable 'tp' (cfgrib-derived)
+  GRIB_paramId                             = 228
+  GRIB_dataType                            = fc
+  GRIB_numberOfPoints                      = 1038240
+  GRIB_typeOfLevel                         = surface
+  GRIB_stepUnits                           = 1
+  GRIB_stepType                            = accum
+  GRIB_gridType                            = regular_ll
+  GRIB_uvRelativeToGrid                    = 0
+  GRIB_NV                                  = 0
+  GRIB_Nx                                  = 1440
+  GRIB_Ny                                  = 721
+  GRIB_cfName                              = unknown
+  GRIB_cfVarName                           = tp
+  GRIB_gridDefinitionDescription           = Latitude/longitude
+  GRIB_iDirectionIncrementInDegrees        = 0.25
+  GRIB_iScansNegatively                    = 0
+  GRIB_jDirectionIncrementInDegrees        = 0.25
+  GRIB_jPointsAreConsecutive               = 0
+  GRIB_jScansPositively                    = 0
+  GRIB_latitudeOfFirstGridPointInDegrees   = 90.0
+  GRIB_latitudeOfLastGridPointInDegrees    = -90.0
+  GRIB_longitudeOfFirstGridPointInDegrees  = 180.0
+  GRIB_longitudeOfLastGridPointInDegrees   = 179.75
+  GRIB_missingValue                        = 3.4028234663852886e+38
+  GRIB_name                                = Total precipitation
+  GRIB_shortName                           = tp
+  GRIB_units                               = m
+  long_name                                = Total precipitation
+  units                                    = m
+  standard_name                            = unknown
+
+## 3. Global attributes
+  GRIB_edition                             = 2
+  GRIB_centre                              = ecmf
+  GRIB_centreDescription                   = European Centre for Medium-Range Weather Forecasts
+  GRIB_subCentre                           = 0
+  Conventions                              = CF-1.7
+  institution                              = European Centre for Medium-Range Weather Forecasts
+  history                                  = 2026-11-11T21:53 GRIB to CDM+CF via cfgrib-0.9.15.1/ecCodes-2.50.0 with {"source": "data\\raw\\20261111T00Z\\tp_steps_0-3-6-144-150-240.grib2", "filter_by_keys": {}, "encode_cf": ["parameter", "time", "geography", "vertical"]}
+
+## 4. Coordinates
+  time         dims=() dtype=datetime64[ns] attrs.units=None  values=[np.datetime64('2026-11-11T00:00:00.000000000')]
+  step         dims=('step',) dtype=timedelta64[ns] attrs.units=None  values=[np.timedelta64(0,'ns'), np.timedelta64(10800000000000,'ns'), np.timedelta64(21600000000000,'ns'), np.timedelta64(518400000000000,'ns'), np.timedelta64(540000000000000,'ns'), np.timedelta64(864000000000000,'ns')]
+  surface      dims=() dtype=float64 attrs.units=1  values=[np.float64(0.0)]
+  latitude     dims=('latitude',) dtype=float64 attrs.units=degrees_north  values=[90.0 ... -90.0] (n=721)
+  longitude    dims=('longitude',) dtype=float64 attrs.units=degrees_east  values=[-180.0 ... 179.75] (n=1440)
+  valid_time   dims=('step',) dtype=datetime64[ns] attrs.units=None  values=[np.datetime64('2026-11-11T00:00:00.000000000'), np.datetime64('2026-11-11T03:00:00.000000000'), np.datetime64('2026-11-11T06:00:00.000000000'), np.datetime64('2026-11-17T00:00:00.000000000'), np.datetime64('2026-11-17T06:00:00.000000000'), np.datetime64('2026-11-21T00:00:00.000000000')]
+
+  tp dims=('step', 'latitude', 'longitude') shape=(6, 721, 1440) dtype=float32
+
+## 5. Comparison with raw ecCodes, message by message
+  latitude coordinate identical to ecCodes distinctLatitudes : True
+  longitude coordinate identical to ecCodes distinctLongitudes: True
+
+  step 0 h:
+    init  : cfgrib=2026-11-11 00:00:00  ecCodes=2026-11-11 00:00:00  equal=True
+    valid : cfgrib=2026-11-11 00:00:00  ecCodes=2026-11-11 00:00:00  equal=True
+    values: cfgrib dtype=float32, ecCodes dtype=float64
+            NaN in cfgrib=0
+            identical after cfgrib->float64: True;  identical after ecCodes->float32: True
+            max |cfgrib - ecCodes| = 0
+
+  step 3 h:
+    init  : cfgrib=2026-11-11 00:00:00  ecCodes=2026-11-11 00:00:00  equal=True
+    valid : cfgrib=2026-11-11 03:00:00  ecCodes=2026-11-11 03:00:00  equal=True
+    values: cfgrib dtype=float32, ecCodes dtype=float64
+            NaN in cfgrib=0
+            identical after cfgrib->float64: True;  identical after ecCodes->float32: True
+            max |cfgrib - ecCodes| = 0
+
+  step 6 h:
+    init  : cfgrib=2026-11-11 00:00:00  ecCodes=2026-11-11 00:00:00  equal=True
+    valid : cfgrib=2026-11-11 06:00:00  ecCodes=2026-11-11 06:00:00  equal=True
+    values: cfgrib dtype=float32, ecCodes dtype=float64
+            NaN in cfgrib=0
+            identical after cfgrib->float64: True;  identical after ecCodes->float32: True
+            max |cfgrib - ecCodes| = 0
+
+  step 144 h:
+    init  : cfgrib=2026-11-11 00:00:00  ecCodes=2026-11-11 00:00:00  equal=True
+    valid : cfgrib=2026-11-17 00:00:00  ecCodes=2026-11-17 00:00:00  equal=True
+    values: cfgrib dtype=float32, ecCodes dtype=float64
+            NaN in cfgrib=0
+            identical after cfgrib->float64: True;  identical after ecCodes->float32: True
+            max |cfgrib - ecCodes| = 0
+
+  step 150 h:
+    init  : cfgrib=2026-11-11 00:00:00  ecCodes=2026-11-11 00:00:00  equal=True
+    valid : cfgrib=2026-11-17 06:00:00  ecCodes=2026-11-17 06:00:00  equal=True
+    values: cfgrib dtype=float32, ecCodes dtype=float64
+            NaN in cfgrib=0
+            identical after cfgrib->float64: True;  identical after ecCodes->float32: True
+            max |cfgrib - ecCodes| = 0
+
+  step 240 h:
+    init  : cfgrib=2026-11-11 00:00:00  ecCodes=2026-11-11 00:00:00  equal=True
+    valid : cfgrib=2026-11-21 00:00:00  ecCodes=2026-11-21 00:00:00  equal=True
+    values: cfgrib dtype=float32, ecCodes dtype=float64
+            NaN in cfgrib=0
+            identical after cfgrib->float64: True;  identical after ecCodes->float32: True
+            max |cfgrib - ecCodes| = 0
+
+## 6. Raw-data directory unchanged by cfgrib (no .idx written)?
+  before: ['manifest.json', 'tp_steps_0-3-6-144-150-240.grib2']
+  after : ['manifest.json', 'tp_steps_0-3-6-144-150-240.grib2']
+  unchanged: True

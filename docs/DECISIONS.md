@@ -91,3 +91,18 @@ Decision maker: Mrittika Basu (project owner). Claude (AI assistant) proposes, e
     yet verified**; it must be checked against the `stepType`/units keys, the values, and ECMWF documentation.
   - Size estimate for a full run: ~0.45 MB per step × ~65 steps ≈ 30 MB. This is an extrapolation,
     not measured. (The earlier P1 estimate of 100–150 MB was too high.)
+
+## D-004: First data inspection (findings only, no design decisions)
+- **Timestamp:** 2026-11-11 16:21–16:24 UTC
+- **Status:** Verified for the 6 inspected steps; open items listed in the report
+- **Report:** `docs/INSPECTION_20261111T00Z.md` (raw outputs in `docs/inspection/`)
+- **Key verified findings:** units `m`; `tp` accumulated from initialisation (metadata + all-zero
+  step 0 + growth ~3 mm/day global mean + no decreases in 144→150, 150→240); no missing or negative stored
+  values; rare step-to-step decreases ≤ 0.122 mm; quantisation 0.061 mm (E=−14) / 0.244 mm (E=−12);
+  cfgrib values identical to ecCodes; cfgrib hides `stepRange`.
+- **Correction of an earlier expectation:** in P1 I attributed any negatives to packing. Decreases
+  between two fields with the *same* packing increment (3→6 h) cannot come from final packing alone.
+  Cause is unresolved.
+- **Integrity:** SHA-256 identical before and after inspection; no files written to `data/raw`.
+- **Decisions deferred to joint review:** daily-aggregation boundaries, handling of negative interval
+  differences, pilot region.
