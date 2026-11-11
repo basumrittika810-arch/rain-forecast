@@ -201,3 +201,15 @@ Decision maker: Mrittika Basu (project owner). Claude (AI assistant) proposes, e
 - **Known limitations (open):** the rectangle also covers parts of Kerala, Karnataka, Andhra Pradesh, northern
   Sri Lanka and sea. Chennai is only ~6 km inside the east edge. The source gives the extent to the nearest
   minute. Selecting grid cells for this box (0.25° grid) is a pipeline decision still to make.
+
+## D-011: Repository published to GitHub
+- **Timestamp:** 2026-11-12
+- **Status:** Done, verified
+- **Remote:** https://github.com/basumrittika810-arch/rain-forecast (public). `main` pushed normally: no force,
+  no history rewrite.
+- **Pre-push checks (whole history, not just current files):** `git fsck` clean; 7 commits intact. No GRIB/data,
+  `.idx`, `.venv`, `.env`, key or credential files ever committed. Largest blob ever committed is 31 KB. Secret-pattern
+  scan of every file version and every commit message found nothing; the scan was positive-controlled.
+- **Owner decision:** the commit author email is publicly visible in history; owner chose to push as-is
+  (alternatives offered: make the repo private first, or rewrite the author email).
+- **Verification:** local `main` = GitHub `main` = `a87049d1dcdb477e14a94f924eef8dc6714ab657`; ahead/behind 0/0.
