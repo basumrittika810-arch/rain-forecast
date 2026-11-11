@@ -1,0 +1,21 @@
+# Raw and derived data: never committed (large, re-downloadable, immutable raw inputs)
+data/
+
+# Python virtual environment and caches
+.venv/
+__pycache__/
+*.pyc
+
+# cfgrib writes index sidecar files next to GRIB files
+*.idx
+
+# Secrets / credentials (none are needed for ECMWF Open Data, but guard anyway)
+.env
+*.key
+*.pem
+
+# Editor / OS noise
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store
