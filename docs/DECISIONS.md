@@ -213,3 +213,28 @@ Decision maker: Mrittika Basu (project owner). Claude (AI assistant) proposes, e
 - **Owner decision:** the commit author email is publicly visible in history; owner chose to push as-is
   (alternatives offered: make the repo private first, or rewrite the author email).
 - **Verification:** local `main` = GitHub `main` = `a87049d1dcdb477e14a94f924eef8dc6714ab657`; ahead/behind 0/0.
+
+## D-012: Pipeline organisation P1 and JSON layout J1
+- **Timestamp:** 2026-11-12
+- **Status:** Decided (owner). Design in `docs/PIPELINE_DESIGN.md`; **not implemented yet** (tests come first,
+  under owner supervision).
+- **Pipeline P1:** one run executes fetch → validate → compute → publish in sequence, starting fresh from the raw GRIB.
+  It stops at the first failure and the previous validated forecast stays live. GRIB is read with ecCodes directly.
+- **JSON J1:** one file per run; every grid point carries its own dates and times next to its values (daily totals,
+  3-h/6-h intervals, rates), each value with `raw_mm`, displayed `mm` and `status` (`ok` / `adjusted` / `unavailable`;
+  missing = `null`, never 0).
+- **Why P1:** it validates every forecast before anyone sees it; it has the fewest moving parts to test; its only
+  downside (rerunning everything after a late failure, ~1 min) is negligible for one region.
+- **Why J1:** a value cannot easily end up beside the wrong date, because each number sits next to its own times. It
+  can be checked by eye. Its extra size (~3–4 MB estimated for ~374 points) is not a problem at this scale.
+- **Rejected:**
+  - **P2** (stages saving intermediate files): more files to keep consistent; risk of reusing a stale
+    intermediate file; its benefit (rerunning one stage) only matters for a much larger, hypothetical workload.
+  - **P3** (compute per API request): nothing is validated before a user sees it, which violates the
+    validate-before-publish rule; rainfall logic would sit inside the API.
+  - **J2** (times listed once, values as position-matched lists): one dropped or added value would shift every
+    later value to the wrong date. Hard to check by eye. Its size saving (~0.4 MB vs ~3–4 MB) is not needed now.
+  - **J3** (one file per grid point): 374 files must switch to a new forecast at the same moment. An interrupted
+    update could mix today's and yesterday's forecasts.
+- **Accepted trade-off:** J1 does not scale to very large regions (all India ≈ 150 MB est.). If that ever happens,
+  only the JSON writer and loader change, not the rainfall calculations.
