@@ -513,4 +513,30 @@ Decision maker: Mrittika Basu (project owner). Claude (AI assistant) proposes, e
   - **Conclusion (Verified for the sample, not the whole list):** coordinates are consistently in the right state and district
     and near the named place. One grid cell (~27 km) is much larger than the observed differences (≤ 1.1 km), so the list is
     precise enough for a 0.25° forecast. Village-level precision is not proven.
-- **Open questions (owner) before building A:** listed in the session; recorded here once answered.
+- **Probe for the owner's choices** (`scripts/probe_places.py` → `docs/inspection/places_probe_20261113.txt`):
+  - **No-district places are often not in Tamil Nadu:** the sample contains Bellandur and Hulimavu (Bengaluru, Karnataka),
+    Bahur, Saram and Tiruvandarkovil (Puducherry), and Parassala (Kerala), all wrongly tagged as Tamil Nadu by GeoNames.
+  - **Abandoned (PPLQ):** e.g. Bekuppa, Gerhatti, Kottayur (many near Hosur). 88 of 283 names also exist as a living place,
+    so they would appear as confusing duplicates. Whether "abandoned" is still true is GeoNames' claim, not checked.
+  - **Sections (PPLX):** city neighbourhoods such as Thyagaraya Nagar, Padmanabha Nagar, Jeeva Nagar North (Chennai).
+  - **Outside the box:** by 0.01–2.1 km only. Two of the 12 (Vellara, Cholatipuzha) have no district and are dropped anyway.
+    The remaining **10 have a district**; all of them snap to grid points that are already stored. Box needed to cover all
+    kept places: lat ≥ 8.08206, lon 76.24385–80.34498.
+  - **Spelling, 12 hand-picked variants (indicative, not random):** start of name + GeoNames alternative names found 7/12;
+    adding close-spelling suggestions (Python `difflib`, cutoff 0.8) found 11/12. Valavettikuppam was not found (GeoNames
+    has "Valavettikkuppamtattanur"). Suggestions include lookalikes (e.g. Kidarakulam → Kidarikulam, Kodarankulam, Kidarangulam).
+- **Owner decisions (2026-11-13), with reasons:**
+  1. **Storage: the cleaned place list is committed to Git**, built by a script from the GeoNames download (checksum recorded).
+     Reason: the "no data in the repo" rule exists to protect privacy and prevent data leaks; this is public geography data, so
+     it is a deliberate, limited exception. Raw GeoNames downloads stay in git-ignored `data/`.
+  2. **Places: drop abandoned (PPLQ) and places without a district.** Reason: the evidence showed the no-district places are
+     often in other states, so keeping them would mislead farmers. Sections (PPLX) are kept.
+  3. **Edge places: widen the region box slightly** to lat 8.08–13.583333, lon 76.24–80.35 (was 8.083333 / 76.25 / 80.333333).
+     Reason: if a forecast exists for a village, the farmer should be able to see it. Documented in the config as "official
+     boundary (TNAU), extended slightly". Stored grid points stay 391 (to be confirmed by tests). The published forecast
+     carries its box, so the API accepts the wider box from the next published run onwards.
+  4. **Spelling: smart search with "did you mean".** Exact and start-of-name matches (names and alternative names) first; if
+     none, close-spelling suggestions, clearly marked as suggestions, always with the district. Reason: seeing a few wrong
+     suggestions the farmer can skip is better than finding nothing.
+- **Differs from the assistant's first recommendation:** Q2. The assistant first recommended keeping no-district places, then
+  changed the recommendation after the probe found places from other states among them.

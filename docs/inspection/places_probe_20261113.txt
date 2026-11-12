@@ -1,0 +1,74 @@
+
+== PPLQ (291): random 12
+   Kottayur                     PPLQ   12.26779  77.90208 district=Dharmapuri             pop=0 alt=
+   Bekuppa                      PPLQ   12.20124  77.66108 district=Krishnagiri            pop=0 alt=
+   Narasingarayanpettai         PPLQ   12.23585  79.40506 district=Villupuram             pop=0 alt=
+   Gerhatti                     PPLQ   12.27822  77.76855 district=Krishnagiri            pop=0 alt=
+   Nambilan                     PPLQ    9.19773  78.42169 district=Ramanathapuram         pop=0 alt=
+   Kuriyappanpatti              PPLQ   10.04883  77.55914 district=Theni                  pop=0 alt=
+   Kottakkarai                  PPLQ    9.72055  78.22852 district=Virudhunagar           pop=0 alt=
+   Kesapireddiyur               PPLQ   11.84898   77.8088 district=Salem                  pop=0 alt=
+   Buranahalli                  PPLQ   12.49695   77.6585 district=Krishnagiri            pop=0 alt=
+   Chikkabennangur              PPLQ   12.54783  77.78925 district=Krishnagiri            pop=0 alt=
+   Manjayanayakkanpatti         PPLQ    9.06803  78.01222 district=Thoothukkudi           pop=0 alt=
+   Chinnagosandiram             PPLQ    12.5848  77.70083 district=Krishnagiri            pop=0 alt=
+   PPLQ names that also exist as another (non-abandoned) place: 88 of 283
+
+== PPLX (249): random 12
+   Begampur                     PPLX   10.35352  77.97363 district=Dindigul               pop=0 alt=
+   Kusavapalaiyam               PPLX   10.00745  77.34726 district=Theni                  pop=0 alt=
+   Moolakadai                   PPLX   13.12694  80.24667 district=Chennai                pop=0 alt=Moolakadai
+   Padmanabha Nagar             PPLX   13.05722  80.21556 district=Chennai                pop=0 alt=
+   Vellaikavundanpalaiyam       PPLX   12.13208  78.16438 district=Dharmapuri             pop=0 alt=
+   Vayalkattupatti              PPLX    9.44904  77.55623 district=Virudhunagar           pop=0 alt=
+   Vadamalaipuram               PPLX     9.4548  77.54565 district=Virudhunagar           pop=0 alt=
+   Thyagaraya Nagar             PPLX   13.03944     80.24 district=Chennai                pop=0 alt=Madras Thyagarayanagar,Thyagaraya Nagar,Tyagarayan
+   Chichadasampalaiyam          PPLX   11.30226  76.94048 district=Coimbatore             pop=0 alt=
+   Ko-Su-Mani Nagar             PPLX   13.05333  80.23583 district=Chennai                pop=0 alt=
+   Jeeva Nagar North            PPLX   13.13833  80.29306 district=Chennai                pop=0 alt=
+   Idaiyapalaiyam               PPLX   10.97402   77.0293 district=Coimbatore             pop=0 alt=
+   PPLX names that also exist as another (non-abandoned) place: 57 of 246
+
+== no district (163): by code {'PPL': 156, 'PPLQ': 7}; random 12
+   Suthukeni                    PPL    12.01565  79.67621 district=-                      pop=0 alt=
+   Arachchikkuppam              PPL    11.78263   79.7528 district=-                      pop=0 alt=
+   Rayasandiram                 PPL    12.89244  78.05122 district=-                      pop=0 alt=
+   Velanthavalam                PPL    10.81599  76.86141 district=-                      pop=0 alt=
+   Bellandur                    PPL    12.92547  77.67647 district=-                      pop=0 alt=
+   Bahur                        PPL     11.8065  79.74421 district=-                      pop=0 alt=Bahour,Bahur,Bahūr,bafuru,bahura,pakur,बाहूर,பாகூர
+   Hulimavu                     PPL    12.87707  77.59558 district=-                      pop=0 alt=Hulimavu
+   Saram                        PPL    11.94111  79.81475 district=-                      pop=0 alt=
+   Parassala                    PPL     8.33869  77.15422 district=-                      pop=34096 alt=Parasala,Parassala,Parasuvaikkal,Pārassāla
+   Sedarappattu                 PPL    11.98885  79.74923 district=-                      pop=0 alt=
+   Boggulakhandrika             PPL    13.23378   79.7825 district=-                      pop=0 alt=
+   Tiruvandarkovil              PPL    11.91879  79.66181 district=-                      pop=0 alt=
+   no-district lat range 8.33869 13.51663 lon range 76.23083 80.10023
+
+== outside box (12)
+   Kovakulam              8.08206 77.52706 Kanniyakumari    outside by lat 0.14 km, lon 0.00 km -> grid 8.00,77.50
+   Karungalikuppam        13.37251 80.33339 Thiruvallur      outside by lat 0.00 km, lon 0.01 km -> grid 13.25,80.25
+   Sinthamanipuram        13.35587 80.33597 Thiruvallur      outside by lat 0.00 km, lon 0.28 km -> grid 13.25,80.25
+   Koviladi               13.35145 80.34084 Thiruvallur      outside by lat 0.00 km, lon 0.81 km -> grid 13.25,80.25
+   Kalanji                13.33604 80.33389 Thiruvallur      outside by lat 0.00 km, lon 0.06 km -> grid 13.25,80.25
+   Champadipalaiyam       13.30664 80.34498 Thiruvallur      outside by lat 0.00 km, lon 1.26 km -> grid 13.25,80.25
+   Vellara                11.54224 76.24128 -                outside by lat 0.00 km, lon 0.95 km -> grid 11.50,76.25
+   Manalvayal             11.55130 76.24437 Nilgiris         outside by lat 0.00 km, lon 0.61 km -> grid 11.50,76.25
+   Cholatipuzha           11.56175 76.23083 -                outside by lat 0.00 km, lon 2.08 km -> grid 11.50,76.25
+   Yelaccher              11.56275 76.24441 Nilgiris         outside by lat 0.00 km, lon 0.61 km -> grid 11.50,76.25
+   Kunnamangalam          11.56847 76.24385 Nilgiris         outside by lat 0.00 km, lon 0.67 km -> grid 11.50,76.25
+   Nancherikudiyiruppu    8.08224 77.54429 Kanniyakumari    outside by lat 0.12 km, lon 0.00 km -> grid 8.00,77.50
+   box needed to cover all TN places: lat 8.08206 13.52578 lon 76.23083 80.34498
+
+== spelling probe: typed (OSM / common spelling) -> what each method returns
+   Soriyampatti       target Soviriyampatti           start-of-name: ['Soriyampatti']  alt-names: ['Soriyampatti']  close(0.8): ['soriyampatti', 'soriyampattai', 'soriyapatti', 'soviriyampatti', 'suriyampatti']  target-in-close: True
+   Kidarakulam        target Kidarangulam             start-of-name: []  alt-names: []  close(0.8): ['kidarikulam', 'kodarankulam', 'kidarangulam', 'kidakkulam', 'arakulam']  target-in-close: True
+   Valavettikuppam    target Valavettikkuppamtattanur start-of-name: []  alt-names: []  close(0.8): ['valaiyachettikuppam', 'attikuppam']  target-in-close: False
+   Muruganpalayam     target Murugampalaiyam          start-of-name: []  alt-names: []  close(0.8): ['muruganpalaiyam', 'murungapalaiyam', 'murugampalaiyam']  target-in-close: True
+   Thoothukudi        target Thoothukkudi             start-of-name: ['Thoothukudi']  alt-names: ['Thoothukudi']  close(0.8): ['thoothukudi']  target-in-close: False
+   Sivagangai         target Sivaganga                start-of-name: []  alt-names: []  close(0.8): ['sivaganga']  target-in-close: True
+   Tiruttani          target Thiruthani               start-of-name: ['Tiruttanimadaswamipatti']  alt-names: ['Thiruthani']  close(0.8): ['iruttanai', 'thiruthani', 'tirumani', 'uttani', 'tittai']  target-in-close: True
+   Rajagoundanpatti   target Rajakavundanpatti        start-of-name: []  alt-names: []  close(0.8): ['rajakavundanpatti', 'rayamundanpatti', 'tamanagoundanpatti', 'rajagopalanpatti', 'raghunadapatti']  target-in-close: True
+   Kanyakumari        target Kanniyakumari            start-of-name: []  alt-names: ['Kanniyakumari']  close(0.8): ['kanniyakumari']  target-in-close: True
+   Tuticorin          target Thoothukkudi             start-of-name: []  alt-names: ['Thoothukudi']  close(0.8): []  target-in-close: False
+   Nagapattinam       target Nagapattinam             start-of-name: ['Nagapattinam']  alt-names: ['Nagapattinam']  close(0.8): ['nagapattinam', 'ammapattinam', 'naganpatti', 'nagampatti', 'nagalpatti']  target-in-close: True
+   Palayamkottai      target Palayankottai            start-of-name: []  alt-names: ['Palamcottah']  close(0.8): ['palaiyamkottai', 'palayakottai', 'palaiyam kottai', 'palalyakottai', 'palaiyakottai']  target-in-close: False
