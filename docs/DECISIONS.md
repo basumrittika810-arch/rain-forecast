@@ -565,3 +565,17 @@ Decision maker: Mrittika Basu (project owner). Claude (AI assistant) proposes, e
     appear as the "matched" spelling.
   - The wider box reaches the live API only with the next published forecast, because the API takes the box from the
     published JSON.
+- **Owner decision (2026-11-13): ranking rule kept.** Among exact matches, an exact *name* ranks before an exact *alternative
+  name*, then bigger places first (e.g. "trichy" → the small GeoNames entry "Trichy" before Tiruchirappalli city). Reason:
+  both results give the same forecast (same district, same grid point 10.75, 78.75), so a change is not worth it before
+  the deadline. The rejected alternative was "bigger place first among all exact matches", which would also let a big town
+  outrank a village whose real name matches exactly.
+
+## D-025: Restart test for the Render API satisfied by redeploy
+- **Timestamp:** 2026-11-13
+- **Status:** Verified
+- **Evidence:** pushing `cf224f6` made Render replace the running instance with a new one (a full redeploy, which covers
+  a restart). Within ~80 s the new instance served `/api/places`. It loaded the forecast from GitHub Pages again (run
+  2026-11-12 00 UTC) and the smoke test passed **20/20** with values identical to the published `latest.json`.
+- **Conclusion:** the API keeps no state on Render; after a restart it serves the same published forecast. A manual
+  "Restart service" was offered to the owner as optional and not needed.
