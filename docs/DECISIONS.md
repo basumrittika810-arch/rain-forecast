@@ -579,3 +579,21 @@ Decision maker: Mrittika Basu (project owner). Claude (AI assistant) proposes, e
   2026-11-12 00 UTC) and the smoke test passed **20/20** with values identical to the published `latest.json`.
 - **Conclusion:** the API keeps no state on Render; after a restart it serves the same published forecast. A manual
   "Restart service" was offered to the owner as optional and not needed.
+
+## D-026: Website (Step 4) display decisions
+- **Timestamp:** 2026-11-13
+- **Status:** Decided (owner); plan below; not implemented yet
+- **Decisions:**
+  1. **Messages describe the rain only** (amount, category, when in the day, how certain, missing data). No farming advice:
+     "farming decisions are the farmer's to make" (consistent with D-000).
+  2. **Rain categories: IMD's**, used only once verified against an official IMD source and cited.
+  3. **Rounding: 1 decimal; tiny amounts shown as "< 0.1 mm"**, because "0.0" would wrongly look like no rain. Raw values
+     stay unchanged in the data; this is display only. Adjusted values (D-008, shown as 0) are not "tiny amounts".
+  4. **Old-forecast warning after 36 hours.** Reason: a normal daily update keeps the forecast fresher than that (worst
+     normal case ~31.5 h, D-018), so 36 h means an update was missed.
+- **Plan (assistant, accepted as the skeleton):** search box + place list (D-024), "use my location" button, a 10-day bar
+  chart coloured by category, one row per day with amount + message, tap a day for its 3-/6-hour chart, forecast age,
+  ECMWF and GeoNames attribution. Category and message are computed in Python (tested) and added by the API; the page only
+  displays them. Charts are drawn as plain SVG by our own code (no chart library). Served by the Render API at `/`.
+- **Order:** (1) categories + messages, (2) page skeleton, (3) charts, (4) checks (phone width, slow network, smoke test,
+  screenshot); a commit after each.
