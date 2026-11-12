@@ -418,3 +418,19 @@ Decision maker: Mrittika Basu (project owner). Claude (AI assistant) proposes, e
   ×20 requests: median 4.4 ms, max 5.9 ms (local HTTP round trip). Kolkata → 404; `lat=abc` → 422; `lat=95` → 422.
 - **Observation:** the live forecast is 37.8 h old because nothing fetches new runs automatically yet. The scheduler
   step must fix that.
+
+## D-021: Deployment architecture (option A)
+- **Timestamp:** 2026-11-12
+- **Status:** Decided (owner); implementation starting
+- **Decision:** the pipeline runs on **GitHub Actions** (scheduled ~08:30, 11:30, 14:30 UTC + manual start). The published
+  forecast is served from **GitHub Pages** (deployed from a workflow artifact, never committed to git). The API runs on a
+  **Render free web service** and downloads `latest.json` from Pages (no local state).
+- **Owner's reasoning:** keeps the heavy pipeline and the always-on API separate, survives restarts, and a failed run never
+  replaces the last good forecast (a failed workflow does not deploy Pages).
+- **Rejected:** everything on Render (free disk is wiped on restart; free tier has no scheduled jobs; sleeping stops an
+  in-process timer); Hugging Face Spaces (needs Docker; storage not persistent); PythonAnywhere free (outbound access
+  restricted to approved sites; believed to exclude ECMWF); Fly.io/Railway (believed no longer free). Free-tier facts
+  are from the assistant's knowledge and are re-checked at setup.
+- **Owner actions:** enable GitHub Pages (source: GitHub Actions); create the Render account. The assistant provides
+  click-by-click steps.
+- **Known trade-offs:** Render free sleeps after inactivity (~30–60 s first response); Actions schedules can start late.
