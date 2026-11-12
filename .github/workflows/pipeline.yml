@@ -1,0 +1,83 @@
+# Scheduled forecast pipeline (decision D-021).
+# Fetch newest complete ECMWF 00 UTC run -> validate -> compute -> check -> publish to GitHub Pages.
+# Pages is only updated when a NEW forecast passed every check; any failure leaves the published forecast as it was.
+
+name: forecast-pipeline
+
+on:
+  schedule:
+    - cron: "30 8 * * *"    # 14:00 IST
+    - cron: "30 11 * * *"   # 17:00 IST
+    - cron: "30 14 * * *"   # 20:00 IST
+  workflow_dispatch:
+    inputs:
+      simulate_failure:
+        description: "Test mode: force a corrupt download that validation must reject (nothing is published)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: forecast-pipeline
+  cancel-in-progress: false
+
+env:
+  PUBLISHED_URL: https://basumrittika810-arch.github.io/rain-forecast/latest.json
+
+jobs:
+  pipeline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    outputs:
+      outcome: ${{ steps.run.outputs.outcome }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: python -m pip install -r requirements-dev.txt
+
+      - name: Check ecCodes loads
+        run: python -m cfgrib selfcheck
+
+      - name: Run test suite
+        run: python -m pytest -q -p no:warnings
+
+      - name: Run pipeline
+        id: run
+        env:
+          SIMULATE_FAILURE: ${{ inputs.simulate_failure }}
+        run: python -m pipeline.run --published-url "$PUBLISHED_URL" --site-dir site
+
+      - name: Keep rejected downloads for investigation
+        if: always() && hashFiles('data/rejected/**') != ''
+        uses: actions/upload-artifact@v7
+        with:
+          name: rejected-downloads
+          path: data/rejected
+          retention-days: 30
+
+      - name: Prepare Pages artifact
+        if: steps.run.outputs.outcome == 'published'
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: site
+
+  deploy:
+    needs: pipeline
+    if: needs.pipeline.outputs.outcome == 'published'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
