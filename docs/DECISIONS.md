@@ -635,3 +635,18 @@ Decision maker: Mrittika Basu (project owner). Claude (AI assistant) proposes, e
   - Our values have more than one decimal, whereas IMD's bands are written to one decimal.
 - **Process note:** the assistant's web-fetch tool could not open the PDFs (one >10 MB, one HTTP 403), so they were
   downloaded with curl and read with pdftotext's table mode (the default layout mode had scrambled the table columns).
+- **Owner decisions (2026-11-13), with reasons:**
+  1. **Classify the rounded number shown** (1 decimal): if the screen shows "2.5 mm" the label says "Light", so the word always
+     matches the number the farmer sees.
+  2. **Today gets a label too** (e.g. "Light") although it covers only 18 h: it is the day the farmer cares about most. The day
+     row still says it is partial (D-006).
+  3. **Add an "area average" sentence:** our number covers an area about 27 km wide, not the farmer's exact field, so nobody
+     should treat it as a promise for their exact spot.
+  4. **"Exceptionally heavy" is not used** (needs station records; IMD documents disagree: 12 vs 24 cm).
+  5. **Exactly 204.5 mm = extremely heavy** (SOP 2021 Table 1.5, "greater than or equal to 204.5 mm").
+- **Source for the area sentence (Documented):** ECMWF Forecast User Guide (Cy50r1), Section 9.5 Large Scale Precipitation
+  and Section 9.6 Convective Precipitation: "Precipitation is the grid box average value, not a point value." Section 9.6:
+  "Localised extreme values in precipitation totals are systematically underestimated in IFS output because of the
+  resolution". Section 8.1.7 Point rainfall gives an example box: "whilst the gridbox average rainfall total is about 17mm,"
+  "the minimum and maximum rainfall amounts are about 2mm and 60mm respectively." (confluence.ecmwf.int/spaces/FUG, pages
+  673551727, 673551728, 673551197; read 2026-11-13)
