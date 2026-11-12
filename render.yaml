@@ -1,0 +1,19 @@
+# Render Blueprint for the read-only forecast API (decision D-021).
+# The API keeps no local state: it downloads latest.json from GitHub Pages (FORECAST_URL) and re-checks every 15 min.
+services:
+  - type: web
+    name: rain-forecast-api
+    runtime: python
+    plan: free
+    region: singapore
+    branch: main
+    buildCommand: pip install -r requirements-api.txt
+    startCommand: uvicorn api.app:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/status
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.10
+      - key: FORECAST_URL
+        value: https://basumrittika810-arch.github.io/rain-forecast/latest.json
+      - key: FORECAST_REFRESH_SECONDS
+        value: "900"

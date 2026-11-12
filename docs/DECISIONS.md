@@ -434,3 +434,26 @@ Decision maker: Mrittika Basu (project owner). Claude (AI assistant) proposes, e
 - **Owner actions:** enable GitHub Pages (source: GitHub Actions); create the Render account. The assistant provides
   click-by-click steps.
 - **Known trade-offs:** Render free sleeps after inactivity (~30–60 s first response); Actions schedules can start late.
+
+## D-022: Pipeline deployed on GitHub Actions + Pages (verified)
+- **Timestamp:** 2026-11-12 15:38–15:46 UTC
+- **Status:** Live and verified
+- **Setup:** owner enabled Pages (source: GitHub Actions); confirmed via API (`build_type: workflow`). Workflow
+  `.github/workflows/pipeline.yml` (actions: checkout v7, setup-python v7, upload-artifact v7, upload-pages-artifact v5,
+  deploy-pages v5, versions looked up from GitHub at setup time).
+- **Run 43250043754 (manual, normal):** ecCodes 2.50.0 loads on the GitHub Linux runner ("Your system is ready");
+  **155 tests passed** there. No forecast was published yet, so it fetched the newest complete run **20261112T00Z**:
+  34,466,914 bytes in 47 s, 68 messages validated, SHA-256 `1fbb55d1…`. Published 391 points, 4,164,510 bytes,
+  quality ok (adjusted 145 intervals / 63 days, 0 invalid). Pages deployed.
+  - Run-to-run precision differs as predicted (D-014): this run includes increment 0.0305 mm (E = −15), absent in 20261111T00Z.
+- **Published file:** `https://basumrittika810-arch.github.io/rain-forecast/latest.json` → HTTP 200, 4,164,510 bytes,
+  run 2026-11-12 05:30 IST, same source SHA-256, 391 points; ETag `"6af5de12-3f8b9e"`. Index page HTTP 200.
+- **Run 43250610272 (manual, normal, same run already published):** "nothing to do", outcome `unchanged`, no download,
+  deploy skipped.
+- **Run 43250883126 (manual, simulated failure):** forced corrupt download → `ValidationError: no GRIB messages in file`.
+  Run concluded **failure**; rejected download kept as artifact `rejected-downloads`; deploy skipped. Pages ETag
+  **unchanged** (`"6af5de12-3f8b9e"`), still run 2026-11-12. **A failed update did not replace the last good forecast.**
+- **Note:** GitHub annotation: the `ubuntu-latest` label is migrating to Ubuntu 26 (since 19 Oct 2026). Runs pass;
+  pinning a fixed runner image is an option if it ever causes problems.
+- **Next:** API on Render via `render.yaml` Blueprint (free plan, Singapore, Python 3.12.10, FORECAST_URL → Pages,
+  health check `/api/status`).
