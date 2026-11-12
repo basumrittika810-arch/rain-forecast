@@ -1,0 +1,75 @@
+# IMD rainfall intensity categories: source evidence (D-027). Downloaded 2026-11-13; PDFs kept in git-ignored data/imd_sources/.
+# Text extracted with pdftotext 4.06 in -table mode (keeps table rows aligned). Verbatim, blank lines removed.
+
+## Source 1: IMD, 'Standard Operation Procedure - Weather Forecasting and Warning Services', Ministry of Earth Sciences, 2021
+## URL: https://mausam.imd.gov.in/imd_latest/contents/pdf/forecasting_sop.pdf
+## SHA-256 f5330b3ae9bf81de591af0d17ed78aca83b5af9e4cf7a59f1034df6804db0001
+
+## Section 1.7.1 note (PDF page 24):
+         Note : Only daily rainfall of at least 2.5mm is taken into consideration in the monsoon months.
+         During non-monsoon period, rainfall less than 2.5 mm also may be considered for distribution /
+         verification as per existing practice. Rainfall realised in the category of trace, viz., less than 2.5
+         mm in monsoon season and less than 0.1 mm in other seasons in a subdivision, the weather for
+         that sub division will be described as mainly dry.
+
+## Section 1.7.2 (PDF page 24) and Table 1.5 (PDF page 25):
+1.7.2.   Intensity of 24-hour Accumulated rainfall
+For the  description of intensity of 24-hour accumulated rainfall, the criteria used are given in Table 1.5.
+                                                     Table 1.5.
+                  Terminology for intensity of 24 hour accumulated rainfall
+          S. No.  Terminology                             Rainfall (mm)     Rainfall (cm)  Percentile
+          1.      Very light rainfall                         Trace -2.4
+          2.      Light rainfall                              2.5-15.5        Upto 1       Upto 65
+          3.      Moderate rainfall                           15.6-64.4       2-6                 65-95
+          4.      Heavy Rainfall                          64.5- 115.5         7-11                95-99
+          5.      Very Heavy Rainfall                     115.6-204.4         12-20        99.0-99.9
+          6.      Extremely heavy                         Greater than or   21 cm or              >99.9
+                                     rainfall                 equal           more
+                                                          to 204.5 mm
+          7.      Exceptionally Heavy Rainfall            When the rainfall observed is a value near about
+                                                          the highest recorded rainfall at or near the station
+                                                          for the month or the season. However, this term
+                                                          will be used only when the actual rainfall amount
+                                                          exceeds 12 cm
+
+## Section 5.2.1 and Table 5.2 (PDF pages 109-110, printed page 94):
+5.2.1. Classification of Heavy Rainfall
+IMD's classification of heavy rainfall(HRF) and terminology use for location specific rainfall ranges is given        below.  It
+defines HRF for a specific station based on daily rainfall. It is based on the rainfall realised for the past 24 hrs  ending  at
+0830 hrs IST of a specific day. Various categories of HRF for a station defined by IMD are given below in table       5.2.
+                                                               94
+                                              Heavy Rainfall Warning Services
+                                                          Table 5.2
+                                                      Rainfall category
+                               Category                      Range of daily rainfall of a station
+                   Very Light Rain                        Trace - 2.4 mm
+                   Light Rain                             2.5 - 15.5 mm
+                   Moderate Rain                          15.6 - 64.4
+                   Heavy rain                             64.5-115.5 mm
+                   Very heavy rain                        115.6-204.4mm
+                   Extremely heavy rain                    204.5mm
+                   Exceptionally heavy rain               When the amount is a value near about the
+                                                          highest recorded rainfall at or near the
+                                                          station for the month or season. However,
+                                                          this term will be used only when the actual
+                                                          rainfall amount exceeds 24cm.
+
+## Source 2: IMD RSMC New Delhi, 'Frequently Asked Questions on Tropical Cyclones and Marine Weather Services', question 93
+## URL: https://rsmcnewdelhi.imd.gov.in/images/pdf/faq.pdf
+## SHA-256 7c772d6a7ef214015865e9e076fed1d5ecd8370c50da149a61173d3a55b619c4
+## (PDF page 31):
+93. What do you mean by heavy rainfall, very heavy rainfall and extremely heavy
+rainfall?
+The rainfall intensity mentioned in the bulletin is based on the following criteria:
+Descriptive term used         Rainfall amount in mm
+No rain                       0.0
+Very light rainfall           Trace - 2.4
+Light rainfall                2.5 - 15.5
+Moderate rainfall             15.6 - 64.4
+Heavy rainfall                64.5 - 115.5
+Very heavy rainfall           115.6 - 204.4
+Extremely heavy rainfall      >204.5
+Exceptionally heavy rainfall  When the amount is a value near about highest
+                              recorded rainfall at or near the station for the
+                              month or season. However, this term will be used
+                              only when the actual rainfall amount exceeds 12

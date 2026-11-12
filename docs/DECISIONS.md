@@ -597,3 +597,41 @@ Decision maker: Mrittika Basu (project owner). Claude (AI assistant) proposes, e
   displays them. Charts are drawn as plain SVG by our own code (no chart library). Served by the Render API at `/`.
 - **Order:** (1) categories + messages, (2) page skeleton, (3) charts, (4) checks (phone width, slow network, smoke test,
   screenshot); a commit after each.
+
+## D-027: IMD rainfall categories verified (source evidence)
+- **Timestamp:** 2026-11-13
+- **Status:** Verified from official IMD documents; **how to apply them awaits owner decisions** (listed in the session)
+- **Sources** (PDFs in git-ignored `data/imd_sources/`; verbatim extracts in `docs/inspection/imd_rain_categories_20261113.txt`):
+  1. IMD, *Standard Operation Procedure – Weather Forecasting and Warning Services*, Ministry of Earth Sciences, 2021
+     (https://mausam.imd.gov.in/imd_latest/contents/pdf/forecasting_sop.pdf, SHA-256 `f5330b3a…`): §1.7.2 Table 1.5
+     "Terminology for intensity of 24 hour accumulated rainfall" (PDF p. 25); §5.2.1 Table 5.2 (PDF p. 110).
+  2. IMD RSMC New Delhi, *FAQ on Tropical Cyclones and Marine Weather Services*, Q93
+     (https://rsmcnewdelhi.imd.gov.in/images/pdf/faq.pdf, SHA-256 `7c772d6a…`), PDF p. 31.
+- **Categories (mm per 24 h), identical in all three tables:**
+
+  | Category | mm |
+  |---|---|
+  | Very light | Trace – 2.4 |
+  | Light | 2.5 – 15.5 |
+  | Moderate | 15.6 – 64.4 |
+  | Heavy | 64.5 – 115.5 |
+  | Very heavy | 115.6 – 204.4 |
+  | Extremely heavy | ≥ 204.5 |
+
+  The FAQ adds "No rain: 0.0".
+- **Differences between the documents:**
+  - Extremely heavy: SOP Table 1.5 says "Greater than or equal to 204.5 mm"; the FAQ says ">204.5".
+  - "Exceptionally heavy" applies only above 12 cm (Table 1.5, FAQ) or 24 cm (Table 5.2). It is defined relative to the
+    station's own record, which we do not have.
+- **Context stated by IMD:**
+  - The categories describe **24-hour accumulated rainfall at a station**: "range of daily rainfall of a station",
+    "for the past 24 hrs ending at 0830 hrs IST" (Table 5.2).
+  - Trace: "less than 2.5 mm in monsoon season and less than 0.1 mm in other seasons in a subdivision" (§1.7.1 note, used
+    for describing a subdivision as "mainly dry").
+- **Differences from our data (affect how categories are applied):**
+  - Our values are ECMWF **grid-box** amounts (~27 km square), not a station measurement.
+  - Our day is 23:30→23:30 IST (D-006), not 08:30→08:30.
+  - Our first day is partial (18 h).
+  - Our values have more than one decimal, whereas IMD's bands are written to one decimal.
+- **Process note:** the assistant's web-fetch tool could not open the PDFs (one >10 MB, one HTTP 403), so they were
+  downloaded with curl and read with pdftotext's table mode (the default layout mode had scrambled the table columns).
