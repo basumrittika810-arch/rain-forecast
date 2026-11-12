@@ -650,3 +650,19 @@ Decision maker: Mrittika Basu (project owner). Claude (AI assistant) proposes, e
   resolution". Section 8.1.7 Point rainfall gives an example box: "whilst the gridbox average rainfall total is about 17mm,"
   "the minimum and maximum rainfall amounts are about 2mm and 60mm respectively." (confluence.ecmwf.int/spaces/FUG, pages
   673551727, 673551728, 673551197; read 2026-11-13)
+- **Implementation (2026-11-13):**
+  - **Files:** `pipeline/messages.py`; `/api/forecast` adds `shown`, `category`, `label` and `message` to each day, `shown` to
+    each interval, plus `area_note` and `category_source`. The published JSON is unchanged.
+  - **Owner-approved details:** true zero is shown as "0 mm", tiny amounts as "< 0.1 mm". Timing names the parts of the
+    day (night 23:30–05:30, morning, afternoon, evening IST) whose shown rain is ≥ 0.1 mm. No "less certain further ahead"
+    note, because no source has been found for where it should start.
+  - **Tests:** `tests/test_messages.py` (53, written first; collection error before the code existed). The API equality test
+    and the smoke test now check that every published field is returned unchanged and that the only additions are the
+    display fields (stricter than before).
+  - **One test expectation was wrong:** a 2.0 mm day was expected as "Light"; IMD says very light (≤ 2.4). The test now uses
+    3.0 mm.
+  - **Result:** full suite **267 passed**.
+  - **Mutation check:** light starting at 2.6 failed 2 tests; halves-to-even rounding failed 7; tiny amounts shown as
+    "0.0 mm" failed 3. Code restored (hash identical).
+  - **Real data** (published run 2026-11-12, local API reading Pages): smoke test 21/21. Example, Chennai 13 Nov:
+    "1.6 mm | Very light | Very light rain expected, through the day."

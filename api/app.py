@@ -1,4 +1,4 @@
-"""Read-only API over the published forecast (data/processed/latest.json). No calculations happen here.
+"""Read-only API over the published forecast (data/processed/latest.json). No rainfall calculations happen here; it only adds display text (pipeline/messages.py, D-027).
 
 Endpoints
   GET /api/forecast?lat=..&lon=..   forecast for the nearest grid point (ties north/east) inside the region box
@@ -30,6 +30,7 @@ from fastapi import FastAPI, HTTPException, Query
 
 from pipeline.config import Region
 from pipeline.grid import snap_to_grid
+from pipeline.messages import AREA_NOTE, CATEGORY_SOURCE, describe_day, format_mm
 from pipeline.places import ATTRIBUTION as PLACES_ATTRIBUTION, DEFAULT_PLACES_PATH, PlaceIndex, load_places
 
 log = logging.getLogger("api")
@@ -169,7 +170,10 @@ def create_app(latest_path: Path | None = None, url: str | None = None, refresh_
             "grid_point": {"lat": point["lat"], "lon": point["lon"]},
             "run": doc["run"], "units": doc["units"], "attribution": doc["attribution"],
             "day_definition": doc["day_definition"], "quality": doc["quality"], "region": doc["region"],
-            "days": point["days"], "intervals": point["intervals"],
+            # published fields unchanged; display text added (D-027): shown amount, IMD label, message
+            "days": [{**d, **describe_day(d, point["intervals"])} for d in point["days"]],
+            "intervals": [{**i, "shown": format_mm(i["mm"])} for i in point["intervals"]],
+            "area_note": AREA_NOTE, "category_source": CATEGORY_SOURCE,
         }
 
     @app.get("/api/status")

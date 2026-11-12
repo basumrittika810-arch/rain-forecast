@@ -52,9 +52,18 @@ def test_forecast_for_location_inside_region(setup):
     assert len(body["days"]) == 11 and len(body["intervals"]) == 67
     assert body["days"][0]["partial"] is True
     assert [d["raw_mm"] for d in body["days"][1:]] == [7.32421875] * 10     # hand-worked above
-    # identical to what is stored in latest.json for that grid point
+    # every stored field returned unchanged (latest.json, that grid point); the only additions are display fields (D-027)
     stored = json.loads(latest.read_text(encoding="utf-8"))["points"]["13.25,79.50"]
-    assert body["days"] == stored["days"] and body["intervals"] == stored["intervals"]
+    assert [{k: d[k] for k in s} for d, s in zip(body["days"], stored["days"])] == stored["days"]
+    assert [{k: i[k] for k in s} for i, s in zip(body["intervals"], stored["intervals"])] == stored["intervals"]
+    assert all(set(d) - set(s) == {"shown", "category", "label", "message"} for d, s in zip(body["days"], stored["days"]))
+    assert all(set(i) - set(s) == {"shown"} for i, s in zip(body["intervals"], stored["intervals"]))
+    # hand-worked: full day 7.32421875 mm -> shown 7.3 mm -> IMD light; each 3-h interval 3 * 5 * 2^-14 m = 0.9155 mm,
+    # so every part of the day has rain
+    assert {k: body["days"][3][k] for k in ("shown", "category", "label", "message")} == {
+        "shown": "7.3 mm", "category": "light", "label": "Light", "message": "Light rain expected, through the day."}
+    assert body["intervals"][0]["shown"] == "0.9 mm"
+    assert "27 km" in body["area_note"] and "IMD" in body["category_source"]
     assert body["run"]["init_utc"] == "2026-11-11T00:00:00Z"
     assert body["units"]["rain"] == "mm" and "ECMWF" in body["attribution"]
     assert body["quality"]["status"] == "ok"

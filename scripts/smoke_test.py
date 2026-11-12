@@ -101,9 +101,15 @@ def main():
     if a.published_url:
         _, pub, _ = get(a.published_url)
         stored = pub["points"]["13.00,80.25"]
-        check("API values identical to published latest.json",
-              f["days"] == stored["days"] and f["intervals"] == stored["intervals"] and f["run"] == pub["run"],
+        same_days = [{k: d[k] for k in s} for d, s in zip(f["days"], stored["days"])] == stored["days"]
+        same_ivs = [{k: i[k] for k in s} for i, s in zip(f["intervals"], stored["intervals"])] == stored["intervals"]
+        check("API values identical to published latest.json (display text added only)",
+              same_days and same_ivs and len(f["days"]) == len(stored["days"]) and f["run"] == pub["run"],
               f"published run {pub['run']['init_utc']}")
+    if "label" in f["days"][0]:
+        check("every day has shown amount, IMD label and message",
+              all(d["label"] and d["message"] and (d["shown"] or d["status"] == "unavailable") for d in f["days"]))
+        print("      Chennai labels:", [(d["date"][5:], d["shown"], d["label"]) for d in f["days"]])
 
     code, e, _ = get(f"{base}/api/forecast?lat=22.5675&lon=88.37")
     check("Kolkata (outside region) -> 404", code == 404, e.get("detail", "")[:80])
