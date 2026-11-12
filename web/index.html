@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vaanam: Rain Forecast for Tamil Nadu</title>
+<meta name="description" content="Rain forecast for the next 10 days for any village or town in Tamil Nadu.">
+<link rel="icon" href="tn-outline.svg" type="image/svg+xml">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="watermark" aria-hidden="true"></div>
+
+<header class="top">
+  <h1><span class="drop" aria-hidden="true"></span>Vaanam</h1>
+  <p class="subtitle">Rain Forecast for Tamil Nadu</p>
+</header>
+
+<main>
+  <section class="card" id="find" aria-labelledby="find-title">
+    <h2 id="find-title">Find your village or town</h2>
+    <form id="search-form" role="search" autocomplete="off">
+      <label for="q" class="visually-hidden">Village or town name</label>
+      <input id="q" name="q" type="search" inputmode="search" maxlength="100"
+             placeholder="Type your village or town" aria-describedby="search-hint">
+      <button type="submit" class="btn btn-main">Search</button>
+    </form>
+    <p id="search-hint" class="hint">English spelling, for example: Melur, Thanjavur, Ooty.</p>
+    <button type="button" id="locate" class="btn btn-soft">📍 Use my location</button>
+    <div id="find-status" class="status" role="status" aria-live="polite"></div>
+    <ul id="results" class="results"></ul>
+  </section>
+
+  <section class="card" id="forecast" hidden aria-labelledby="place">
+    <h2 id="place"></h2>
+    <p id="made" class="made"></p>
+    <p id="stale" class="warning" hidden></p>
+    <p id="day-note" class="note"></p>
+    <p id="area-note" class="note"></p>
+
+    <h3>Rain for the next days</h3>
+    <div id="chart" class="chart"></div>
+    <ul id="legend" class="legend" aria-label="Colour key"></ul>
+
+    <h3>Day by day</h3>
+    <p class="hint">Tap a day to see its rain in 3-hour blocks.</p>
+    <ol id="days" class="days"></ol>
+  </section>
+  <div id="forecast-status" class="status card-status" role="status" aria-live="polite"></div>
+</main>
+
+<footer class="foot">
+  <p>Rain forecast data: ECMWF open data (IFS HRES), CC BY 4.0. Place names: GeoNames, CC BY 4.0.</p>
+  <p>Rain categories: India Meteorological Department (IMD), SOP Weather Forecasting and Warning Services 2021.
+     Map outline: Natural Earth (public domain).</p>
+  <p>This site describes expected rain only. Amounts are model forecasts and can be wrong.</p>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>

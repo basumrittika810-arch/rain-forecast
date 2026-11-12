@@ -4,6 +4,8 @@ Endpoints
   GET /api/forecast?lat=..&lon=..   forecast for the nearest grid point (ties north/east) inside the region box
   GET /api/status                   which forecast is live, how old it is, last reload problem (if any)
   GET /api/places?q=..              find a Tamil Nadu place by name -> coordinates and district (D-024)
+  GET /api/places/nearest?lat&lon   closest listed place, to name a GPS position (D-028)
+  GET /                             the website (web/: plain HTML + JS + CSS, D-028)
 
 Where the forecast comes from:
   * FORECAST_URL set (deployment): latest.json is downloaded from that URL (GitHub Pages) and re-checked every
@@ -27,6 +29,7 @@ import urllib.request
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException, Query
+from fastapi.staticfiles import StaticFiles
 
 from pipeline.config import Region
 from pipeline.grid import snap_to_grid
@@ -35,6 +38,7 @@ from pipeline.places import ATTRIBUTION as PLACES_ATTRIBUTION, DEFAULT_PLACES_PA
 
 log = logging.getLogger("api")
 DEFAULT_LATEST = Path(__file__).resolve().parent.parent / "data" / "processed" / "latest.json"
+WEB_DIR = Path(__file__).resolve().parent.parent / "web"
 
 
 class SourceError(RuntimeError):
@@ -150,6 +154,11 @@ def create_app(latest_path: Path | None = None, url: str | None = None, refresh_
             raise HTTPException(422, str(e)) from e
         return {**result, "attribution": PLACES_ATTRIBUTION}
 
+    @app.get("/api/places/nearest")
+    def nearest_place(lat: float = Query(..., ge=-90, le=90, allow_inf_nan=False),
+                      lon: float = Query(..., ge=-180, le=180, allow_inf_nan=False)):
+        return {**places.nearest(lat, lon), "attribution": PLACES_ATTRIBUTION}
+
     @app.get("/api/forecast")
     def forecast(lat: float = Query(..., ge=-90, le=90, allow_inf_nan=False, description="latitude, degrees north"),
                  lon: float = Query(..., ge=-180, le=180, allow_inf_nan=False, description="longitude, degrees east")):
@@ -188,6 +197,8 @@ def create_app(latest_path: Path | None = None, url: str | None = None, refresh_
                 "age_hours": round(age, 2), "quality": doc["quality"], "points": len(doc["points"]),
                 "region": doc["region"], "source": source.kind, "last_reload_error": store.error}
 
+    # the website; mounted last so every /api/... and /docs route above takes precedence
+    app.mount("/", StaticFiles(directory=WEB_DIR, html=True), name="web")
     return app
 
 

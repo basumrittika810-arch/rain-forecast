@@ -666,3 +666,56 @@ Decision maker: Mrittika Basu (project owner). Claude (AI assistant) proposes, e
     "0.0 mm" failed 3. Code restored (hash identical).
   - **Real data** (published run 2026-11-12, local API reading Pages): smoke test 21/21. Example, Chennai 13 Nov:
     "1.6 mm | Very light | Very light rain expected, through the day."
+
+## D-028: Website "Vaanam" (Step 4, page + charts)
+- **Timestamp:** 2026-11-13
+- **Status:** Implemented and tested; checked in a real browser at phone width
+- **Owner decisions:**
+  - Name **"Vaanam"** (Tamil for "sky"); title "Vaanam: Rain Forecast for Tamil Nadu".
+  - Design list given by the owner: search, "Use my location", name + district, forecast time, day and area notes, IMD
+    labels + messages, missing days never shown as no rain, 36 h warning, wake-up note, charts, credits, rain only.
+  - Calm blues / sky blue / green. IMD categories go from pale sky blue to deep blue, green for no rain, and always carry
+    their word.
+  - **Watermark:** a simple Tamil Nadu outline drawn in our own code, faint, so the text above stays clear.
+- **Files:** `web/index.html`, `web/app.js`, `web/style.css`, `web/tn-outline.svg` (29 KB in total), served by the API
+  at `/` (mounted after all API routes). `scripts/make_outline.py` builds the outline from Natural Earth 1:50m admin-1
+  "Tamil Nadu" (public domain; raw file in git-ignored `data/naturalearth/`, SHA-256 `69a0e06e…`).
+- **Outline check (decoration only, nothing computed from it):** Chennai, Coimbatore and Madurai are inside; Kolkata,
+  Bengaluru and Thiruvananthapuram are outside; 39,760 of 39,997 listed places (99.4 %) are inside. Puducherry also falls
+  inside, because the 1:50m outline is simplified.
+- **New endpoint `/api/places/nearest?lat&lon`:** names a GPS position as "Near <place>, <district> district", so the
+  page never shows coordinates. If no name can be found, the page says "Your location".
+- **Presentation choices made by the assistant (owner's rule: decide and log):**
+  - Days already over are hidden. The day containing "now" is marked "Today".
+  - The partial first day's label gets " (18 hours)" (owner's list). The day note mentions the partial day only while
+    that day is still shown.
+  - Bar labels use the shown amount without "mm" ("0", "< 0.1", "2.7"). The chart scale is the next of 5/10/25/50/100/150/
+    250/400 mm above the largest day, so tiny rain is not exaggerated. No rain is drawn as a thin green line at the base.
+    A missing day is drawn as a dashed empty box with "no data", never as 0.
+  - 3-hour chart: one bar per block with its start time in IST, plus the note "Rain can fall at any time within a block"
+    (D-006). Blocks use one blue (IMD categories are 24-hour terms), green for 0 and grey for missing.
+  - Wake-up note after 3 s of waiting; requests give up after 90 s with a "Try again" button. Search runs 0.4 s after
+    typing stops (at least 2 letters). The result list folds away once a place is chosen.
+  - Location messages: denied, unavailable, too slow, not supported and outside Tamil Nadu each say what happened and
+    point to the search box.
+  - Animation: bars grow, cards fade in, the title raindrop moves slightly. All of it is switched off when the phone asks
+    for reduced motion.
+  - Fonts are the phone's own system fonts (no download). Tap targets are at least 48 px.
+- **Tests:** `tests/test_web.py` (33, written first; 32 failed before the files existed):
+  - the page and its files are served; `/api` and `/docs` are not hidden behind the page;
+  - all required texts are present; the 36-hour rule; every category has a colour class and a word;
+  - no farming-advice words; nothing loaded from other sites; page weight under 60 KB; phone viewport;
+    reduced-motion support;
+  - the nearest-place function and endpoint (including real Chennai at 0 km).
+  - **Result:** full suite **300 passed**.
+- **Browser check** (Edge, headless, 360 × 780, local API reading the published forecast; Playwright in a throwaway
+  scratch environment, not a project dependency):
+  - search "melur" lists every Melur with its district; "kidarakulam" gives "Did you mean…?" with districts; "zzqqxx"
+    gives "No place found…"; "m" asks for 2 letters;
+  - location denied gives a polite message; Kolkata gives "outside Tamil Nadu"; a Madurai position gives "Near Sellur,
+    Madurai district" with no coordinates on screen.
+  - No page errors. The only console line is the expected 404 for the Kolkata forecast request.
+  - **Fixed after looking at the screenshots:** larger chart text; result list folds away; background band removed;
+    3-hour bar colours (an SVG attribute ignored CSS variables).
+- **Limits:** the JavaScript has no automated unit tests (no Node.js here). The slow-server wake-up state has not been seen
+  live yet. Not yet tested on a real phone (owner to test).

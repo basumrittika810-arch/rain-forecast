@@ -18,6 +18,7 @@ import datetime as dt
 import difflib
 import hashlib
 import json
+import math
 import re
 import sys
 from collections import defaultdict
@@ -164,6 +165,18 @@ class PlaceIndex:
                     seen.add(p.geonameid)
                     results.append(self._row(p, spelling))
         return {"query": q, "kind": "suggestions" if results else "none", "results": results}
+
+    def nearest(self, lat: float, lon: float) -> dict:
+        """Closest listed place (great-circle distance), for naming a GPS position (D-028). Ties: lower geonameid."""
+        best = min(self.places, key=lambda p: (_km(lat, lon, p.lat, p.lon), p.geonameid))
+        return {**self._row(best, best.name), "distance_km": round(_km(lat, lon, best.lat, best.lon), 1)}
+
+
+def _km(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
+    r = math.pi / 180
+    a = (math.sin((lat2 - lat1) * r / 2) ** 2
+         + math.cos(lat1 * r) * math.cos(lat2 * r) * math.sin((lon2 - lon1) * r / 2) ** 2)
+    return 6371.0 * 2 * math.asin(math.sqrt(a))
 
 
 def main(raw_dir: str) -> None:
