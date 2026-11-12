@@ -1,0 +1,65 @@
+# OSM Nominatim name search, 2026-11-12; sample seed 20261112
+kind    | GeoNames name, district | GeoNames lat,lon | OSM best match (name) | OSM lat,lon | distance km | grid cell same?
+village | Soviriyampatti, Salem | 11.5567,77.9943 | NOT FOUND in OSM
+village | Palaiya Kannivadi, Dindigul | 10.3533,77.8521 | NOT FOUND in OSM
+village | Kulattukkattupatiyur, Tiruppur | 11.0289,77.6482 | NOT FOUND in OSM
+village | Pirattiyur, Tiruchirappalli | 10.7928,78.6473 | Pirattiyur, Trichy Zone V, Trichy Corporation Limits, Pungan | 10.7927,78.6500 | 0.30 | True
+village | Valavettikkuppamtattanur, Ariyalur | 11.1328,79.2720 | NOT FOUND in OSM
+village | Morakkaniyanur, Tiruvannamalai | 12.4872,79.3582 | NOT FOUND in OSM
+village | Ramanathapuram, Cuddalore | 11.6266,79.3697 | NOT FOUND in OSM
+village | Vadakkur, Sivaganga | 9.7157,78.4187 | NOT FOUND in OSM
+village | Sangipatti, Tiruchirappalli | 10.5744,78.4480 | Sangipatti, F.Keelaiyur, Manapparai, Tiruchirappalli, Tamil  | 10.5747,78.4480 | 0.03 | True
+village | Kaliyampalaiyam, Erode | 11.3341,77.3886 | NOT FOUND in OSM
+village | Morappanai, Ramanathapuram | 9.6087,78.9342 | NOT FOUND in OSM
+village | Tillaiyadi, Mayiladuthurai | 11.0391,79.8114 | NOT FOUND in OSM
+village | Virakavundanpatti, Salem | 11.7209,77.9901 | NOT FOUND in OSM
+village | Sengodakavundanur, Tiruppur | 10.7331,77.1903 | NOT FOUND in OSM
+village | Devinayakkanpatti, Dindigul | 10.6021,77.9107 | NOT FOUND in OSM
+village | Kadarsapatti, Madurai | 9.9554,78.3435 | NOT FOUND in OSM
+village | Karisalkulam, Sivaganga | 9.6134,78.4176 | NOT FOUND in OSM
+village | Vattiripalli, Krishnagiri | 12.8378,77.9102 | NOT FOUND in OSM
+village | Chinnanerkunam, Cuddalore | 11.4530,79.5067 | NOT FOUND in OSM
+village | Kidarangulam, Tenkasi | 8.9202,77.5113 | NOT FOUND in OSM
+town    | Thiruthani, Thiruvallur | 13.1759,79.6164 | Thiruthani, Tiruttani, Chennai Metropolitan Area, Tiruttani, | 13.1744,79.6063 | 1.11 | True
+town    | Nalambur, Thiruvallur | 13.0867,80.1703 | NOT FOUND in OSM
+town    | Murugampalaiyam, Tiruppur | 11.0806,77.3238 | NOT FOUND in OSM
+town    | Vazhapadi, Salem | 11.6554,78.4012 | Vazhapadi, Salem, Tamil Nadu, 636115, India | 11.6562,78.4018 | 0.11 | True
+town    | Omalur, Salem | 11.7410,78.0456 | Omalur, Salem, Tamil Nadu, 636455, India | 11.7429,78.0473 | 0.28 | True
+town    | Ramachettipalaiyam, Coimbatore | 10.9582,76.9201 | NOT FOUND in OSM
+town    | Thanjavur, Thanjavur | 10.7852,79.1391 | Thanjavur, Tamil Nadu, 613001, India | 10.7860,79.1381 | 0.14 | True
+town    | Kayalpattinam, Thoothukkudi | 8.5714,78.1199 | Government Hospital, Kayalpattinam, Kayalpattinam Bypass Roa | 8.5676,78.1208 | 0.44 | True
+town    | Elandakuttai, Namakkal | 11.4060,77.7750 | NOT FOUND in OSM
+town    | Kammivapettai, Cuddalore | 11.7530,79.7457 | NOT FOUND in OSM
+
+# OSM Nominatim reverse lookup at GeoNames coordinates (zoom 14), same sample
+kind | GeoNames name | GeoNames district | OSM place at that point | OSM district | OSM state
+village | Soviriyampatti | Salem | Soriyampatti | Salem | Tamil Nadu
+village | Palaiya Kannivadi | Dindigul | Paraipatti | Dindigul | Tamil Nadu
+village | Kulattukkattupatiyur | Tiruppur | Mullipuram | Tiruppur | Tamil Nadu
+village | Pirattiyur | Tiruchirappalli | Trichy Zone V | Tiruchirappalli | Tamil Nadu
+village | Valavettikkuppamtattanur | Ariyalur | Valavettikuppam | Ariyalur | Tamil Nadu
+village | Morakkaniyanur | Tiruvannamalai | Chetpet | Tiruvannamalai | Tamil Nadu
+village | Ramanathapuram | Cuddalore | - | Cuddalore | Tamil Nadu
+village | Vadakkur | Sivaganga | Manamadurai | Sivagangai | Tamil Nadu
+village | Sangipatti | Tiruchirappalli | F.Keelaiyur | Tiruchirappalli | Tamil Nadu
+village | Kaliyampalaiyam | Erode | Nambiyur | Erode | Tamil Nadu
+village | Morappanai | Ramanathapuram | Naganenthal | Ramanathapuram | Tamil Nadu
+village | Tillaiyadi | Mayiladuthurai | Andur | Mayiladuthurai | Tamil Nadu
+village | Virakavundanpatti | Salem | M.CHETTIPATTI OMALUR | Salem | Tamil Nadu
+village | Sengodakavundanur | Tiruppur | Ramachandrapuram | Tiruppur | Tamil Nadu
+village | Devinayakkanpatti | Dindigul | Rajakavundanpatti | Dindigul | Tamil Nadu
+village | Kadarsapatti | Madurai | Melur | Madurai | Tamil Nadu
+village | Karisalkulam | Sivaganga | Velaneri | Sivagangai | Tamil Nadu
+village | Vattiripalli | Krishnagiri | Shanamangalam | Krishnagiri | Tamil Nadu
+village | Chinnanerkunam | Cuddalore | Sethiathoppu | Cuddalore | Tamil Nadu
+village | Kidarangulam | Tenkasi | Kidarakulam | Tenkasi | Tamil Nadu
+town | Thiruthani | Thiruvallur | Murugoor | Thiruvallur | Tamil Nadu
+town | Nalambur | Thiruvallur | Zone 7 Ambattur | Chennai District | Tamil Nadu
+town | Murugampalaiyam | Tiruppur | Muruganpalayam | Tiruppur | Tamil Nadu
+town | Vazhapadi | Salem | Vazhapadi | Salem | Tamil Nadu
+town | Omalur | Salem | Omalur | Salem | Tamil Nadu
+town | Ramachettipalaiyam | Coimbatore | Perur | Coimbatore | Tamil Nadu
+town | Thanjavur | Thanjavur | Manambuchavadi | Thanjavur | Tamil Nadu
+town | Kayalpattinam | Thoothukkudi | Mangalavadi | Thoothukudi | Tamil Nadu
+town | Elandakuttai | Namakkal | Chinnarpalayam | Namakkal | Tamil Nadu
+town | Kammivapettai | Cuddalore | Cuddalore | Cuddalore | Tamil Nadu

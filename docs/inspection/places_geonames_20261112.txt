@@ -1,0 +1,49 @@
+# GeoNames IN.zip SHA-256 fa6d874bafba6600c56065fda4ed0977b95df237d0b6674097983d378327183d, downloaded 2026-11-12 ~18:14 UTC from https://download.geonames.org/export/dump/ (file dates 2026-11-12)
+all Tamil Nadu (admin1=25) records: 46004
+by feature class: {'P': 40444, 'S': 1580, 'T': 1440, 'L': 1123, 'H': 998, 'A': 335, 'R': 48, 'V': 36}
+
+populated places (class P): 40444
+by feature code: {'PPL': 39876, 'PPLQ': 291, 'PPLX': 249, 'PPLL': 14, 'PPLA2': 7, 'PPLS': 2, 'PPLF': 2, 'PPLA': 1, 'PPLA3': 1, 'PPLR': 1}
+with population > 0: 1068
+  population >= 1000: 1066
+  population >= 5000: 1030
+  population >= 15000: 501
+with admin2 (district) code: 40283 ; code known in admin2Codes: 40281
+district names in admin2Codes for TN: 38
+['Ariyalur', 'Chengalpattu district', 'Chennai', 'Coimbatore', 'Cuddalore', 'Dharmapuri', 'Dindigul', 'Erode', 'Kallakurichi district', 'Kancheepuram', 'Kanniyakumari', 'Karur', 'Krishnagiri', 'Madurai', 'Mayiladuthurai district', 'Nagapattinam', 'Namakkal', 'Nilgiris', 'Perambalur', 'Pudukkottai', 'Ramanathapuram', 'Ranipet district', 'Salem', 'Sivaganga', 'Tenkasi district', 'Thanjavur', 'Theni', 'Thiruvallur', 'Thiruvarur', 'Thoothukkudi', 'Tiruchirappalli', 'Tirunelveli Kattabo', 'Tirupattur district', 'Tiruppur', 'Tiruvannamalai', 'Vellore', 'Villupuram', 'Virudhunagar']
+places per district: {'Sivaganga': 2131, 'Tiruppur': 1998, 'Erode': 1977, 'Dindigul': 1911, 'Krishnagiri': 1871, 'Tiruchirappalli': 1710, 'Tiruvannamalai': 1607, 'Pudukkottai': 1590, 'Salem': 1521, 'Karur': 1499, 'Namakkal': 1480, 'Ramanathapuram': 1367, 'Thanjavur': 1363, 'Villupuram': 1341, 'Thiruvallur': 1273, 'Dharmapuri': 1252, 'Cuddalore': 1098, 'Coimbatore': 1015, 'Thoothukkudi': 1003, 'Tirunelveli Kattabo': 960, 'Virudhunagar': 889, 'Madurai': 867, 'Thiruvarur': 857, 'Kallakurichi district': 782, 'Chengalpattu district': 759, 'Ranipet district': 639, 'Ariyalur': 598, 'Nilgiris': 595, 'Kancheepuram': 554, 'Tirupattur district': 549, 'Kanniyakumari': 544, 'Tenkasi district': 513, 'Vellore': 490, 'Mayiladuthurai district': 480, 'Theni': 407, 'Nagapattinam': 329, 'Perambalur': 287, 'Chennai': 175, '<none>': 163}
+
+with any alternate name: 1702 ; with Tamil-script alternate name: 143
+inside forecast box: 40432 ; outside: 12
+   outside: Kovakulam 8.08206 77.52706 Kanniyakumari
+   outside: Karungalikuppam 13.37251 80.33339 Thiruvallur
+   outside: Sinthamanipuram 13.35587 80.33597 Thiruvallur
+   outside: Koviladi 13.35145 80.34084 Thiruvallur
+   outside: Kalanji 13.33604 80.33389 Thiruvallur
+   outside: Champadipalaiyam 13.30664 80.34498 Thiruvallur
+   outside: Vellara 11.54224 76.24128 None
+   outside: Manalvayal 11.5513 76.24437 Nilgiris
+   outside: Cholatipuzha 11.56175 76.23083 None
+   outside: Yelaccher 11.56275 76.24441 Nilgiris
+   outside: Kunnamangalam 11.56847 76.24385 Nilgiris
+   outside: Nancherikudiyiruppu 8.08224 77.54429 Kanniyakumari
+
+names shared by >1 district: 3206 of 28006 distinct names; e.g. [('virapandi', ['Coimbatore', 'Madurai', 'Salem', 'Theni', 'Tiruppur', 'Villupuram']), ('viraganur', ['Madurai', 'Salem']), ('vinnamangalam', ['Kancheepuram', 'Thanjavur', 'Tirupattur district', 'Tiruvannamalai']), ('villiyanallur', ['Mayiladuthurai district', 'Thanjavur']), ('villivakkam', ['Chengalpattu district', 'Chennai', 'Thiruvallur'])]
+
+modification dates: min 2003-03-14 max 2026-09-14
+Chennai          [('Chennai', '13.08784', '80.27847', 'Chennai', 'PPLA', '4681087')]
+Madurai          [('Madurai', '9.919', '78.11953', 'Madurai', 'PPLA2', '1465625'), ('Madurai', '12.64275', '79.47669', 'Tiruvannamalai', 'PPL', '0'), ('Madurai', '12.52786', '79.82199', 'Chengalpattu district', 'PPL', '0')]
+Coimbatore       [('Coimbatore', '11.00555', '76.96612', 'Coimbatore', 'PPL', '2136916')]
+Thanjavur        [('Thanjavur', '10.78523', '79.13909', 'Thanjavur', 'PPL', '291067')]
+Tiruchirappalli  [('Tiruchirappalli', '10.8155', '78.69651', 'Tiruchirappalli', 'PPL', '1022518')]
+Trichy           [('Tiruchirappalli', '10.8155', '78.69651', 'Tiruchirappalli', 'PPL', '1022518'), ('Trichy', '10.80289', '78.69875', 'Tiruchirappalli', 'PPL', '0')]
+Tirunelveli      [('Tirunelveli', '8.72742', '77.6838', 'Tirunelveli Kattabo', 'PPLA2', '1435844')]
+Salem            [('Salem', '11.65376', '78.15538', 'Salem', 'PPL', '917414')]
+Kanniyakumari    [('Kanniyakumari', '8.09008', '77.53841', 'Kanniyakumari', 'PPL', '22453')]
+Melur            [('Melur', '10.03241', '78.3393', 'Madurai', 'PPL', '40017'), ('Melur', '12.73674', '80.09511', 'Chengalpattu district', 'PPL', '0'), ('Melur', '12.65307', '80.02276', 'Chengalpattu district', 'PPL', '0'), ('Melur', '12.236', '78.21206', 'Dharmapuri', 'PPL', '0')]
+Vellore          [('Vellore', '12.9184', '79.13255', 'Vellore', 'PPL', '484690')]
+Nagappattinam    [('Nagapattinam', '10.76377', '79.84313', 'Nagapattinam', 'PPL', '102905')]
+Ooty             [('Ooty', '11.4134', '76.69521', 'Nilgiris', 'PPL', '233426')]
+Udhagamandalam   [('Ooty', '11.4134', '76.69521', 'Nilgiris', 'PPL', '233426')]
+Kumbakonam       [('Kumbakonam', '10.96209', '79.39124', 'Thanjavur', 'PPL', '167155')]
+Mayiladuthurai   [('Mayiladuthurai', '11.10354', '79.655', 'Mayiladuthurai district', 'PPLA2', '86660')]

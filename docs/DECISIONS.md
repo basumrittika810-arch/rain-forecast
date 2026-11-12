@@ -457,3 +457,60 @@ Decision maker: Mrittika Basu (project owner). Claude (AI assistant) proposes, e
   pinning a fixed runner image is an option if it ever causes problems.
 - **Next:** API on Render via `render.yaml` Blueprint (free plan, Singapore, Python 3.12.10, FORECAST_URL → Pages,
   health check `/api/status`).
+
+## D-023: API deployed on Render (verified)
+- **Timestamp:** 2026-11-12 ~17:50 UTC
+- **Status:** Live and verified; **restart test still pending** (owner action)
+- **Setup:** owner created a Render account and applied the `render.yaml` Blueprint (name `rain-forecast`, branch `main`).
+  Service `rain-forecast-api`, plan Free, deployed commit `2799195` in 59 s. Public address:
+  **https://rain-forecast-api-qii4.onrender.com** (Render added the suffix `-qii4`; the plain name was not available).
+- **Smoke test** (`scripts/smoke_test.py` with `--published-url` = the Pages `latest.json`): **20/20 passed**. Run 2026-11-12 05:30 IST,
+  17.86 h old, quality ok (adjusted 145 intervals / 63 days), Chennai → grid 13.00, 80.25, values **identical to the published
+  file**, Kolkata → 404, `lat=abc` → 422. `/api/status` reports `"source": "url"`; `/docs` HTTP 200. The owner also tested via `/docs`.
+- **Observation:** the bare address `/` returns 404 `{"detail":"Not Found"}`, because no page exists there yet; the web page (Step 4) will live there.
+
+## D-024: Place-name search (option A) + "use my location" (option D)
+- **Timestamp:** 2026-11-12 ~18:30 UTC
+- **Status:** Decided (owner); evidence below; **building A awaits answers to the open questions**; D is built in Step 4 (website)
+- **Context:** farmers do not know coordinates. The owner wants them to type a place name; turning it into coordinates happens
+  in the backend. A farmer may want the forecast for a place where they are not present (e.g. their field), so GPS alone is not enough.
+- **Decision:**
+  - **A:** our own stored list of Tamil Nadu places with coordinates, searched by a new API endpoint. No outside service at request time.
+  - **D:** a "use my location" button on the website (Step 4), as a shortcut.
+  - Search uses **English spellings for now**; Tamil script is to be checked later.
+  - Results **show the district**, so places with the same name can be told apart.
+- **Rejected:** B (online geocoder per search: rate limit ~1 request/s, outage risk, searches go to a third party, paid keys for
+  commercial services); C (District → Taluk → Village dropdowns: same data need as A, more taps, more work).
+- **Evidence, place list** (`scripts/inspect_places.py` → `docs/inspection/places_geonames_20261112.txt`). Source: GeoNames
+  `IN.zip`, CC BY 4.0 (attribution "GeoNames" required), downloaded 2026-11-12, SHA-256 `fa6d874b…`.
+  - Tamil Nadu (admin1 code 25): 46,004 records; **40,444 populated places** (class P). By code: 39,876 PPL, 291 PPLQ (abandoned),
+    249 PPLX (section of a place), and a few others.
+  - **Mostly villages:** only 1,068 have a population figure (1,066 ≥ 1,000; 501 ≥ 15,000). The other ~39,400 have none, which
+    in this file typically means small villages. The random sample below supports this (Verified for the sample only).
+  - **District:** 40,281 of 40,444 have a district code that resolves to one of **38 district names** (all current districts,
+    incl. the newer ones such as Ranipet and Tenkasi). 163 have no district.
+  - **Name quirks:** two names need cleaning for display: "Tirunelveli Kattabo" (a truncated name; display "Tirunelveli"), and
+    9 names ending in " district".
+  - **Same name, different districts:** 3,206 of 28,006 distinct names occur in more than one district (e.g. Virapandi in 6
+    districts; Melur in Madurai, Chengalpattu ×2, Dharmapuri). Showing the district is therefore necessary, but **not always
+    enough**: the same name can occur twice in one district.
+  - **Common alternative names are included:** Trichy → Tiruchirappalli, Udhagamandalam → Ooty.
+  - **Tamil script:** only **143 of 40,444** (0.35 %) carry a Tamil-script name, so this file **cannot support Tamil search**.
+    Another source would be needed (open).
+  - **Forecast box:** 40,432 inside; **12 outside** by ≤ 0.02° (Kanniyakumari southern tip, Thiruvallur coast, Nilgiris western
+    edge). All 12 snap to stored grid points, but `/api/forecast` refuses locations outside the box.
+- **Evidence, coordinates vs a second source** (OpenStreetMap Nominatim, 30 places: 20 villages without population + 10 towns
+  ≥ 15,000, fixed random seed; `docs/inspection/places_crosscheck_osm_20261112.txt`):
+  - **Name search:** OSM found only 8/30 by name, because spellings differ (GeoNames "-kavundan-" vs OSM "-goundan-",
+    "Soviriyampatti" vs "Soriyampatti"). All 8 found lie **0.03–1.11 km** from GeoNames, in the **same forecast grid cell**.
+  - **Reverse lookup** (which place and district lie at the GeoNames coordinate):
+    - State: Tamil Nadu 30/30.
+    - District: **29/30 agree** (allowing spellings Sivagangai/Thoothukudi). The exception is Nalambur: GeoNames says
+      Thiruvallur, OSM says Chennai District (near Ambattur, on the district border).
+    - Place name: about 10/30 match or nearly match (e.g. Valavettikuppam, Kidarakulam, Vazhapadi, Omalur). The rest name a
+      neighbouring village or town, which is consistent with nearby coordinates but **not proof** of village-level accuracy.
+  - D-010 towns compared with Wikipedia coordinates: Chennai, Coimbatore and Madurai are each within ~0.7 km of GeoNames.
+  - **Conclusion (Verified for the sample, not the whole list):** coordinates are consistently in the right state and district
+    and near the named place. One grid cell (~27 km) is much larger than the observed differences (≤ 1.1 km), so the list is
+    precise enough for a 0.25° forecast. Village-level precision is not proven.
+- **Open questions (owner) before building A:** listed in the session; recorded here once answered.
