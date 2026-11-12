@@ -4,17 +4,25 @@ Endpoints
   GET /api/forecast?lat=..&lon=..   forecast for the nearest grid point (ties north/east) inside the region box
   GET /api/status                   which forecast is live, how old it is, last reload problem (if any)
 
-latest.json is loaded into memory and reloaded automatically when the file changes. If a new file cannot be
-read, the previously loaded forecast keeps being served and the problem is reported in /api/status.
+Where the forecast comes from:
+  * FORECAST_URL set (deployment): latest.json is downloaded from that URL (GitHub Pages) and re-checked every
+    FORECAST_REFRESH_SECONDS (default 900).
+  * otherwise (local): data/processed/latest.json, re-checked on every request (a cheap file-status check).
+If a new version cannot be read, the previously loaded forecast keeps being served and the problem is reported
+in /api/status.
 
 Run locally:  .venv\\Scripts\\python.exe -m uvicorn api.app:app --port 8000
 """
 
 import datetime as dt
+import hashlib
 import json
 import logging
 import os
 import threading
+import time
+import urllib.error
+import urllib.request
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException, Query
@@ -26,40 +34,88 @@ log = logging.getLogger("api")
 DEFAULT_LATEST = Path(__file__).resolve().parent.parent / "data" / "processed" / "latest.json"
 
 
-class ForecastStore:
-    """Holds the last successfully loaded latest.json; reloads when the file's identity changes."""
+class SourceError(RuntimeError):
+    pass
+
+
+class FileSource:
+    kind = "file"
 
     def __init__(self, path: Path):
         self.path = Path(path)
-        self.doc = None
-        self.signature = None
-        self.error = None
-        self.lock = threading.Lock()
 
-    def _current_signature(self):
+    def read(self, token):
+        """(new_token, text), or None if unchanged or not published yet."""
         try:
             st = os.stat(self.path)
         except FileNotFoundError:
             return None
-        return (st.st_mtime_ns, st.st_size, st.st_ino)
+        sig = (st.st_mtime_ns, st.st_size, st.st_ino)
+        if sig == token:
+            return None
+        try:
+            return sig, self.path.read_text(encoding="utf-8")
+        except OSError as e:
+            raise SourceError(f"{type(e).__name__}: {e}") from e
+
+
+class UrlSource:
+    kind = "url"
+
+    def __init__(self, url: str, timeout: float = 30):
+        self.url, self.timeout = url, timeout
+
+    def read(self, token):
+        req = urllib.request.Request(self.url, headers={"If-None-Match": token} if token else {})
+        try:
+            with urllib.request.urlopen(req, timeout=self.timeout) as r:
+                body = r.read()
+                etag = r.headers.get("ETag") or hashlib.sha256(body).hexdigest()
+        except urllib.error.HTTPError as e:
+            if e.code in (304, 404):   # unchanged / not published yet
+                return None
+            raise SourceError(f"HTTP {e.code} from {self.url}") from e
+        except (urllib.error.URLError, OSError) as e:
+            raise SourceError(f"cannot reach {self.url}: {getattr(e, 'reason', e)}") from e
+        if etag == token:
+            return None
+        return etag, body.decode("utf-8")
+
+
+class ForecastStore:
+    """Holds the last successfully loaded latest.json and refreshes it from its source."""
+
+    def __init__(self, source, refresh_seconds: float, clock=time.monotonic):
+        self.source, self.refresh, self.clock = source, refresh_seconds, clock
+        self.doc = self.token = self.error = self.last_check = None
+        self.lock = threading.Lock()
 
     def get(self):
-        sig = self._current_signature()
-        if sig is None or sig == self.signature:
+        if self.last_check is not None and self.clock() - self.last_check < self.refresh:
             return self.doc
         with self.lock:
-            if sig == self.signature:
+            if self.last_check is not None and self.clock() - self.last_check < self.refresh:
                 return self.doc
+            self.last_check = self.clock()
             try:
-                doc = json.loads(self.path.read_text(encoding="utf-8"))
+                result = self.source.read(self.token)
+            except SourceError as e:
+                self.error = str(e)
+                log.error("forecast source problem; keeping previous forecast: %s", self.error)
+                return self.doc
+            if result is None:
+                return self.doc
+            token, text = result
+            try:
+                doc = json.loads(text)
                 doc["run"]["init_utc"], doc["region"]["name"], doc["points"]  # minimal shape check
-            except (OSError, ValueError, KeyError, TypeError) as e:
+            except (ValueError, KeyError, TypeError) as e:
                 self.error = f"{type(e).__name__}: {e}"
-                log.error("could not load %s; keeping previous forecast: %s", self.path, self.error)
+                log.error("could not parse forecast; keeping previous forecast: %s", self.error)
             else:
                 self.doc, self.error = doc, None
                 log.info("loaded forecast run %s (%d points)", doc["run"]["init_utc"], len(doc["points"]))
-            self.signature = sig  # do not retry the same broken file on every request
+            self.token = token  # do not re-parse the same broken content on every check
         return self.doc
 
 
@@ -68,9 +124,18 @@ def _region(doc) -> Region:
     return Region(r["name"], r["lat_min"], r["lat_max"], r["lon_min"], r["lon_max"])
 
 
-def create_app(latest_path: Path = DEFAULT_LATEST) -> FastAPI:
+def create_app(latest_path: Path | None = None, url: str | None = None, refresh_seconds: float | None = None,
+               clock=time.monotonic) -> FastAPI:
+    url = url or (None if latest_path else os.environ.get("FORECAST_URL"))
+    if url:
+        source = UrlSource(url)
+        refresh = refresh_seconds if refresh_seconds is not None else float(
+            os.environ.get("FORECAST_REFRESH_SECONDS", "900"))
+    else:
+        source = FileSource(latest_path or DEFAULT_LATEST)
+        refresh = refresh_seconds if refresh_seconds is not None else 0
     app = FastAPI(title="Rain forecast API", version="1.0")
-    store = ForecastStore(latest_path)
+    store = ForecastStore(source, refresh, clock=clock)
 
     @app.get("/api/forecast")
     def forecast(lat: float = Query(..., ge=-90, le=90, allow_inf_nan=False, description="latitude, degrees north"),
@@ -99,13 +164,13 @@ def create_app(latest_path: Path = DEFAULT_LATEST) -> FastAPI:
     def status():
         doc = store.get()
         if doc is None:
-            return {"forecast_available": False, "last_reload_error": store.error}
+            return {"forecast_available": False, "source": source.kind, "last_reload_error": store.error}
         init = dt.datetime.fromisoformat(doc["run"]["init_utc"].replace("Z", "+00:00"))
         age = (dt.datetime.now(dt.timezone.utc) - init).total_seconds() / 3600
         return {"forecast_available": True, "run_init_utc": doc["run"]["init_utc"],
                 "run_init_ist": doc["run"]["init_ist"], "generated_utc": doc.get("generated_utc"),
                 "age_hours": round(age, 2), "quality": doc["quality"], "points": len(doc["points"]),
-                "region": doc["region"], "last_reload_error": store.error}
+                "region": doc["region"], "source": source.kind, "last_reload_error": store.error}
 
     return app
 
