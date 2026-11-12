@@ -396,3 +396,25 @@ Decision maker: Mrittika Basu (project owner). Claude (AI assistant) proposes, e
   later complete one (D-018 Q3) +~45 min. Q3 is to be deferred even when D-018 is implemented.
 - **Still open for when D-018 is implemented:** D-018 Q1 (waiting period before accepting missing steps), Q2 (minimum
   content to publish).
+
+## D-020: Step 3, read-only API
+- **Timestamp:** 2026-11-12
+- **Status:** Implemented and tested; real server run verified
+- **Files:** `api/app.py` (FastAPI, `create_app(latest_path)`), `tests/test_api.py` (18 tests). New **dev-only**
+  dependency: `httpx` 0.28.1 (+ `httpcore`), required by FastAPI's TestClient; pinned in `requirements-dev.txt`, not in
+  the runtime `requirements.txt`.
+- **Behaviour:** loads `latest.json` into memory and reloads when its identity (mtime, size, inode) changes.
+  `GET /api/forecast?lat&lon`: lat in [-90, 90], lon in [-180, 180], NaN and inf rejected (422). The location must be
+  inside the published region box (box from the JSON, unchanged by the grid margin), else 404. Snaps north/east via
+  `pipeline.grid.snap_to_grid`. Returns the stored point's days and intervals unchanged, plus run, units, attribution,
+  day definition, quality, region, requested and grid coordinates. 503 if nothing has been published.
+  `GET /api/status`: live run, age in hours, quality, point count, last reload error. A broken new `latest.json` keeps
+  the previous forecast in service, and the error is reported in status.
+- **Tests:** written first (collection error before code), 18/18 passed. Mutation check: disabling the region check failed
+  the 3 outside-region tests; restored (hash identical). Full suite **140 passed**. Known warning: Starlette says the
+  `httpx` TestClient backend is deprecated in favour of `httpx2` (test-only; no effect on the API).
+- **Real run** (uvicorn, real `latest.json`): status 200, run 2026-11-11 05:30 IST, **age 37.78 h**, 391 points, quality ok.
+  Chennai (13.0825, 80.275) → grid point 13.00, 80.25, 11,833-byte response, daily mm identical to D-017. Coimbatore
+  ×20 requests: median 4.4 ms, max 5.9 ms (local HTTP round trip). Kolkata → 404; `lat=abc` → 422; `lat=95` → 422.
+- **Observation:** the live forecast is 37.8 h old because nothing fetches new runs automatically yet. The scheduler
+  step must fix that.

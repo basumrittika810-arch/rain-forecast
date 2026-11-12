@@ -50,6 +50,16 @@ See `docs/DECISIONS.md` (D-001).
 .\.venv\Scripts\python.exe -m pipeline.publish data\runs\20261111T00Z  # a specific run
 ```
 
+## API (Step 3)
+
+```powershell
+# Serves data/processed/latest.json (reloaded automatically when it changes)
+.\.venv\Scripts\python.exe -m uvicorn api.app:app --port 8000
+# GET http://127.0.0.1:8000/api/forecast?lat=13.0825&lon=80.275   -> nearest grid point's days + intervals
+# GET http://127.0.0.1:8000/api/status                             -> live run, age, quality
+# Outside the region -> 404; invalid lat/lon -> 422; nothing published yet -> 503
+```
+
 ## Investigation commands
 
 ```powershell
