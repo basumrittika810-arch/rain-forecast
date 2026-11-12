@@ -540,3 +540,28 @@ Decision maker: Mrittika Basu (project owner). Claude (AI assistant) proposes, e
      suggestions the farmer can skip is better than finding nothing.
 - **Differs from the assistant's first recommendation:** Q2. The assistant first recommended keeping no-district places, then
   changed the recommendation after the probe found places from other states among them.
+- **Implementation (2026-11-13):**
+  - **Files:** `pipeline/places.py` (build / load / search; standard library only), `config/places_tamil_nadu.csv`
+    (2,156,648 bytes) + `config/places_tamil_nadu.source.json` (IN.zip SHA-256 `fa6d874b…`), `GET /api/places?q=&limit=`
+    in `api/app.py`, region box widened in `config/settings.toml`.
+  - **Tests:** `tests/test_places.py` + updated config/grid tests, written first. The new tests failed before the code existed
+    (collection error; 12 config/grid failures).
+  - **Built list:** **39,997 places = the hand count** (40,444 − 291 − 163 + 7). Raw IN.zip SHA-256 unchanged.
+  - **Two test expectations were wrong, not the code:**
+    - A float comparison needed a 1e-6 tolerance (13.583333 vs 13 + 35/60).
+    - GeoNames has its own small "Trichy" entry (Tiruchirappalli district, 1.4 km from the city point). It ranks before the
+      city's nickname match, and both snap to the same forecast point 10.75, 78.75. Both tests were corrected.
+  - **Result:** full suite **214 passed**.
+  - **Mutation check:** keeping abandoned places failed the builder test; disabling "did you mean" failed 3 tests. Code
+    restored (hash identical).
+  - **Stored grid points:** still 391 with the wider box (test).
+  - **Local server:** name matches 7–54 ms, suggestions ~120 ms.
+- **Known limits (open, not fixed):**
+  - The same name can occur twice in one district with identical labels, e.g. Melur (Chengalpattu) ×2. Those two snap to the
+    same forecast point, but this is not guaranteed in general.
+  - "T Nagar" is not found: GeoNames has "Thyagaraya Nagar" without that short form.
+  - Valavettikuppam is not found (as in the probe).
+  - Some alternative names are machine transliterations from other scripts (e.g. "trwchraply"); harmless, but they may
+    appear as the "matched" spelling.
+  - The wider box reaches the live API only with the next published forecast, because the API takes the box from the
+    published JSON.

@@ -13,14 +13,29 @@ KOLKATA = (22.5675, 88.37)
 
 # ---------- the real configuration file ----------
 
-def test_real_config_matches_cited_source():
+def test_real_config_is_cited_source_extended_slightly():
+    # D-024: official TNAU boundary (degrees + minutes) extended slightly so every listed Tamil Nadu place is inside.
     r = load_region()
-    # Expected values computed independently from the source's degrees + minutes.
     assert r.name == "Tamil Nadu"
-    assert r.lat_min == pytest.approx(8 + 5 / 60, abs=1e-6)
-    assert r.lat_max == pytest.approx(13 + 35 / 60, abs=1e-6)
-    assert r.lon_min == pytest.approx(76 + 15 / 60, abs=1e-6)
-    assert r.lon_max == pytest.approx(80 + 20 / 60, abs=1e-6)
+    assert (r.lat_min, r.lat_max, r.lon_min, r.lon_max) == pytest.approx((8.08, 13 + 35 / 60, 76.24, 80.35), abs=1e-6)
+    # only ever wider than the source, never narrower
+    tol = 1e-6   # the config stores degrees + minutes rounded to 6 decimals
+    assert r.lat_min <= 8 + 5 / 60 + tol and r.lat_max >= 13 + 35 / 60 - tol
+    assert r.lon_min <= 76 + 15 / 60 + tol and r.lon_max >= 80 + 20 / 60 - tol
+
+
+# The 10 GeoNames places with a district that lay just outside the TNAU box (D-024 probe), GeoNames coordinates.
+EDGE_PLACES = {
+    "Kovakulam": (8.08206, 77.52706), "Nancherikudiyiruppu": (8.08224, 77.54429),
+    "Karungalikuppam": (13.37251, 80.33339), "Sinthamanipuram": (13.35587, 80.33597), "Koviladi": (13.35145, 80.34084),
+    "Kalanji": (13.33604, 80.33389), "Champadipalaiyam": (13.30664, 80.34498),
+    "Manalvayal": (11.5513, 76.24437), "Yelaccher": (11.56275, 76.24441), "Kunnamangalam": (11.56847, 76.24385),
+}
+
+
+@pytest.mark.parametrize("name", sorted(EDGE_PLACES))
+def test_edge_places_now_inside(name):
+    assert load_region().contains(*EDGE_PLACES[name])
 
 
 @pytest.mark.parametrize("city", [CHENNAI, COIMBATORE, MADURAI], ids=["Chennai", "Coimbatore", "Madurai"])

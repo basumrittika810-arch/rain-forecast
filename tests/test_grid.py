@@ -59,9 +59,9 @@ def test_strict_box_would_be_374_and_miss_the_southern_row():
     assert 8.0 not in lat_sel
 
 
-def test_application_box_is_unchanged():
-    r = load_region()
-    assert (r.lat_min, r.lat_max, r.lon_min, r.lon_max) == pytest.approx((8 + 5 / 60, 13 + 35 / 60, 76.25, 80 + 20 / 60))
+def test_application_box_is_slightly_extended_tnau_box():
+    r = load_region()   # D-024: TNAU box extended slightly; still 391 stored points (tests above)
+    assert (r.lat_min, r.lat_max, r.lon_min, r.lon_max) == pytest.approx((8.08, 13 + 35 / 60, 76.24, 80.35))
     assert not r.contains(8.0, 78.0)    # the extra stored row lies outside the box users may query
 
 

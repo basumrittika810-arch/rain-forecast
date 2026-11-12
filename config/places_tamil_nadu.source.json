@@ -1,0 +1,10 @@
+{
+  "source": "GeoNames IN.zip, https://download.geonames.org/export/dump/IN.zip",
+  "sha256": "fa6d874bafba6600c56065fda4ed0977b95df237d0b6674097983d378327183d",
+  "admin2_sha256": "67492a022984623460aaaec97f4d1d49e74356c8b5730be9fe23e736223b71dc",
+  "licence": "CC BY 4.0",
+  "attribution": "Place names and coordinates: GeoNames (geonames.org), CC BY 4.0",
+  "rules": "Tamil Nadu (admin1 25), feature class P, without PPLQ (abandoned) and without unknown district; ASCII alternative names only; all inside config/settings.toml region box (decision D-024)",
+  "places": 39997,
+  "built_utc": "2026-11-12T19:03:58Z"
+}

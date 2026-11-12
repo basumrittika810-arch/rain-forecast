@@ -58,6 +58,21 @@ See `docs/DECISIONS.md` (D-001).
 # GET http://127.0.0.1:8000/api/forecast?lat=13.0825&lon=80.275   -> nearest grid point's days + intervals
 # GET http://127.0.0.1:8000/api/status                             -> live run, age, quality
 # Outside the region -> 404; invalid lat/lon -> 422; nothing published yet -> 503
+# GET http://127.0.0.1:8000/api/places?q=melur&limit=10             -> places by name, with district and lat/lon
+#   kind = "matches" (exact / start of name / alternative name), "suggestions" (did you mean) or "none"
+```
+
+Deployed: https://rain-forecast-api-qii4.onrender.com (Render, reads the forecast published on GitHub Pages; D-023).
+
+### Place list (D-024)
+
+`config/places_tamil_nadu.csv` (39,997 Tamil Nadu places) is committed on purpose: public GeoNames data (CC BY 4.0).
+Its source and checksum are in `config/places_tamil_nadu.source.json`. To rebuild it:
+
+```powershell
+# download IN.zip and admin2Codes.txt from https://download.geonames.org/export/dump/ into data\geonames_raw,
+# unzip IN.zip into data\geonames_raw\extracted, then:
+.\.venv\Scripts\python.exe -m pipeline.places data\geonames_raw
 ```
 
 ## Investigation commands

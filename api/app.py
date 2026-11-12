@@ -3,6 +3,7 @@
 Endpoints
   GET /api/forecast?lat=..&lon=..   forecast for the nearest grid point (ties north/east) inside the region box
   GET /api/status                   which forecast is live, how old it is, last reload problem (if any)
+  GET /api/places?q=..              find a Tamil Nadu place by name -> coordinates and district (D-024)
 
 Where the forecast comes from:
   * FORECAST_URL set (deployment): latest.json is downloaded from that URL (GitHub Pages) and re-checked every
@@ -29,6 +30,7 @@ from fastapi import FastAPI, HTTPException, Query
 
 from pipeline.config import Region
 from pipeline.grid import snap_to_grid
+from pipeline.places import ATTRIBUTION as PLACES_ATTRIBUTION, DEFAULT_PLACES_PATH, PlaceIndex, load_places
 
 log = logging.getLogger("api")
 DEFAULT_LATEST = Path(__file__).resolve().parent.parent / "data" / "processed" / "latest.json"
@@ -125,7 +127,7 @@ def _region(doc) -> Region:
 
 
 def create_app(latest_path: Path | None = None, url: str | None = None, refresh_seconds: float | None = None,
-               clock=time.monotonic) -> FastAPI:
+               clock=time.monotonic, places_path: Path = DEFAULT_PLACES_PATH) -> FastAPI:
     url = url or (None if latest_path else os.environ.get("FORECAST_URL"))
     if url:
         source = UrlSource(url)
@@ -136,6 +138,16 @@ def create_app(latest_path: Path | None = None, url: str | None = None, refresh_
         refresh = refresh_seconds if refresh_seconds is not None else 0
     app = FastAPI(title="Rain forecast API", version="1.0")
     store = ForecastStore(source, refresh, clock=clock)
+    places = PlaceIndex(load_places(places_path))   # committed file; a broken file stops startup (no silent empty list)
+
+    @app.get("/api/places")
+    def find_places(q: str = Query(..., max_length=100, description="place name, English spelling"),
+                    limit: int = Query(10, ge=1, le=50)):
+        try:
+            result = places.search(q, limit=limit)
+        except ValueError as e:
+            raise HTTPException(422, str(e)) from e
+        return {**result, "attribution": PLACES_ATTRIBUTION}
 
     @app.get("/api/forecast")
     def forecast(lat: float = Query(..., ge=-90, le=90, allow_inf_nan=False, description="latitude, degrees north"),

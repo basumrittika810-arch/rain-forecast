@@ -11,10 +11,13 @@ status = "provisional pilot region (decision D-008)"
 #   "North Latitude Between 8° 5' and 13° 35'" / "East Longitude Between 76° 15' and 80° 20'"
 #   https://agritech.tnau.ac.in/agriculture/agri_agricultureataglance_tnataglance.html
 #   (read 2026-11-12). Conversion: degrees + minutes/60.
-lat_min = 8.083333   # 8° 5'  N
-lat_max = 13.583333  # 13° 35' N
-lon_min = 76.25      # 76° 15' E
-lon_max = 80.333333  # 80° 20' E
+# Official boundary (TNAU), extended slightly (decision D-024): 10 Tamil Nadu villages in the GeoNames place list
+# lay up to ~1.3 km outside it (south tip, Thiruvallur coast, Nilgiris west edge); their forecast data exists.
+# TNAU values: lat 8.083333 - 13.583333, lon 76.25 - 80.333333.
+lat_min = 8.08       # TNAU 8° 5' N (8.083333), extended to cover Kovakulam 8.08206 N
+lat_max = 13.583333  # 13° 35' N (unchanged)
+lon_min = 76.24      # TNAU 76° 15' E (76.25), extended to cover Kunnamangalam 76.24385 E
+lon_max = 80.35      # TNAU 80° 20' E (80.333333), extended to cover Champadipalaiyam 80.34498 E
 
 # Note: a rectangle also covers areas outside the state (parts of Kerala, Karnataka,
 # Andhra Pradesh, northern Sri Lanka and sea). Whether to mask those out is a later decision.
