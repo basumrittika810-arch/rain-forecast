@@ -1,0 +1,75 @@
+Load test of the live Vaanam site, 13 Nov 2026 (D-034)
+=======================================================
+Site:     https://rain-forecast-api-qii4.onrender.com  (Render free plan: 0.1 CPU, 512 MB - documented)
+Client:   the owner's Windows laptop, home internet; Python 3.12, httpx
+Forecast: the 12 Nov 2026 00 UTC run was being served
+Script:   scripts/loadtest.py (run 2 below used the same logic as the saved script)
+One visit = 8 page files in parallel, 2 searches, 20 % misspelt search, 30 % GPS lookup, 1 forecast, 1-3 s pause.
+Each step lasted 20 s. "p95" = 95 % of requests were at least this fast.
+
+
+Run 1, ~11:31 UTC - NOT a fair measurement (kept for honesty)
+-------------------------------------------------------------
+No shared connection pool: every user opened its own connections (up to 160 at once).
+warm-up: 200 in 0.6s
+  1 users |    82 requests,    7 visits (   21/min) | median  0.17s  p95  0.59s  max 21.67s | errors 1 (1.2%)
+  5 users |   293 requests,   26 visits (   78/min) | median  0.27s  p95  3.44s  max  5.60s | errors 0 (0.0%)
+ 10 users |   233 requests,   20 visits (   60/min) | median  4.74s  p95 13.54s  max 13.75s | errors 0 (0.0%)
+ 20 users |   229 requests,   20 visits (   60/min) | median 18.45s  p95 18.94s  max 18.95s | errors 188 (82.1%)
+STOPPED at 20 users (errors 82.1%, p95 18.9s)
+after test: status 200
+
+Diagnosis (verified): a burst of 160 parallel requests from the laptop failed with
+"ConnectError: getaddrinfo failed", a name lookup failing ON THE TEST MACHINE, before any request reached the
+server. The server answered /api/status normally straight after. So the failures were the test client's, not
+the site's. Fix: all users share one pool of at most 60 connections.
+
+
+Run 2, ~11:35 UTC - the fair measurement
+----------------------------------------
+warm-up: 200 in 0.2s
+  5 users |   450 requests,   39 visits (  117/min) | median  0.15s  p95  0.70s  max  0.94s | errors 0 (0.0%)
+            forecast         median  0.11s  p95  0.40s  (n=39)
+            search           median  0.10s  p95  0.18s  (n=78)
+            misspelt search  median  0.20s  p95  0.60s  (n=4)
+            nearest (GPS)    median  0.20s  p95  0.46s  (n=17)
+            page files       median  0.21s  p95  0.73s  (n=312)
+            error kinds so far: {}
+ 10 users |   669 requests,   58 visits (  174/min) | median  0.34s  p95  1.16s  max  1.80s | errors 0 (0.0%)
+            forecast         median  0.20s  p95  0.61s  (n=58)
+            search           median  0.19s  p95  0.57s  (n=116)
+            misspelt search  median  0.49s  p95  1.80s  (n=15)
+            nearest (GPS)    median  0.43s  p95  1.32s  (n=16)
+            page files       median  0.40s  p95  1.21s  (n=464)
+            error kinds so far: {}
+ 20 users |   748 requests,   65 visits (  195/min) | median  1.51s  p95  3.27s  max  4.15s | errors 0 (0.0%)
+            forecast         median  0.71s  p95  1.39s  (n=65)
+            search           median  0.76s  p95  1.41s  (n=130)
+            misspelt search  median  1.04s  p95  1.39s  (n=15)
+            nearest (GPS)    median  0.92s  p95  1.64s  (n=18)
+            page files       median  1.84s  p95  3.57s  (n=520)
+            error kinds so far: {}
+ 35 users |   856 requests,   75 visits (  225/min) | median  2.37s  p95  5.69s  max  7.60s | errors 0 (0.0%)
+            forecast         median  1.09s  p95  2.69s  (n=75)
+            search           median  1.15s  p95  2.82s  (n=150)
+            misspelt search  median  1.34s  p95  2.61s  (n=13)
+            nearest (GPS)    median  1.10s  p95  2.61s  (n=18)
+            page files       median  3.11s  p95  5.92s  (n=600)
+            error kinds so far: {}
+after test: status 200
+
+
+Server-side cost per request, measured on the laptop with no network (same code)
+---------------------------------------------------------------------------------
+forecast 8 ms; search 8-9 ms; misspelt search 50-70 ms; nearest place 44 ms; memory about 90 MB.
+
+
+What this shows / does not show
+-------------------------------
+Shows (verified): 35 people using the site at the same moment, about 225 visits a minute (~13,000 an hour),
+  zero errors; pages slow down gradually (whole-visit p95 5.7 s at 35) rather than breaking.
+Does not show (open):
+  - the breaking point: the test stopped at 35 users as planned, so the real ceiling is higher but unknown;
+  - wake-up from sleep: after 15 min without visitors the free server sleeps and the first visit waits 30-60 s
+    (documented by Render, not measured here);
+  - slow or patchy Indian mobile networks (the test ran from one home connection).

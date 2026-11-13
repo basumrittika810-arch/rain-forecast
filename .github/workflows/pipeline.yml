@@ -6,9 +6,10 @@ name: forecast-pipeline
 
 on:
   schedule:
-    - cron: "30 8 * * *"    # 14:00 IST
-    - cron: "30 11 * * *"   # 17:00 IST
-    - cron: "30 14 * * *"   # 20:00 IST
+    # Every 2 hours at 17 past, 08:17-20:17 UTC (13:47-01:47 IST), D-033.
+    # Off :00/:30 because GitHub is busiest then; 7 tries a day so one late or dropped run does no harm.
+    # A run that finds the newest forecast already published stops in about 30 s and publishes nothing.
+    - cron: "17 8-20/2 * * *"
   workflow_dispatch:
     inputs:
       simulate_failure:

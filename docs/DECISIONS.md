@@ -893,3 +893,63 @@ Decision maker: Mrittika Basu (project owner). Claude (AI assistant) proposes, e
   - **Changed:** the footer credits test no longer requires "Natural Earth".
 - **Browser check:** Edge at 360 × 780 and 1366 × 768. No sideways scrolling, no page errors. The title shows in
   Arima; rain falls onto the fields above the green footer.
+
+## D-033: Timed pipeline runs every 2 hours at 17 past; outside timer only in extreme cases
+- **Timestamp:** 2026-11-13
+- **Status:** Implemented and tested; to be proven by the first timed run that publishes a new forecast by itself
+- **Problem (verified):** GitHub never started a single timed run. The 08:30, 11:30 and 14:30 UTC runs on 13 Nov
+  were all missing (API: 0 runs with event "schedule"), so the site showed the "old forecast" warning from
+  12:00 UTC.
+  - **Ruled out (verified):**
+    - the workflow file: the three times were on `main` and the workflow was "active";
+    - the repository: public, not a fork, not archived, Actions switched on with all actions allowed;
+    - the commits: they are linked to the owner's account;
+    - the account's age: created March 2026;
+    - an open GitHub incident: the status page showed Actions working normally (an Actions outage on 11 Nov, the
+      day before the schedule was added, was resolved).
+  - **Cause (hypothesis):** GitHub does not show why a timed run did not start.
+    - GitHub's documentation says timed runs can be delayed or dropped when it is busy, and the busiest times are
+      on the hour and half-hour.
+    - Other users report schedules that never fire until they are re-registered by changing the times or by
+      switching the workflow off and on.
+- **Owner decisions:**
+  - Option A: switch the workflow off and on again in GitHub, after this change is pushed.
+  - Option B: new run times.
+  - Option C, an outside timer service (e.g. cron-job.org) that starts runs through GitHub, is to be used **only in
+    extreme cases**. It needs a GitHub access key stored with a third party.
+  - A manual run on 13 Nov at 14:45 UTC published the 13 Nov 00 UTC forecast, generated 14:47:25 UTC. The live site
+    picked it up and the warning disappeared.
+- **How (chosen by the assistant, owner's rule: decide and log):**
+  - **Schedule:** `17 8-20/2 * * *`, which is 08:17, 10:17, … 20:17 UTC (13:47 … 01:47 IST), 7 runs a day.
+  - **Why the first run is at 08:17:** ECMWF's 00 UTC forecast is usually complete around 07:30–08:00 UTC
+    (documented, D-021), so it is the first run that finds a new forecast.
+  - **Why the later runs:** they are spares in case GitHub drops or delays a run.
+  - **Cost:** a run that finds the forecast already published stops in about 30 s and publishes nothing (D-021).
+    Actions minutes are free for public repositories (documented).
+  - The manual "Run workflow" button and the failure-test switch are unchanged.
+- **Proof still open:** the first timed run after 07:30 UTC on 14 Nov must download, check and publish the 14 Nov
+  forecast with no help. If no timed run happens by about 12:00 UTC on 14 Nov, report to the owner. The owner then
+  decides between a manual run, more investigation, or option C.
+- **Tests (written first; 4 failed before the change):** `tests/test_schedule.py`
+  - the only schedule is `17 8-20/2 * * *`;
+  - no run is on :00 or :30;
+  - the manual start and the failure-test switch are still there;
+  - the load-test script and its results are saved (D-034).
+
+## D-034: Load test script and results kept in the project
+- **Timestamp:** 2026-11-13
+- **Status:** Saved; owner approved keeping them
+- **What:**
+  - `scripts/loadtest.py`: the stepped load test. It has options for the site, the steps and the step length.
+  - `docs/inspection/loadtest_20261113.txt`: the full results of both runs on 13 Nov.
+- **Result (verified):**
+  - At 35 people using the site at the same moment (about 225 visits a minute) there were no errors.
+  - The slowest 5 % of requests took 5.7 s or less.
+  - The site slowed gradually instead of breaking.
+- **First run not counted:** it failed at 20 users, but the failures came from the test laptop itself
+  ("getaddrinfo failed": too many connections at once). The results file keeps that run, the diagnosis and the
+  fix (one shared pool of 60 connections).
+- **Open:**
+  - the real breaking point (the test stopped at 35 users as planned);
+  - how long the first visit takes after the free server has been asleep (Render documents 30–60 s);
+  - how the site behaves on Indian mobile networks.
