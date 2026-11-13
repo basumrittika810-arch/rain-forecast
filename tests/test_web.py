@@ -15,7 +15,7 @@ from api.app import create_app
 from pipeline.places import Place, PlaceIndex, load_places, write_places
 
 WEB = Path(__file__).resolve().parent.parent / "web"
-FILES = ["index.html", "app.js", "style.css", "tn-outline.svg"]
+FILES = ["index.html", "app.js", "style.css", "icon.svg", "scene-rain.svg", "scene-fields.svg"]
 
 
 @pytest.fixture(scope="module")
@@ -37,7 +37,8 @@ def test_page_served_at_main_address(client):
 
 
 @pytest.mark.parametrize("path, ctype", [("/app.js", "javascript"), ("/style.css", "text/css"),
-                                         ("/tn-outline.svg", "image/svg+xml")])
+                                         ("/icon.svg", "image/svg+xml"), ("/scene-rain.svg", "image/svg+xml"),
+                                         ("/scene-fields.svg", "image/svg+xml")])
 def test_assets_served(client, path, ctype):
     r = client.get(path)
     assert r.status_code == 200 and ctype in r.headers["content-type"]
@@ -185,17 +186,35 @@ def test_header_band_gradient_with_white_text():
     assert "rgba" not in background and "transparent" not in background
 
 
-def test_heading_font_stored_with_site_and_licensed():
-    css = text("style.css")
-    face = re.search(r"@font-face\s*\{([^}]*)\}", css).group(1)
-    url = re.search(r"url\(\"?([^\")]+)\"?\)", face).group(1)
-    assert not url.startswith(("http:", "https:", "//")), url           # stored with the site, nothing from outside
-    font = WEB / url
-    assert font.read_bytes()[:4] == b"wOF2" and font.stat().st_size < 30_000
-    assert "SIL Open Font License" in (font.parent / "OFL.txt").read_text(encoding="utf-8")
-    fam = re.search(r"font-family:\s*\"([^\"]+)\"", face).group(1)
-    assert fam in _rule("h1, h2, h3")
-    assert "swap" in face                                                # text shows at once in the phone's own font
+def _font_faces():
+    out = {}
+    for face in re.findall(r"@font-face\s*\{([^}]*)\}", text("style.css")):
+        fam = re.search(r"font-family:\s*\"([^\"]+)\"", face).group(1)
+        out[fam] = (face, re.search(r"url\(\"?([^\")]+)\"?\)", face).group(1))
+    return out
+
+
+def test_fonts_stored_with_site_and_licensed():
+    faces = _font_faces()
+    assert set(faces) == {"Baloo 2", "Arima"}, faces
+    for fam, (face, url) in faces.items():
+        assert not url.startswith(("http:", "https:", "//")), url       # stored with the site, nothing from outside
+        font = WEB / url
+        assert font.read_bytes()[:4] == b"wOF2" and font.stat().st_size < 30_000
+        licence = font.parent / f"OFL-{fam.replace(' ', '')}.txt"
+        assert "SIL Open Font License" in licence.read_text(encoding="utf-8"), licence
+        assert "swap" in face                                            # text shows at once in the phone's own font
+
+
+def test_headings_baloo_title_arima():
+    """D-031: headings in Baloo 2. D-032 (owner): only the title "Vaanam" changes, to Arima."""
+    assert '"Baloo 2"' in _rule("h1, h2, h3")
+    assert re.search(r'font-family:\s*"Arima"', _rule(".top h1"))
+    # the title font holds only the letters of "Vaanam" (V, a, n, m), so it stays tiny
+    assert (WEB / _font_faces()["Arima"][1]).stat().st_size < 5_000
+    assert "unicode-range" in _font_faces()["Arima"][0]
+    h1 = re.search(r"<h1>(.*?)</h1>", text("index.html")).group(1)
+    assert re.sub(r"<[^>]+>", "", h1) == "Vaanam"
 
 
 def test_title_larger():
@@ -228,7 +247,7 @@ def test_darker_page_background():
 def test_footer_band_with_credits_and_small_maker_line():
     html, foot = text("index.html"), _rule(".foot")
     footer = html[html.index("<footer"):html.index("</footer>")]
-    for credit in ("ECMWF", "GeoNames", "India Meteorological Department", "Natural Earth"):
+    for credit in ("ECMWF", "GeoNames", "India Meteorological Department"):
         assert credit in footer
     assert "Made by Mrittika" in footer
     assert "background" in foot                                          # its own band: the map is never behind it
@@ -251,14 +270,33 @@ def test_wide_screens_use_two_columns():
     assert 'class="fc-body"' in html and 'class="fc-overview"' in html and 'class="fc-days"' in html
 
 
-def test_map_outline_more_visible():
-    """Owner (D-030): the Tamil Nadu outline is spread out and easier to see, still behind the text."""
-    svg, css = text("tn-outline.svg"), text("style.css")
-    assert float(re.search(r'fill-opacity="([\d.]+)"', svg).group(1)) >= 0.15
-    assert float(re.search(r'stroke-opacity="([\d.]+)"', svg).group(1)) >= 0.5
-    rule = re.search(r"\.watermark\s*\{([^}]*)\}", css).group(1)
-    assert "contain" in rule and "z-index: -1" in rule
+def test_background_is_rain_falling_on_fields():
+    """D-032 (owner chose option F): the Tamil Nadu map is replaced by rain falling on green fields. The scene sits in
+    the page between the content and the footer, so it is never behind any text; the footer continues the fields."""
+    html, css = text("index.html"), text("style.css")
+    assert html.index("</main>") < html.index('class="scene"') < html.index("<footer")
+    scene = _rule(".scene")
+    assert "scene-rain.svg" in css and "scene-fields.svg" in css and "flex" in scene
+    rain, fields = text("scene-rain.svg"), text("scene-fields.svg")
+    assert "<line" in rain or "<path" in rain
+    front = re.search(r'id="front"[^>]*fill="(#[0-9a-fA-F]{6})"', fields).group(1)
+    assert front.lower() in _rule(".foot").lower()                      # the footer is the same green as the front field
+    assert "@keyframes fall" in css and "prefers-reduced-motion" in css  # rain moves gently, never for reduced motion
+    for gone in ("tn-outline", "watermark", "Natural Earth"):
+        assert gone not in html + css, gone
+    assert not (WEB / "tn-outline.svg").exists()
 
+
+def test_footer_text_readable_on_green():
+    foot = _rule(".foot")
+    bg = re.search(r"background:\s*(#[0-9a-fA-F]{6})", foot).group(1)
+    fg = re.search(r"[^-]color:\s*(#[0-9a-fA-F]{6})", foot).group(1)
+    assert _contrast(bg, fg) >= 7.0, round(_contrast(bg, fg), 2)
+
+
+def test_favicon_is_raindrop():
+    assert '<link rel="icon" href="icon.svg" type="image/svg+xml">' in text("index.html")
+    assert "<path" in text("icon.svg")
 
 def test_three_hour_blocks_do_not_use_a_category_colour():
     """IMD categories are 24-hour terms (D-028): 3-hour blocks use one neutral colour, not a category's."""

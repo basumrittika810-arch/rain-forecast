@@ -854,3 +854,42 @@ Decision maker: Mrittika Basu (project owner). Claude (AI assistant) proposes, e
   - No sideways scrolling, no page errors.
   - The map is not behind any text.
   - The title shows in Baloo 2.
+
+## D-032: Title font Arima; background "rain falling on fields" replaces the Tamil Nadu map
+- **Timestamp:** 2026-11-13
+- **Status:** Implemented and tested; checked in a real browser on a phone-size and a laptop-size screen
+- **Owner decisions:**
+  - The map in the background is replaced by option F, rain falling on green fields. The owner chose it from six
+    previewed options (plain, rain streaks, clouds, fields, kolam dots, rain on fields).
+  - Only the title "Vaanam" changes font, to **Arima**. The owner chose it from nine previewed fonts. Other headings
+    stay Baloo 2 and body text stays the phone's own font.
+- **How (chosen by the assistant, owner's rule: decide and log):**
+  - **Arima Bold:** by NDISCOVER, SIL Open Font License 1.1, licence in `web/fonts/OFL-Arima.txt`.
+    - Cut to the four letters V, a, n, m: 1,268 bytes. Any other letter shows in Baloo 2.
+    - Arima also has Tamil letters, so a Tamil title can match later.
+    - Downloaded into an empty scratch folder and checked (`wOF2` signature, size) before copying.
+    - Baloo 2's licence file was renamed to `OFL-Baloo2.txt` so each font has its own licence file.
+  - **Scene:** a strip between the content and the footer, own drawings in two small SVG files.
+    - `scene-rain.svg`: a tile of slanted white raindrops, fading in from the top.
+    - `scene-fields.svg`: two green hills; the footer continues the front hill's green `#1e5137`.
+    - The strip fills the space left on short pages (at least 170 px), so it is never behind any text.
+    - The rain drifts down slowly (1.6 s loop) and is switched off when the phone asks for reduced motion.
+  - **Footer:** now green instead of navy, so the fields flow into it. Text `#e6f2ea` on `#1e5137` passes a
+    contrast check of at least 7 : 1 (a test enforces this).
+  - **Removed:** the map outline (`web/tn-outline.svg`), its builder (`scripts/make_outline.py`) and the "Map
+    outline: Natural Earth" credit, because nothing uses Natural Earth any more. Both files remain in git history (D-028).
+  - **Browser-tab icon:** a blue raindrop (`web/icon.svg`, own drawing). The map file was the icon before and had become
+    white, so it would have been invisible.
+  - **Page weight:** all files a phone downloads, including both fonts, total 52854 bytes.
+- **Tests:**
+  - **Written or changed first; 9 failed before the change:**
+    - the new files are served;
+    - both fonts are stored with the site and each has its licence file;
+    - headings use Baloo 2 and the title uses Arima, which holds only the letters of "Vaanam" and is under 5 KB;
+    - the scene sits between the content and the footer, the footer matches the front field, the rain has reduced-motion
+      support, and no map remains;
+    - the footer text contrast check (already passed with the navy footer; it now guards the green one);
+    - the raindrop icon.
+  - **Changed:** the footer credits test no longer requires "Natural Earth".
+- **Browser check:** Edge at 360 × 780 and 1366 × 768. No sideways scrolling, no page errors. The title shows in
+  Arima; rain falls onto the fields above the green footer.

@@ -1,8 +1,14 @@
 /* Vaanam: calm blues, sky blue and green; dark readable text (decision D-028; look refreshed in D-031). */
-/* Heading font: Baloo 2 Bold (Ek Type), SIL Open Font License 1.1 (fonts/OFL.txt), Latin letters only, stored with the site. */
+/* Heading font: Baloo 2 Bold (Ek Type), SIL Open Font License 1.1 (fonts/OFL-Baloo2.txt), Latin letters, stored with the site. */
 @font-face {
   font-family: "Baloo 2"; font-style: normal; font-weight: 700; font-display: swap;
   src: url("fonts/baloo2-700-latin.woff2") format("woff2");
+}
+/* Title font (D-032): Arima Bold (NDISCOVER), SIL Open Font License 1.1 (fonts/OFL-Arima.txt), only the letters of "Vaanam". */
+@font-face {
+  font-family: "Arima"; font-style: normal; font-weight: 700; font-display: swap;
+  src: url("fonts/arima-700-vaanam.woff2") format("woff2");
+  unicode-range: U+56, U+61, U+6D-6E;
 }
 :root {
   --ink: #10304a;          /* main text: dark navy */
@@ -38,13 +44,22 @@ body {
   min-height: 100vh;
   display: flex; flex-direction: column;   /* footer sits at the bottom even on short pages */
 }
-main { flex: 1 0 auto; width: 100%; }
+main { flex: 0 0 auto; width: 100%; }
 
-/* Tamil Nadu outline (D-030, D-031): white, behind the lower part of the screen; the header and footer bands and the
-   nearly opaque cards cover it, so it only shows in the empty space and never behind text */
-.watermark {
-  position: fixed; inset: 18vh 2vw 2vh; z-index: -1; pointer-events: none;
-  background: url("tn-outline.svg") no-repeat center bottom / contain;
+/* Background (D-032, owner's option F): rain falling on green fields, between the content and the footer.
+   It fills the space left on short pages (at least 170 px) and is never behind any text; the footer continues the
+   front field's green. The rain drifts down gently; switched off when the phone asks for reduced motion. */
+.scene { flex: 1 0 170px; position: relative; overflow: hidden; pointer-events: none; }
+.scene::before {
+  content: ""; position: absolute; left: 0; right: 0; top: 0; bottom: 34px;
+  background: url("scene-rain.svg") repeat 0 0 / 90px 90px;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 50%); mask-image: linear-gradient(to bottom, transparent, #000 50%);
+  animation: fall 1.6s linear infinite;
+}
+@keyframes fall { to { background-position: -22.5px 90px; } }
+.scene::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 90px;
+  background: url("scene-fields.svg") no-repeat center bottom / 100% 100%;
 }
 
 .top {
@@ -53,7 +68,7 @@ main { flex: 1 0 auto; width: 100%; }
   border-radius: 0 0 24px 24px; box-shadow: 0 6px 18px rgba(12, 51, 94, 0.25);
 }
 h1, h2, h3 { font-family: "Baloo 2", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; font-weight: 700; }
-.top h1 { margin: 0; font-size: 3rem; line-height: 1.1; letter-spacing: 0.01em; color: #ffffff; }
+.top h1 { margin: 0; font-family: "Arima", "Baloo 2", system-ui, sans-serif; font-size: 3rem; line-height: 1.15; letter-spacing: 0.01em; color: #ffffff; }
 .tagline { margin: 6px 0 0; font-size: 1.2rem; font-weight: 600; color: #ffffff; }
 .subtitle { margin: 2px 0 0; font-size: 0.95rem; color: #d6e8f7; }
 .colour-note { margin: 10px 0 0; font-size: 0.82rem; color: var(--muted); }
@@ -153,8 +168,8 @@ input[type=search]:focus { outline: none; box-shadow: 0 0 0 4px #9bd2f3; }
 .chart rect.cat-unavailable { stroke: var(--c-missing); stroke-dasharray: 3 3; stroke-width: 1.5; }
 
 .foot {
-  margin: 28px 0 0; padding: 20px 16px 22px; text-align: center; font-size: 0.82rem;
-  color: #d6e8f7; background: #0c335e; border-radius: 24px 24px 0 0;
+  margin: 0; padding: 14px 16px 22px; text-align: center; font-size: 0.82rem;
+  color: #e6f2ea; background: #1e5137;   /* same green as the front field above it (D-032) */
 }
 .foot p { max-width: 900px; margin: 4px auto; }
 .made-by { margin-top: 12px !important; font-size: 0.7rem; opacity: 0.8; }
@@ -171,6 +186,4 @@ input[type=search]:focus { outline: none; box-shadow: 0 0 0 4px #9bd2f3; }
   .fc-body { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 0 28px; align-items: start; }
   .fc-overview { position: sticky; top: 12px; }
   .top h1 { font-size: 3.6rem; }
-  /* the map moves to the empty space on the right of the search card */
-  .watermark { inset: 20vh 2vw 4vh calc(50% + 340px); background-position: center; }
 }
