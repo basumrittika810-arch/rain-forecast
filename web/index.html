@@ -13,10 +13,8 @@
 
 <header class="top">
   <h1><span class="drop" aria-hidden="true"></span>Vaanam</h1>
-  <p class="subtitle">Rain Forecast for Tamil Nadu</p>
-  <p class="colour-note">Colours show forecast rain amounts, not official warnings.
-     For official weather warnings, see IMD
-     (<a href="https://mausam.imd.gov.in/" target="_blank" rel="noopener">mausam.imd.gov.in</a>).</p>
+  <p class="tagline">Your village's rain, day by day</p>
+  <p class="subtitle">Rain forecast for Tamil Nadu</p>
 </header>
 
 <main>
@@ -25,7 +23,7 @@
     <form id="search-form" role="search" autocomplete="off">
       <label for="q" class="visually-hidden">Village or town name</label>
       <input id="q" name="q" type="search" inputmode="search" maxlength="100"
-             placeholder="Type your village or town" aria-describedby="search-hint">
+             placeholder="Village or town" aria-describedby="search-hint">
       <button type="submit" class="btn btn-main">Search</button>
     </form>
     <p id="search-hint" class="hint">English spelling, for example: Melur, Thanjavur, Ooty.</p>
@@ -46,10 +44,13 @@
         <h3>Rain for the next days</h3>
         <div id="chart" class="chart"></div>
         <ul id="legend" class="legend" aria-label="Colour key"></ul>
+        <p class="colour-note">Colours show forecast rain amounts, not official warnings.
+           For official weather warnings, see IMD
+           (<a href="https://mausam.imd.gov.in/" target="_blank" rel="noopener">mausam.imd.gov.in</a>).</p>
       </div>
       <div class="fc-days">
         <h3>Day by day</h3>
-        <p class="hint">Tap a day to see its rain in 3-hour blocks.</p>
+        <p class="hint">Tap a day to see when the rain is expected.</p>
         <ol id="days" class="days"></ol>
       </div>
     </div>
@@ -62,6 +63,7 @@
   <p>Rain categories: India Meteorological Department (IMD), SOP Weather Forecasting and Warning Services 2021.
      Map outline: Natural Earth (public domain).</p>
   <p>This site describes expected rain only. Amounts are model forecasts and can be wrong.</p>
+  <p class="made-by">Made by Mrittika</p>
 </footer>
 
 <script src="app.js"></script>

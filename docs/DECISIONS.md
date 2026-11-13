@@ -788,3 +788,69 @@ Decision maker: Mrittika Basu (project owner). Claude (AI assistant) proposes, e
   - **Full suite: 307 passed.**
 - **Browser check:** Edge at 360 × 780 and 1366 × 768, search "melur" and open its forecast. No sideways scrolling
   (page width equals screen width). No page errors.
+
+## D-031: New look: header band, tagline, heading font, bigger search box, footer band, darker background
+- **Timestamp:** 2026-11-13
+- **Status:** Implemented and tested; checked in a real browser on a phone-size and a laptop-size screen
+- **Owner decisions:**
+  - Tagline under the title: **"Your village's rain, day by day"**, with "Rain forecast for Tamil Nadu" in small text
+    below it.
+    - Not "hour by hour": the data has 3-hour blocks (days 1–6) and 6-hour blocks (days 7–11), and no hourly values.
+  - Day-list hint changed from "Tap a day to see its rain in 3-hour blocks." to "Tap a day to see when the rain is
+    expected." The old text was wrong for days 7–11, which have 6-hour blocks.
+  - Header band: gradient from deep blue to sky blue behind the title, with white text. "Vaanam" is larger and in a
+    friendly heading font.
+  - The IMD note moves from under the title to just below the colour key, in smaller text, so the search box is the
+    first thing people use. Wording unchanged (D-030).
+  - The map must not run behind the title or any text.
+  - Softer cards (rounded corners, gentle shadow); a bigger, highlighted search box with a search icon inside.
+  - Simple footer band with the credits and a very small "Made by Mrittika".
+  - Darker blue page background, so the white cards with the amounts and charts stand out.
+- **How (chosen by the assistant, owner's rule: decide and log):**
+  - **Heading font: Baloo 2 Bold** (Ek Type), SIL Open Font License 1.1:
+    - Latin letters only, 19,436 bytes (SHA-256 `8e7ffc9b…`); licence text in `web/fonts/OFL.txt`;
+    - stored with the site (`web/fonts/`), not loaded from Google, so the page still loads nothing from other sites;
+    - `font-display: swap`: text appears at once in the phone's own font and switches when the heading font arrives.
+    - **Why Baloo 2:** rounded and friendly but plain; it has a Tamil sister font (Baloo Thambi 2) for later. The other
+      candidate, Nunito Extra Bold (16.5 KB), was less distinctive.
+    - Body text stays in the phone's own font, for readability and size.
+    - The font file was downloaded into an empty scratch folder and checked (`wOF2` signature, size) before copying.
+  - **Title:** 3 rem on phones (was 2.1), 3.6 rem on wide screens. Header gradient `#0c335e → #1a5ea6 → #3f93d3`.
+    - The band's background is opaque, with rounded bottom corners and a soft shadow; the raindrop is light blue.
+  - **Search:**
+    - box 58 px tall, with a 2 px blue border and a soft glow;
+    - magnifier icon drawn inside the box (an inline SVG in the stylesheet, no extra file);
+    - placeholder "Village or town", shortened so it is not cut off on a 360 px phone.
+  - **Cards:** 20 px corners, two-layer soft shadow, white at 97 % (was 86 %), so readings sit on almost solid white.
+  - **Background:** blue gradient `#8fbde3 → #79aedb` (was a very pale sky blue). Not "fixed", because a fixed background
+    produced a visible band before (D-028).
+  - **Footer:** deep navy band with light text and rounded top corners, pushed to the bottom of the screen on short
+    pages. "Made by Mrittika" is 0.7 rem at 80 % opacity.
+  - **Map:**
+    - outline now white (fill 18 %, line 60 %), to suit the darker background;
+    - phones: it sits in the lower part of the screen; computers: in the empty space right of the search card;
+    - the header and footer bands are opaque and the cards nearly opaque, so the map shows only in empty space;
+    - the light text halo from D-030 was removed because it is no longer needed;
+    - outline rebuilt with `scripts/make_outline.py` (style only; same 147 points).
+- **Tests:**
+  - **New (written first; all 10 failed before the change):**
+    - tagline;
+    - hint without "3-hour";
+    - header band gradient with white text and an opaque background;
+    - font stored locally, under 30 KB, licensed, and used for headings;
+    - title larger;
+    - search box at least 56 px, with an icon and room for it;
+    - softer, nearly opaque cards;
+    - darker background;
+    - footer band with credits and a small maker line.
+  - **Changed:**
+    - IMD note: now must sit after the colour key, in small text (the owner moved it).
+    - Page weight: the old 60 KB rule for page files is kept, plus a new 90 KB limit including the font (about 51 KB
+      now).
+    - Outside-files check: now also forbids `url(http…)` in the stylesheet.
+  - **One check fixed:** my new header test first flagged the band's shadow colour as "see-through". It now checks only
+    the background.
+- **Browser check:** Edge at 360 × 780 and 1366 × 768, start screen and Melur forecast.
+  - No sideways scrolling, no page errors.
+  - The map is not behind any text.
+  - The title shows in Baloo 2.

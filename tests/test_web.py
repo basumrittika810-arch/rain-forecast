@@ -144,12 +144,96 @@ def test_category_word_readable_on_its_colour():
 
 
 def test_colour_note_points_to_imd_warnings():
-    """Owner (D-030): under the app name, say colours are amounts, not warnings, and point to IMD."""
+    """Owner (D-030): say colours are amounts, not warnings, and point to IMD.
+    Moved by the owner (D-031): next to the colour key, in small text, so the search box is the first thing seen."""
     html = text("index.html")
     assert ("Colours show forecast rain amounts, not official warnings. "
             "For official weather warnings, see IMD") in re.sub(r"\s+", " ", re.sub(r"<[^>]+>", "", html))
     assert 'href="https://mausam.imd.gov.in/"' in html
-    assert html.index("colour-note") < html.index("<main>")
+    assert html.index('id="legend"') < html.index("colour-note") < html.index('class="fc-days"')
+    size = re.search(r"\.colour-note\s*\{[^}]*font-size:\s*([\d.]+)rem", text("style.css")).group(1)
+    assert float(size) <= 0.9
+
+
+# ---------------------------------------------------------------- D-031: header, font, search, footer, background
+
+def _rule(selector):
+    m = re.search(rf"(?m)^{re.escape(selector)}\s*\{{([^}}]*)\}}", text("style.css"))
+    assert m, selector
+    return m.group(1)
+
+
+def test_tagline_under_title():
+    html = text("index.html")
+    header = html[html.index('<header class="top">'):html.index("</header>")]
+    assert "Your village's rain, day by day" in header
+    assert "Rain forecast for Tamil Nadu" in header
+
+
+def test_day_hint_does_not_promise_3_hour_blocks():
+    """Days 7-11 have 6-hour blocks, so the general hint must not say '3-hour'."""
+    html = text("index.html")
+    assert "Tap a day to see when the rain is expected." in html
+    assert "3-hour" not in html
+
+
+def test_header_band_gradient_with_white_text():
+    top = _rule(".top")
+    assert "linear-gradient" in top and re.search(r"color:\s*#fff(fff)?\b", top)
+    # the map can never sit behind the title: the band's background is opaque (no rgba/transparent colours in it)
+    background = re.search(r"background:\s*([^;]*);", top).group(1)
+    assert "rgba" not in background and "transparent" not in background
+
+
+def test_heading_font_stored_with_site_and_licensed():
+    css = text("style.css")
+    face = re.search(r"@font-face\s*\{([^}]*)\}", css).group(1)
+    url = re.search(r"url\(\"?([^\")]+)\"?\)", face).group(1)
+    assert not url.startswith(("http:", "https:", "//")), url           # stored with the site, nothing from outside
+    font = WEB / url
+    assert font.read_bytes()[:4] == b"wOF2" and font.stat().st_size < 30_000
+    assert "SIL Open Font License" in (font.parent / "OFL.txt").read_text(encoding="utf-8")
+    fam = re.search(r"font-family:\s*\"([^\"]+)\"", face).group(1)
+    assert fam in _rule("h1, h2, h3")
+    assert "swap" in face                                                # text shows at once in the phone's own font
+
+
+def test_title_larger():
+    size = re.search(r"font-size:\s*([\d.]+)rem", _rule(".top h1")).group(1)
+    assert float(size) >= 2.8
+
+
+def test_search_box_bigger_with_icon():
+    rule = _rule("input[type=search]")
+    assert "data:image/svg+xml" in rule                                  # icon drawn inside the box, no extra file
+    assert int(re.search(r"min-height:\s*(\d+)px", rule).group(1)) >= 56
+    assert int(re.search(r"padding-left:\s*(\d+)px", rule).group(1)) >= 40   # text starts after the icon
+
+
+def test_softer_cards():
+    card = _rule(".card")
+    assert int(re.search(r"border-radius:\s*(\d+)px", card).group(1)) >= 16
+    assert "box-shadow" in card
+    alpha = float(re.search(r"--card:\s*rgba\(255,\s*255,\s*255,\s*([\d.]+)\)", text("style.css")).group(1))
+    assert alpha >= 0.95                                                 # readings stay clear over the map
+
+
+def test_darker_page_background():
+    body = _rule("body")
+    cols = re.findall(r"#[0-9a-fA-F]{6}", body.split("background:")[1].split(";")[0])
+    assert cols and all(_luminance(c) <= 0.55 for c in cols), cols      # old top colour #d9effb was 0.83
+    assert all(_contrast(c, "#ffffff") >= 1.5 for c in cols)             # white cards clearly stand out
+
+
+def test_footer_band_with_credits_and_small_maker_line():
+    html, foot = text("index.html"), _rule(".foot")
+    footer = html[html.index("<footer"):html.index("</footer>")]
+    for credit in ("ECMWF", "GeoNames", "India Meteorological Department", "Natural Earth"):
+        assert credit in footer
+    assert "Made by Mrittika" in footer
+    assert "background" in foot                                          # its own band: the map is never behind it
+    size = re.search(r"font-size:\s*([\d.]+)rem", _rule(".made-by")).group(1)
+    assert float(size) <= 0.75
 
 
 def test_blue_is_darker():
@@ -198,12 +282,16 @@ def test_no_frameworks_or_outside_files():
     # plain links the reader may tap are allowed only to the IMD site (D-030); they load nothing by themselves
     assert set(re.findall(r"""<a[^>]*href\s*=\s*["'](https?://[^"']+)""", html)) <= {"https://mausam.imd.gov.in/"}
     assert "@import" not in text("style.css")
+    assert not re.search(r"url\(\s*[\"']?(https?:)?//", text("style.css"))   # fonts and images from this site only
     assert not re.search(r"\bimport\s.*\bfrom\b", text("app.js"))
 
 
 def test_light_page_weight():
     total = sum((WEB / f).stat().st_size for f in FILES)
     assert total < 60_000, total
+    # D-031: with the heading font, the whole page a phone downloads stays under 90 KB
+    fonts = sum(p.stat().st_size for p in (WEB / "fonts").glob("*.woff2"))
+    assert total + fonts < 90_000, total + fonts
 
 
 def test_phone_ready():
