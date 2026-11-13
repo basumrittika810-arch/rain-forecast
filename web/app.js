@@ -333,7 +333,7 @@ function drawBlocks(box, d, intervals) {
     } else {
       const h = iv.mm === 0 ? 3 : Math.max(4, (iv.mm / max) * (base - top));
       s.append(svg("rect", { class: "bar", x: cx - bw / 2, y: base - h, width: bw, height: h, rx: 3,
-        style: `fill:var(${iv.mm === 0 ? "--c-no-rain" : "--c-moderate"});animation-delay:${k * 50}ms` }));
+        style: `fill:var(${iv.mm === 0 ? "--c-no-rain" : "--blue"});animation-delay:${k * 50}ms` }));
       s.append(svg("text", { x: cx, y: base - h - 6, "text-anchor": "middle", "font-size": 13, "font-weight": 700 },
         iv.shown.replace(" mm", "")));
     }

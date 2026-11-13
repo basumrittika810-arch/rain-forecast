@@ -719,3 +719,37 @@ Decision maker: Mrittika Basu (project owner). Claude (AI assistant) proposes, e
     3-hour bar colours (an SVG attribute ignored CSS variables).
 - **Limits:** the JavaScript has no automated unit tests (no Node.js here). The slow-server wake-up state has not been seen
   live yet. Not yet tested on a real phone (owner to test).
+
+## D-029: Rain colours changed to yellow → orange → red
+- **Timestamp:** 2026-11-13
+- **Status:** Implemented and tested; checked in a real browser at phone width
+- **Owner decision:** rain colours go from light to orange to red as rain increases, with the most rain in red. This
+  replaces the blue shades of D-028. Green for no rain and grey hatching for missing days stay the same; every colour
+  still has its word next to it.
+- **Colours (chosen by the assistant, owner's rule: decide and log):**
+
+  | Category | Colour | Text on it | Text contrast |
+  |---|---|---|---|
+  | No rain | `#3fa36b` green | dark `#06213a` | 5.2 : 1 |
+  | Very light | `#fde9a9` pale yellow | dark `#10304a` | 11.3 : 1 |
+  | Light | `#fbd05c` yellow | dark `#10304a` | 9.3 : 1 |
+  | Moderate | `#f5a33a` amber | dark `#06213a` | 7.9 : 1 |
+  | Heavy | `#e8641c` orange | dark `#06213a` | 4.9 : 1 |
+  | Very heavy | `#c62a1a` red | white | 5.6 : 1 |
+  | Extremely heavy | `#7f0d10` deep red | white | 10.7 : 1 |
+
+  - Hue moves from yellow (46°) to red (358°), and each step is darker than the one before.
+  - **Fixed along the way:** the "No rain" chip had white text at only 3.2 : 1, below the WCAG AA level of 4.5 : 1. It
+    now uses dark text.
+  - **3-hour blocks** now use the site blue for any rain. They used the "moderate" colour, which would now look like an
+    orange "Moderate" label. IMD categories are 24-hour terms (D-028), so blocks must not look like a category.
+- **Note:** IMD's own warning colours (green / yellow / orange / red) measure expected impact, not rain amount. Our
+  colours show the amount category only, and the word is always printed.
+- **Tests (written first; all 3 failed on the old colours):** colours go yellow → red and get darker, and the last one
+  is clearly red; every category word reaches 4.5 : 1 contrast on its colour; 3-hour blocks use no category colour.
+  **Full suite: 303 passed.**
+- **Browser check** (Edge, 360 px):
+  - real forecast for Melur;
+  - a display-only demo where the browser altered the forecast so all seven categories appear once (nothing stored or
+    published was changed);
+  - no page errors.

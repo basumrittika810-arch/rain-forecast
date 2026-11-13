@@ -10,14 +10,14 @@
   --line: #c9e2f2;
   --warn-bg: #fff4d6;
   --warn-ink: #5a4000;
-  /* IMD categories: pale sky blue -> deep blue; green for no rain; grey hatch for missing */
+  /* IMD categories (D-029): pale yellow -> orange -> deep red as rain increases; green for no rain; grey hatch for missing */
   --c-no-rain: #3fa36b;
-  --c-very-light: #cdeafb;
-  --c-light: #9bd2f3;
-  --c-moderate: #57a8e6;
-  --c-heavy: #2a78cc;
-  --c-very-heavy: #1a52a0;
-  --c-extremely-heavy: #0c2c66;
+  --c-very-light: #fde9a9;
+  --c-light: #fbd05c;
+  --c-moderate: #f5a33a;
+  --c-heavy: #e8641c;
+  --c-very-heavy: #c62a1a;
+  --c-extremely-heavy: #7f0d10;
   --c-missing: #aab4bd;
 }
 
@@ -123,13 +123,13 @@ input[type=search]:focus { outline: 3px solid #9bd2f3; border-color: var(--blue)
 .today-tag { color: var(--blue-dark); }
 
 /* colour + word for every category (the word is always printed next to the colour) */
-.cat-no_rain { background: var(--c-no-rain); color: #fff; fill: var(--c-no-rain); }
-.cat-very_light { background: var(--c-very-light); color: var(--ink); fill: var(--c-very-light); }
-.cat-light { background: var(--c-light); color: var(--ink); fill: var(--c-light); }
+.cat-no_rain { background: var(--c-no-rain); color: #06213a; fill: var(--c-no-rain); }
+.cat-very_light { background: var(--c-very-light); color: #10304a; fill: var(--c-very-light); }
+.cat-light { background: var(--c-light); color: #10304a; fill: var(--c-light); }
 .cat-moderate { background: var(--c-moderate); color: #06213a; fill: var(--c-moderate); }
-.cat-heavy { background: var(--c-heavy); color: #fff; fill: var(--c-heavy); }
-.cat-very_heavy { background: var(--c-very-heavy); color: #fff; fill: var(--c-very-heavy); }
-.cat-extremely_heavy { background: var(--c-extremely-heavy); color: #fff; fill: var(--c-extremely-heavy); }
+.cat-heavy { background: var(--c-heavy); color: #06213a; fill: var(--c-heavy); }
+.cat-very_heavy { background: var(--c-very-heavy); color: #ffffff; fill: var(--c-very-heavy); }
+.cat-extremely_heavy { background: var(--c-extremely-heavy); color: #ffffff; fill: var(--c-extremely-heavy); }
 .cat-unavailable { background: repeating-linear-gradient(45deg, #e3e8ec 0 6px, #cfd6dc 6px 12px); color: var(--ink); fill: none; }
 .chart rect.cat-unavailable { stroke: var(--c-missing); stroke-dasharray: 3 3; stroke-width: 1.5; }
 

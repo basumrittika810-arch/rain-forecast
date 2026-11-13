@@ -96,6 +96,60 @@ def test_every_category_has_colour_and_word():
         assert key in js, key
 
 
+RAIN_ORDER = ("very_light", "light", "moderate", "heavy", "very_heavy", "extremely_heavy")
+
+
+def _css_var(name):
+    m = re.search(rf"--{name}:\s*(#[0-9a-fA-F]{{6}})\s*;", text("style.css"))
+    assert m, name
+    return m.group(1)
+
+
+def _rgb(h):
+    return [int(h[i:i + 2], 16) / 255 for i in (1, 3, 5)]
+
+
+def _luminance(h):   # WCAG 2 relative luminance
+    return sum(w * (c / 12.92 if c <= 0.03928 else ((c + 0.055) / 1.055) ** 2.4)
+               for w, c in zip((0.2126, 0.7152, 0.0722), _rgb(h)))
+
+
+def _contrast(a, b):
+    hi, lo = sorted((_luminance(a), _luminance(b)), reverse=True)
+    return (hi + 0.05) / (lo + 0.05)
+
+
+def test_rain_colours_go_from_yellow_to_red_and_darken():
+    """Owner (D-029): warm colours, orange to red as rain increases; most rain is red."""
+    import colorsys
+    cols = [_css_var(f"c-{k.replace('_', '-')}") for k in RAIN_ORDER]
+    hues = [colorsys.rgb_to_hls(*_rgb(c))[0] * 360 for c in cols]
+    hues = [h - 360 if h > 300 else h for h in hues]          # deep red just below 0 deg
+    lums = [_luminance(c) for c in cols]
+    assert all(a > b for a, b in zip(hues, hues[1:])), hues   # yellow -> orange -> red
+    assert all(a > b for a, b in zip(lums, lums[1:])), lums   # lighter -> darker
+    assert 35 <= hues[0] <= 60 and -10 <= hues[-1] <= 10, hues
+    r, g, b = _rgb(cols[-1])
+    assert r > 2 * g and r > 2 * b                             # the most rain is clearly red
+
+
+def test_category_word_readable_on_its_colour():
+    """The word printed on each colour chip reaches WCAG AA contrast (4.5:1)."""
+    css = text("style.css")
+    for key in ("no_rain", *RAIN_ORDER):
+        rule = re.search(rf"\.cat-{key}\s*\{{([^}}]*)\}}", css).group(1)
+        bg = _css_var(re.search(r"background:\s*var\(--([\w-]+)\)", rule).group(1))
+        fg = re.search(r"[^-]color:\s*(#[0-9a-fA-F]{6})", rule).group(1)
+        assert _contrast(bg, fg) >= 4.5, (key, bg, fg, round(_contrast(bg, fg), 2))
+
+
+def test_three_hour_blocks_do_not_use_a_category_colour():
+    """IMD categories are 24-hour terms (D-028): 3-hour blocks use one neutral colour, not a category's."""
+    js = text("app.js")
+    block = js[js.index("function drawBlocks"):]
+    assert not re.search(r"--c-(very-light|light|moderate|heavy|very-heavy|extremely-heavy)\b", block)
+
+
 # ---------------------------------------------------------------- rules
 
 def test_no_farming_advice_words():
