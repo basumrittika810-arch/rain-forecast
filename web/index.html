@@ -14,6 +14,9 @@
 <header class="top">
   <h1><span class="drop" aria-hidden="true"></span>Vaanam</h1>
   <p class="subtitle">Rain Forecast for Tamil Nadu</p>
+  <p class="colour-note">Colours show forecast rain amounts, not official warnings.
+     For official weather warnings, see IMD
+     (<a href="https://mausam.imd.gov.in/" target="_blank" rel="noopener">mausam.imd.gov.in</a>).</p>
 </header>
 
 <main>
@@ -35,16 +38,21 @@
     <h2 id="place"></h2>
     <p id="made" class="made"></p>
     <p id="stale" class="warning" hidden></p>
-    <p id="day-note" class="note"></p>
-    <p id="area-note" class="note"></p>
+    <div class="fc-body">
+      <div class="fc-overview">
+        <p id="day-note" class="note"></p>
+        <p id="area-note" class="note"></p>
 
-    <h3>Rain for the next days</h3>
-    <div id="chart" class="chart"></div>
-    <ul id="legend" class="legend" aria-label="Colour key"></ul>
-
-    <h3>Day by day</h3>
-    <p class="hint">Tap a day to see its rain in 3-hour blocks.</p>
-    <ol id="days" class="days"></ol>
+        <h3>Rain for the next days</h3>
+        <div id="chart" class="chart"></div>
+        <ul id="legend" class="legend" aria-label="Colour key"></ul>
+      </div>
+      <div class="fc-days">
+        <h3>Day by day</h3>
+        <p class="hint">Tap a day to see its rain in 3-hour blocks.</p>
+        <ol id="days" class="days"></ol>
+      </div>
+    </div>
   </section>
   <div id="forecast-status" class="status card-status" role="status" aria-live="polite"></div>
 </main>

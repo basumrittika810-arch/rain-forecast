@@ -143,6 +143,39 @@ def test_category_word_readable_on_its_colour():
         assert _contrast(bg, fg) >= 4.5, (key, bg, fg, round(_contrast(bg, fg), 2))
 
 
+def test_colour_note_points_to_imd_warnings():
+    """Owner (D-030): under the app name, say colours are amounts, not warnings, and point to IMD."""
+    html = text("index.html")
+    assert ("Colours show forecast rain amounts, not official warnings. "
+            "For official weather warnings, see IMD") in re.sub(r"\s+", " ", re.sub(r"<[^>]+>", "", html))
+    assert 'href="https://mausam.imd.gov.in/"' in html
+    assert html.index("colour-note") < html.index("<main>")
+
+
+def test_blue_is_darker():
+    """Owner (D-030): darker blue. White button text on it reaches at least 6:1 (was 5.1:1 with #1f6fc0)."""
+    assert _contrast(_css_var("blue"), "#ffffff") >= 6.0
+    assert _contrast(_css_var("blue-dark"), "#ffffff") >= 9.0
+
+
+def test_wide_screens_use_two_columns():
+    """Owner (D-030): on a computer the forecast spreads out; phones keep one column."""
+    css, html = text("style.css"), text("index.html")
+    m = re.search(r"@media \(min-width:\s*(\d+)px\)\s*\{(.*?)\n\}", css, re.S)
+    assert m and int(m.group(1)) >= 768, "a wide-screen rule is needed"
+    assert "grid-template-columns" in m.group(2) and ".fc-body" in m.group(2)
+    assert 'class="fc-body"' in html and 'class="fc-overview"' in html and 'class="fc-days"' in html
+
+
+def test_map_outline_more_visible():
+    """Owner (D-030): the Tamil Nadu outline is spread out and easier to see, still behind the text."""
+    svg, css = text("tn-outline.svg"), text("style.css")
+    assert float(re.search(r'fill-opacity="([\d.]+)"', svg).group(1)) >= 0.15
+    assert float(re.search(r'stroke-opacity="([\d.]+)"', svg).group(1)) >= 0.5
+    rule = re.search(r"\.watermark\s*\{([^}]*)\}", css).group(1)
+    assert "contain" in rule and "z-index: -1" in rule
+
+
 def test_three_hour_blocks_do_not_use_a_category_colour():
     """IMD categories are 24-hour terms (D-028): 3-hour blocks use one neutral colour, not a category's."""
     js = text("app.js")
@@ -160,7 +193,10 @@ def test_no_farming_advice_words():
 
 def test_no_frameworks_or_outside_files():
     html = text("index.html")
-    assert not re.search(r"""(src|href)\s*=\s*["']https?://""", html)       # nothing loaded from other sites
+    assert not re.search(r"""src\s*=\s*["']https?://""", html)              # nothing loaded from other sites
+    assert not re.search(r"""<link[^>]*href\s*=\s*["']https?://""", html)
+    # plain links the reader may tap are allowed only to the IMD site (D-030); they load nothing by themselves
+    assert set(re.findall(r"""<a[^>]*href\s*=\s*["'](https?://[^"']+)""", html)) <= {"https://mausam.imd.gov.in/"}
     assert "@import" not in text("style.css")
     assert not re.search(r"\bimport\s.*\bfrom\b", text("app.js"))
 

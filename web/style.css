@@ -3,10 +3,10 @@
   --ink: #10304a;          /* main text: dark navy */
   --muted: #34536a;
   --sky: #e6f4fc;
-  --blue: #1f6fc0;
-  --blue-dark: #174f8c;
+  --blue: #1a5ea6;         /* darker blue (D-030); was #1f6fc0 */
+  --blue-dark: #0f3f73;    /* was #174f8c */
   --green: #2e8b57;
-  --card: rgba(255, 255, 255, 0.93);
+  --card: rgba(255, 255, 255, 0.86);
   --line: #c9e2f2;
   --warn-bg: #fff4d6;
   --warn-ink: #5a4000;
@@ -33,16 +33,17 @@ body {
   min-height: 100vh;
 }
 
-/* faint Tamil Nadu outline behind everything; cards stay almost opaque so text stays clear */
+/* Tamil Nadu outline behind everything, filling the screen height (D-030); cards stay mostly opaque so text stays clear */
 .watermark {
-  position: fixed; inset: 0; z-index: -1; pointer-events: none;
-  background: url("tn-outline.svg") no-repeat center 60% / min(78vw, 460px) auto;
-  opacity: 0.9;
+  position: fixed; inset: 3vh 3vw; z-index: -1; pointer-events: none;
+  background: url("tn-outline.svg") no-repeat center / contain;
 }
 
 .top { text-align: center; padding: 22px 16px 6px; }
 .top h1 { margin: 0; font-size: 2.1rem; letter-spacing: 0.02em; color: var(--blue-dark); }
 .subtitle { margin: 2px 0 0; font-size: 1.05rem; color: var(--muted); font-weight: 600; }
+.colour-note { max-width: 560px; margin: 8px auto 0; font-size: 0.88rem; color: var(--muted); }
+.colour-note a { color: var(--blue-dark); font-weight: 600; }
 .drop {
   display: inline-block; width: 0.55em; height: 0.55em; margin-right: 0.3em; vertical-align: 0.05em;
   background: var(--blue); border-radius: 0 50% 50% 50%; transform: rotate(45deg);
@@ -140,3 +141,15 @@ input[type=search]:focus { outline: 3px solid #9bd2f3; border-color: var(--blue)
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
+
+/* computers and tablets (D-030): wider page, forecast in two columns (overview + chart | day list); phones keep one column */
+@media (min-width: 900px) {
+  main { max-width: 1120px; padding: 8px 24px 24px; }
+  #find { max-width: 640px; margin-left: auto; margin-right: auto; }
+  .fc-body { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 0 28px; align-items: start; }
+  .fc-overview { position: sticky; top: 12px; }
+  .foot { max-width: 1120px; }
+}
+
+/* text that sits directly on the map (header, footer) gets a soft light halo so the outline never blurs it (D-030) */
+.top, .foot { text-shadow: 0 0 3px #eef8fc, 0 0 6px #eef8fc, 0 0 10px #eef8fc; }

@@ -28,8 +28,8 @@ def main(src: str) -> None:
     w, h = max(xs) * scale, max(ys) * scale
     svg = (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="-2 -2 {w + 4:.1f} {h + 4:.1f}">'
            f'<!-- Tamil Nadu outline: Natural Earth 1:50m admin-1 (public domain). Decoration only. -->'
-           f'<polygon points="{pts}" fill="#2e8b57" fill-opacity="0.10" stroke="#1f6fc0" stroke-opacity="0.35" '
-           f'stroke-width="0.6" stroke-linejoin="round"/></svg>\n')
+           f'<polygon points="{pts}" fill="#2e8b57" fill-opacity="0.16" stroke="#0f3f73" stroke-opacity="0.5" '
+           f'stroke-width="0.35" stroke-linejoin="round"/></svg>\n')
     OUT.parent.mkdir(exist_ok=True)
     OUT.write_text(svg, encoding="utf-8")
     print(f"wrote {OUT} ({len(svg)} bytes, {len(ring)} points)")

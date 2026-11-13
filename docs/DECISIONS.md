@@ -753,3 +753,38 @@ Decision maker: Mrittika Basu (project owner). Claude (AI assistant) proposes, e
   - a display-only demo where the browser altered the forecast so all seven categories appear once (nothing stored or
     published was changed);
   - no page errors.
+
+## D-030: IMD warnings note, wider layout on computers, clearer map, darker blue
+- **Timestamp:** 2026-11-13
+- **Status:** Implemented and tested; checked in a real browser on a phone-size and a laptop-size screen
+- **Owner decisions:**
+  - Under the app name: "Colours show forecast rain amounts, not official warnings. For official weather warnings, see
+    IMD (mausam.imd.gov.in)." The address is a link that opens IMD's site in a new tab. Checked on 13 Nov: IMD's site
+    answered "200 OK".
+  - On wide screens, the forecast spreads out instead of one item below another. Phones keep one column, because that
+    is what fits a phone screen.
+  - The Tamil Nadu map in the background is bigger and easier to see.
+  - The blue is darker.
+- **How (chosen by the assistant, owner's rule: decide and log):**
+  - **Two columns from 900 px wide:** left has the notes, the 10-day chart and the colour key, and stays in view while
+    scrolling; right has the day-by-day list. The page is up to 1120 px wide; the search card stays 640 px.
+  - **Map:**
+    - fills the screen height (`contain`, with 3 % margins);
+    - fill opacity 0.10 → 0.16; outline is the new dark blue at 0.5 opacity (was 0.35); line is thinner (0.6 → 0.35)
+      because the map is now drawn larger;
+    - cards are slightly see-through (white at 86 %, was 93 %);
+    - header and footer text get a soft light halo, so the outline crossing them does not blur the words.
+  - **Blue:** main `#1f6fc0` → `#1a5ea6` (white text 5.1 → 6.6 : 1); dark `#174f8c` → `#0f3f73` (8.3 → 10.6 : 1).
+  - The outline was rebuilt with `scripts/make_outline.py` from the same Natural Earth file. Only the style attributes
+    changed; the 147 points are identical (checked in the diff).
+- **Test changed:** `test_no_frameworks_or_outside_files` used to forbid any `href="https://…"`. It now forbids loading
+  anything from other sites (`src=` and `<link href=…>`). It allows `<a>` links only to `https://mausam.imd.gov.in/`. A
+  link the reader taps loads nothing by itself, so the rule's purpose (no outside files) is kept.
+- **New tests (written first; all 4 failed before the change):**
+  - the note text is in the header, with the IMD link;
+  - white on the blue reaches 6 : 1 (dark blue 9 : 1);
+  - a wide-screen rule with two grid columns, plus the new page sections;
+  - the map is stronger and fills the screen behind everything.
+  - **Full suite: 307 passed.**
+- **Browser check:** Edge at 360 × 780 and 1366 × 768, search "melur" and open its forecast. No sideways scrolling
+  (page width equals screen width). No page errors.
