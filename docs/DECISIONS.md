@@ -953,3 +953,43 @@ Decision maker: Mrittika Basu (project owner). Claude (AI assistant) proposes, e
   - the real breaking point (the test stopped at 35 users as planned);
   - how long the first visit takes after the free server has been asleep (Render documents 30–60 s);
   - how the site behaves on Indian mobile networks.
+
+## D-035: Outside timer (cron-job.org) starts the pipeline every hour
+- **Timestamp:** 2026-11-13 19:36 UTC (14 Nov 01:06 IST)
+- **Status:** Live and tested; the full proof (a new forecast published by a timed run) is due 14 Nov ~08:05 UTC
+- **Why (verified):** after D-033, GitHub's own timer still started nothing. The 16:17 and 18:17 UTC runs were also
+  missing, so the count of timed runs stayed 0. The deadline is 14 Nov.
+- **Owner decision:** use option C now. The owner had kept it for extreme cases (D-033) and judged that missing
+  updates on deadline day is one: "we cannot risk it".
+- **Set-up (done by the owner; the assistant gave the steps and never saw the key):**
+  - **GitHub key:** a fine-grained personal access token named "cron-job.org rain-forecast".
+    - Repository access: **rain-forecast only**. Permission: **Actions: read and write** (plus the automatic
+      Metadata: read).
+    - Expires 31 Jan 2027, with a reminder about a week before.
+    - If it leaks, the holder can start, re-run or cancel pipeline runs. It cannot change code, settings or the
+      published forecast. It can be deleted at any time.
+  - **cron-job.org job** "Vaanam pipeline":
+    - `POST https://api.github.com/repos/basumrittika810-arch/rain-forecast/actions/workflows/pipeline.yml/dispatches`;
+    - body `{"ref":"main"}`;
+    - headers `Accept`, `Authorization: Bearer <key>`, `X-GitHub-Api-Version: 2022-11-28`, `Content-Type`;
+    - responses saved; failure emails on.
+  - **Schedule:** `5 * * * *`, every hour at 5 past, chosen by the assistant.
+    - The planned `5 8-20 * * *` showed its next run as "8:05 AM" at about 19:10 UTC. In UTC the next run should have
+      been 20:05 the same evening.
+    - So it was unclear whether the site counted hours in UTC or in Indian time.
+    - Running every hour works in any time zone, and the new forecast is published within an hour of being ready.
+    - Cost: about 24 runs a day. All but one stop in about 1–1.5 minutes with "unchanged". Free for public repositories.
+    - Afterwards the list showed the next run as "Today at 1:35:00 AM" (= 20:05 UTC). So the job runs on UTC and the
+      list shows Indian time.
+  - **Kept:** GitHub's own schedule (D-033), as a backup. Two runs at once cannot clash: the workflow's concurrency
+    group queues the second, which then finds nothing new.
+- **Test (verified), 2026-11-13:**
+  - cron-job.org "Test run" returned **204 No Content**.
+  - GitHub run **43493750172**, event `workflow_dispatch`, triggered by `basumrittika810-arch`.
+    - Created 19:36:05 UTC; conclusion **success**.
+    - Log: "newest complete run on ECMWF: 20261113T00Z … not newer than the published run … outcome: unchanged".
+    - Deploy skipped, as designed.
+- **Remaining risks:**
+  - The job depends on cron-job.org being up and on the key not expiring.
+  - Failure emails cover both, and GitHub's own timer and a manual run remain as fallbacks.
+- **No code changed.** The README's update section now describes this.

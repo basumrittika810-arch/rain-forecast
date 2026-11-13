@@ -89,7 +89,7 @@ Details: [docs/DAILY_RAINFALL_ANALYSIS.md](docs/DAILY_RAINFALL_ANALYSIS.md),
 
 ## Key decisions
 
-All 34 decisions, with alternatives and evidence: [docs/DECISIONS.md](docs/DECISIONS.md).
+All 35 decisions, with alternatives and evidence: [docs/DECISIONS.md](docs/DECISIONS.md).
 
 - **Rain only, no advice** (D-026).
 - **23:30 IST day, 10 full days plus today** (D-006). Going to 258 hours, slightly beyond the usual 240, gains a
@@ -121,17 +121,16 @@ All 34 decisions, with alternatives and evidence: [docs/DECISIONS.md](docs/DECIS
 
 ## Keeping it up to date: a timer runs the pipeline
 
-- GitHub Actions runs it every 2 hours, 08:17–20:17 UTC ([.github/workflows/pipeline.yml](.github/workflows/pipeline.yml)).
-- ECMWF's forecast is ready around 07:30–08:00 UTC, so the first run publishes it. Later runs find nothing new and
-  stop.
-- **Honestly: GitHub's timer did not fire at first.**
-  - On 13 Nov the original times (08:30, 11:30, 14:30 UTC) never started a run, although the settings were correct.
-  - What was tried (D-033):
-    - a manual run, so the day's forecast went live;
-    - new times away from GitHub's busiest minutes;
-    - switching the workflow off and on.
-  - An outside timer is reserved for extreme cases, because it needs a GitHub key stored elsewhere.
-  - **Result of the 14 Nov test** (the 08:17 UTC run must publish on its own): *pending*.
+- **cron-job.org** starts the pipeline hourly at 5 past via GitHub's API (D-035), with a key limited to this
+  repository's workflows. GitHub's own timer is a backup
+  ([.github/workflows/pipeline.yml](.github/workflows/pipeline.yml)).
+- ECMWF's forecast is ready around 07:30–08:00 UTC, so the 08:05 run publishes it. Other runs find nothing new.
+- **Honestly: GitHub's own timer never fired.**
+  - On 13 Nov not one of five timed runs started, although every setting was correct.
+  - Tried first (D-033), without success: new times off GitHub's busiest minutes; switching the workflow off and on.
+    A manual run kept the forecast current.
+  - So the outside timer, kept for extreme cases, was switched on. Test: accepted (204), run succeeded.
+  - **Result of the 14 Nov test** (the 08:05 UTC run must publish on its own): *pending*.
 
 ## Limitations
 
