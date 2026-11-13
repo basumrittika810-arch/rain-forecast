@@ -1,91 +1,168 @@
-# Rain Forecast (ECMWF IFS HRES Open Data)
+# Vaanam: rain forecast for Tamil Nadu
 
-Precipitation forecast web application for small farmers in a pilot region of India
-(provisionally Tamil Nadu), built on ECMWF IFS HRES Open Data (0.25°, total precipitation `tp`).
+## What it does
 
-Status: **project set up; application not built yet.** Data semantics are verified (see `docs/`).
+- Shows how much rain is expected, day by day for the next 10 days, for any village or town in Tamil Nadu.
+- Built for **small farmers**: one search box, plain sentences, colours from yellow to red as rain increases.
+- **Rain only, no farming advice.** Farming decisions are the farmer's to make.
+- **What makes it different:** it is very simple. Official and commercial weather apps hold far more but take effort
+  to read. Vaanam answers one question clearly: *how much rain, when, near me?*
 
-Data: ECMWF Open Data, licensed CC BY 4.0. Attribution to ECMWF is required.
+## Try it
 
-## Folder structure
+**https://rain-forecast-api-qii4.onrender.com**
 
-| Folder | Contents |
-|---|---|
-| `pipeline/` | Forecast processing: download, validate, compute rainfall, write JSON (to be built) |
-| `api/` | FastAPI app serving the processed JSON (to be built) |
-| `web/` | Frontend (to be built) |
-| `tests/` | Automated tests, run with pytest (to be built) |
-| `scripts/` | One-off investigation and verification tools used to establish the data facts |
-| `docs/` | Decision log, inspection and analysis reports, verbatim evidence outputs |
-| `data/` | Downloaded GRIB and derived files. **Git-ignored**; raw files are read-only and never modified |
+- **The first visit may take 30–60 s.** The free server sleeps after 15 minutes without visitors and has to wake up
+  (the page says so).
+- Searches to try:
+  - a town: `Thanjavur`
+  - a nickname or old name: `Ooty`, `Tanjore` (finds Thanjavur)
+  - a misspelling: `Madurei` (asks "Did you mean Madurai?")
+  - or tap **Use my location** (shows the nearest place name, never coordinates)
+- Tap a day to see when the rain is expected (3- or 6-hour blocks).
+- Swagger: https://rain-forecast-api-qii4.onrender.com/docs
 
-## Setup (Windows, Python 3.12)
+## Why I built it
 
-```powershell
-py -3.12 -m venv .venv
-.\.venv\Scripts\python.exe -m pip install --upgrade pip
-.\.venv\Scripts\python.exe -m pip install -r requirements-dev.txt   # runtime + test tools
-.\.venv\Scripts\python.exe -m cfgrib selfcheck                      # expect: "Your system is ready."
+- **The problem:** weather apps are detailed but hard to interpret. Maps, symbols and percentages stand between a
+  farmer and a simple answer.
+- **My choices:**
+  - **Rain only:** one variable, explained well.
+  - **Plain sentences:** "Light rain expected, mostly in the afternoon." Each one gives the amount, IMD's word for it
+    and a colour.
+  - **No farming advice:** the farmer knows their crop and field; the app only describes the rain.
+  - **Village search by name**, tolerant of nicknames and spelling mistakes. Farmers do not know coordinates.
+  - **Honest about uncertainty:**
+    - every forecast says it is an area average;
+    - missing data shows as "no data", never 0;
+    - a forecast older than 36 hours carries a warning;
+    - tiny amounts show as "< 0.1 mm", not "0.0".
+  - **Colours are not warnings:** the page links to IMD for official warnings.
+  - **Light:** 53 KB including fonts, nothing loaded from other sites. That suits slow connections and protects privacy.
+
+## How it works
+
+```mermaid
+flowchart LR
+    E["ECMWF open data<br/>rain forecast, 0.25 deg grid"] -->|download ~35 MB| P
+    subgraph P["GitHub Actions: pipeline, on a timer"]
+        direction TB
+        F[fetch] --> V[validate] --> C[compute rain per block and per day] --> K[check]
+    end
+    P -->|only if every check passes| G["GitHub Pages<br/>latest.json, 391 grid points"]
+    G -->|downloaded and reloaded| A["Render: FastAPI<br/>/api/forecast, /api/places, /api/status"]
+    N["GeoNames: 39,997 Tamil Nadu places"] --> A
+    A --> W["Website: HTML, JS, CSS<br/>own SVG charts"] --> U[Farmer's phone]
 ```
 
-`requirements.txt` holds the pinned runtime packages (for the server). `requirements-dev.txt` adds pytest.
+- **Pipeline** (`pipeline/`): checks every downloaded field, computes rain, publishes. Any failure means nothing is
+  published and the last good forecast stays live.
+- **API** (`api/app.py`): matches a place to the nearest grid point and adds the IMD category and sentence. It also
+  serves the website (`web/`, no framework, no chart library).
+- **Why this split:** free, and the heavy pipeline stays apart from the site.
 
-**Known Windows issue:** with Windows 11 *Smart App Control* enabled, the unsigned compiled
-modules of `eccodes` and `pandas` are blocked at import time
-(`DLL load failed ... An Application Control policy has blocked this file`).
-See `docs/DECISIONS.md` (D-001).
+## How the rain numbers are made
 
-## Pipeline commands
+1. **Running totals:** ECMWF gives rain *since the forecast started*. These come every 3 hours up to 144 hours ahead,
+   then every 6 hours up to 258 hours.
+2. **Rain per block:** the later total minus the earlier one. The app never claims when, within a block, the rain falls.
+3. **Daily totals:** the blocks summed from **23:30 to 23:30 IST**.
+   - Midnight IST is never a forecast time.
+   - 23:30 IST (18 UTC) exists for all 10 days.
+   - Alternatives: a 05:30 boundary would move early-morning rain to the previous date, and IMD's 08:30 boundary
+     disappears after day 6.
+   - The first day is partial and labelled "18 hours".
+4. **Tiny negative values:** stored numbers are rounded, so a block can dip a hair below zero.
+   - The original data is never changed.
+   - A dip within the rounding error, worked out from the data's own precision, is shown as 0 mm and logged.
+   - A larger dip blocks publication, and the previous forecast stays.
+5. **IMD categories** (mm per 24 h; IMD *SOP Weather Forecasting and Warning Services 2021*, Table 1.5):
+
+   | Very light | Light | Moderate | Heavy | Very heavy | Extremely heavy |
+   |---|---|---|---|---|---|
+   | ≤ 2.4 | 2.5–15.5 | 15.6–64.4 | 64.5–115.5 | 115.6–204.4 | ≥ 204.5 |
+
+   The category is applied to the rounded number shown, so the word always matches the number.
+
+Details: [docs/DAILY_RAINFALL_ANALYSIS.md](docs/DAILY_RAINFALL_ANALYSIS.md),
+[docs/inspection/imd_rain_categories_20261113.txt](docs/inspection/imd_rain_categories_20261113.txt).
+
+## Key decisions
+
+All 34 decisions, with alternatives and evidence: [docs/DECISIONS.md](docs/DECISIONS.md).
+
+- **Rain only, no advice** (D-026).
+- **23:30 IST day, 10 full days plus today** (D-006). Going to 258 hours, slightly beyond the usual 240, gains a
+  10th full day.
+- **Never publish a doubtful forecast** (D-008, D-015). The negative tolerance allows for rounding in both readings, a
+  wider choice than the one suggested to me.
+- **IMD's own categories, cited**, not invented ones (D-027).
+- **Search with "did you mean"** (D-024). A few wrong suggestions are better than finding nothing.
+- **Free, split hosting** (D-021): pipeline on GitHub, site on Render.
+
+## Testing
+
+- **333 automated tests** (pytest), each written before its code. They cover:
+  - rain arithmetic;
+  - corrupt and incomplete downloads;
+  - publishing;
+  - search and spelling;
+  - the API;
+  - the page (texts, colour contrast, no farming words, page weight);
+  - this README.
+- **Real data:** our download matched an independent manual download byte for byte. The API returns every published
+  value unchanged ([scripts/smoke_test.py](scripts/smoke_test.py)).
+- **Failure drill:** a deliberately corrupt download was rejected and the live forecast stayed the same.
+- **Swagger** (`/docs`): endpoints tried by hand; wrong inputs give clear errors (outside Tamil Nadu: 404).
+- **Browser:** phone size (360 × 780) and laptop size: searches, location messages, no sideways scrolling, no errors.
+- **Real phone:** tested on my own phone.
+- **Load test** on the live site ([results](docs/inspection/loadtest_20261113.txt)): 35 people at once, about 225
+  visits a minute, **0 errors**, 95 % of requests under 5.7 s. Breaking point not reached.
+
+## Keeping it up to date: a timer runs the pipeline
+
+- GitHub Actions runs it every 2 hours, 08:17–20:17 UTC ([.github/workflows/pipeline.yml](.github/workflows/pipeline.yml)).
+- ECMWF's forecast is ready around 07:30–08:00 UTC, so the first run publishes it. Later runs find nothing new and
+  stop.
+- **Honestly: GitHub's timer did not fire at first.**
+  - On 13 Nov the original times (08:30, 11:30, 14:30 UTC) never started a run, although the settings were correct.
+  - What was tried (D-033):
+    - a manual run, so the day's forecast went live;
+    - new times away from GitHub's busiest minutes;
+    - switching the workflow off and on.
+  - An outside timer is reserved for extreme cases, because it needs a GitHub key stored elsewhere.
+  - **Result of the 14 Nov test** (the 08:17 UTC run must publish on its own): *pending*.
+
+## Limitations
+
+- An **area average** about 27 km wide. One field can get very different rain, and local extremes are underestimated
+  (ECMWF documents this).
+- One model, one run a day, no probability of rain. The forecast can be up to about 31 hours old.
+- English only. Place names follow GeoNames, and some small villages are missing.
+- Free server: the first visit after a quiet spell is slow, and more than 35 users at once is untested.
+- One missing forecast step skips the whole update (the last one stays live). Partial publishing is deferred (D-019).
+- Not yet tested on slow rural mobile networks. The JavaScript has no unit tests of its own.
+
+## What next
+
+- **Every village in Tamil Nadu:** add an official village list (e.g. the Census village directory) to GeoNames.
+- **All of India:** the region is already a setting (`config/`), and IMD categories are national. The cost is a larger
+  forecast file and a paid server.
+- Tamil language, a second daily update (12 UTC run), and tests on slow rural networks.
+
+## Run it locally
 
 ```powershell
-# Step 1: find the newest complete 00 UTC run, download tp (steps 0-258) to data/tmp/, validate,
-# and move it to data/runs/<run>/. Rejected downloads go to data/rejected/ with reason.txt.
-# Does not publish anything and never touches data/processed/ (latest.json).
-.\.venv\Scripts\python.exe -m pipeline.fetch
-
-# Step 2: compute rainfall for the region from a fetched run, build the JSON, run all checks,
-# then write data/processed/<run>.json and atomically replace data/processed/latest.json.
-# Publishes nothing if any check fails; never replaces a newer forecast with an older one.
-.\.venv\Scripts\python.exe -m pipeline.publish                        # newest run in data/runs
-.\.venv\Scripts\python.exe -m pipeline.publish data\runs\20261111T00Z  # a specific run
-```
-
-## API (Step 3)
-
-```powershell
-# Serves data/processed/latest.json (reloaded automatically when it changes)
-.\.venv\Scripts\python.exe -m uvicorn api.app:app --port 8000
-# GET http://127.0.0.1:8000/api/forecast?lat=13.0825&lon=80.275   -> nearest grid point's days + intervals
-# GET http://127.0.0.1:8000/api/status                             -> live run, age, quality
-# Outside the region -> 404; invalid lat/lon -> 422; nothing published yet -> 503
-# GET http://127.0.0.1:8000/api/places?q=melur&limit=10             -> places by name, with district and lat/lon
-#   kind = "matches" (exact / start of name / alternative name), "suggestions" (did you mean) or "none"
-```
-
-Deployed: https://rain-forecast-api-qii4.onrender.com (Render, reads the forecast published on GitHub Pages; D-023).
-
-### Place list (D-024)
-
-`config/places_tamil_nadu.csv` (39,997 Tamil Nadu places) is committed on purpose: public GeoNames data (CC BY 4.0).
-Its source and checksum are in `config/places_tamil_nadu.source.json`. To rebuild it:
-
-```powershell
-# download IN.zip and admin2Codes.txt from https://download.geonames.org/export/dump/ into data\geonames_raw,
-# unzip IN.zip into data\geonames_raw\extracted, then:
-.\.venv\Scripts\python.exe -m pipeline.places data\geonames_raw
-```
-
-## Investigation commands
-
-```powershell
-# Which recent run has tp for the sample steps
-.\.venv\Scripts\python.exe scripts\check_availability.py
-# Download tp for all steps up to 258 h of a run (refuses to overwrite)
-.\.venv\Scripts\python.exe scripts\download_run.py 20261111 00 258
-# Verify a downloaded run (metadata, telescoping, negative-difference evidence)
-.\.venv\Scripts\python.exe scripts\verify_run.py data\raw\20261111T00Z\tp_steps_0-258.grib2 data\raw\20261111T00Z\manifest_tp_steps_0-258.json data\raw\20261111T00Z\tp_steps_0-3-6-144-150-240.grib2 out.txt
-# Run tests
+py -3.12 -m venv .venv; .\.venv\Scripts\python.exe -m pip install -r requirements-dev.txt
 .\.venv\Scripts\python.exe -m pytest
+$env:FORECAST_URL="https://basumrittika810-arch.github.io/rain-forecast/latest.json"
+.\.venv\Scripts\python.exe -m uvicorn api.app:app --port 8000   # then open http://127.0.0.1:8000
 ```
 
-Commands for the pipeline, API and web app will be added when they are built.
+## Credits
+
+- Forecast data: **ECMWF** open data (IFS HRES), CC BY 4.0.
+- Place names: **GeoNames**, CC BY 4.0.
+- Rain categories: **India Meteorological Department**, SOP Weather Forecasting and Warning Services, 2021.
+- Fonts: Baloo 2 (Ek Type) and Arima (NDISCOVER), SIL Open Font License (`web/fonts/`).
+- Built by Mrittika Basu, with Claude Code as coding assistant.
