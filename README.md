@@ -89,7 +89,7 @@ Details: [docs/DAILY_RAINFALL_ANALYSIS.md](docs/DAILY_RAINFALL_ANALYSIS.md),
 
 ## Key decisions
 
-All 37 decisions, with alternatives and evidence: [docs/DECISIONS.md](docs/DECISIONS.md).
+All 38 decisions (D-000 to D-037), with alternatives and evidence: [docs/DECISIONS.md](docs/DECISIONS.md).
 
 - **Rain only, no advice** (D-026).
 - **23:30 IST day, 10 full days plus today** (D-006). Going to 258 hours, slightly beyond the usual 240, gains a
