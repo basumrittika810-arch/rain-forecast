@@ -27,7 +27,9 @@ def test_has_agreed_sections_in_order():
 
 
 def test_readable_in_under_five_minutes():
-    assert len(_words(README)) <= 1250   # ~250 words a minute
+    # Raised from 1250 to 1400 by the owner's choice (D-037): the timer story must be recorded in full.
+    # 1400 words is ~5.5 min at 250 words a minute, under 5 min when skimming bullets.
+    assert len(_words(README)) <= 1400
 
 
 def test_no_emojis():

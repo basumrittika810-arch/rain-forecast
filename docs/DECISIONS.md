@@ -1017,3 +1017,26 @@ Decision maker: Mrittika Basu (project owner). Claude (AI assistant) proposes, e
   - No other timed run has appeared. So it does work, but late and unreliably.
   - cron-job.org stays the main timer; GitHub's timer stays as a backup.
 - **README:** "pending" replaced with this result.
+
+## D-037: README records why options A and B failed and option C is used
+- **Timestamp:** 2026-11-14
+- **Status:** Done (owner request)
+- **Owner request:** record in the README that options A and B did not work, that the project therefore used option C,
+  and that option C now brings fresh forecasts automatically.
+- **README changes:**
+  - **"Keeping it up to date":**
+    - how it runs now (cron-job.org every hour at 5 past, GitHub's timer as backup);
+    - how a fresh forecast arrives each day: ECMWF ready around 07:30–08:00 UTC, published by the 08:05 UTC run with
+      no one involved;
+    - the honest sequence: plan, then A (off and on) failed, then B (new times) failed, then a manual run as a stopgap,
+      then C (last resort, limited key, expires 31 Jan 2027);
+    - the result (D-036).
+  - **Correction:** the earlier line "GitHub's own timer never fired" was no longer true. It fired once, 1 h 41 min
+    late (D-036), so it now says that.
+  - **Limitations:** a new line says that updates depend on cron-job.org and on renewing the key before 31 Jan 2027.
+    If either fails, cron-job.org emails a warning and the site shows its 36-hour warning.
+- **Test change, owner's choice:** the README word limit in `tests/test_readme.py` was raised from 1,250 to **1,400**
+  words.
+  - The owner said the word limit matters less than recording this.
+  - The README is now 1,390 words, about 5.5 minutes at 250 words a minute and under 5 minutes when skimming.
+  - All other README checks are unchanged.

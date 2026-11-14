@@ -89,7 +89,7 @@ Details: [docs/DAILY_RAINFALL_ANALYSIS.md](docs/DAILY_RAINFALL_ANALYSIS.md),
 
 ## Key decisions
 
-All 35 decisions, with alternatives and evidence: [docs/DECISIONS.md](docs/DECISIONS.md).
+All 37 decisions, with alternatives and evidence: [docs/DECISIONS.md](docs/DECISIONS.md).
 
 - **Rain only, no advice** (D-026).
 - **23:30 IST day, 10 full days plus today** (D-006). Going to 258 hours, slightly beyond the usual 240, gains a
@@ -121,16 +121,26 @@ All 35 decisions, with alternatives and evidence: [docs/DECISIONS.md](docs/DECIS
 
 ## Keeping it up to date: a timer runs the pipeline
 
-- **cron-job.org** starts the pipeline hourly at 5 past via GitHub's API (D-035), with a key limited to this
-  repository's workflows. GitHub's own timer is a backup
-  ([.github/workflows/pipeline.yml](.github/workflows/pipeline.yml)).
-- ECMWF's forecast is ready around 07:30–08:00 UTC, so the 08:05 run publishes it. Other runs find nothing new.
-- **Honestly: GitHub's own timer never fired.**
-  - On 13 Nov not one of five timed runs started, although every setting was correct.
-  - Tried first (D-033), without success: new times off GitHub's busiest minutes; switching the workflow off and on.
-    A manual run kept the forecast current.
-  - So the outside timer, kept for extreme cases, was switched on. Test: accepted (204), run succeeded.
-  - **Result, 14 Nov:** the 08:05 UTC run published the new forecast on its own.
+- **How it runs now:** cron-job.org starts the pipeline every hour at 5 past, through GitHub's API (D-035).
+  GitHub's own timer stays as a backup ([.github/workflows/pipeline.yml](.github/workflows/pipeline.yml)).
+- **Fresh forecasts, automatically:**
+  - ECMWF's new forecast is ready around 07:30–08:00 UTC.
+  - The next hourly run (08:05 UTC, 13:35 IST) downloads, checks and publishes it, every day, with no one pressing
+    anything.
+  - Every other run finds nothing new and stops.
+- **Honestly: how we got here.**
+  - **Plan:** GitHub's built-in timer. On 13 Nov none of its timed runs started, although every setting was correct.
+    GitHub does not say why.
+  - **Option A**, switching the workflow off and on to re-register the timer: **did not work**.
+  - **Option B**, new times away from GitHub's busiest minutes, 7 a day: **did not work**. The next two slots were
+    missed too, and the only timed run that ever came was 1 h 41 min late (D-033, D-036).
+  - A manual run kept the forecast current in the meantime.
+  - **Option C**, the last resort: an outside timer (cron-job.org). It was kept for extreme cases because it needs a
+    GitHub key stored elsewhere. With the deadline near, we used it. The key can only start workflows in this
+    repository and expires on 31 Jan 2027.
+  - **Result:**
+    - test run accepted (204) and successful on 13 Nov;
+    - on 14 Nov the 08:05 UTC run published the new forecast **on its own**, live at 08:07 UTC (D-036).
 
 ## Limitations
 
@@ -139,6 +149,8 @@ All 35 decisions, with alternatives and evidence: [docs/DECISIONS.md](docs/DECIS
 - One model, one run a day, no probability of rain. The forecast can be up to about 31 hours old.
 - English only. Place names follow GeoNames, and some small villages are missing.
 - Free server: the first visit after a quiet spell is slow, and more than 35 users at once is untested.
+- Updates depend on cron-job.org and on a GitHub key that must be renewed before 31 Jan 2027. If either fails,
+  cron-job.org emails a warning, and the site shows its 36-hour warning.
 - One missing forecast step skips the whole update (the last one stays live). Partial publishing is deferred (D-019).
 - Not yet tested on slow rural mobile networks. The JavaScript has no unit tests of its own.
 
