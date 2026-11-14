@@ -130,7 +130,7 @@ All 35 decisions, with alternatives and evidence: [docs/DECISIONS.md](docs/DECIS
   - Tried first (D-033), without success: new times off GitHub's busiest minutes; switching the workflow off and on.
     A manual run kept the forecast current.
   - So the outside timer, kept for extreme cases, was switched on. Test: accepted (204), run succeeded.
-  - **Result of the 14 Nov test** (the 08:05 UTC run must publish on its own): *pending*.
+  - **Result, 14 Nov:** the 08:05 UTC run published the new forecast on its own.
 
 ## Limitations
 

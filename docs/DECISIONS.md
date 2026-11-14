@@ -993,3 +993,27 @@ Decision maker: Mrittika Basu (project owner). Claude (AI assistant) proposes, e
   - The job depends on cron-job.org being up and on the key not expiring.
   - Failure emails cover both, and GitHub's own timer and a manual run remain as fallbacks.
 - **No code changed.** The README's update section now describes this.
+
+## D-036: Proof: a timed run published a new forecast with no help
+- **Timestamp:** 2026-11-14 08:18 UTC
+- **Status:** Verified. Closes the open proof in D-033 and D-035.
+- **The run:** GitHub run **43574134127**.
+  - Started by cron-job.org at 08:05:29 UTC (event `workflow_dispatch`, key of `basumrittika810-arch`).
+  - Log:
+    - "currently published run: 20261113T00Z";
+    - "newest complete run on ECMWF: 20261114T00Z";
+    - "validation passed: 68 messages, steps 0-258";
+    - "published 20261114T00Z: 391 points, 4,193,978 bytes, quality ok (adjusted: 135 intervals, 85 days;
+      unavailable: 0)".
+  - The pipeline and deploy jobs both succeeded.
+- **Published file:** `latest.json` = run 2026-11-14 00 UTC, generated **08:07:16 UTC**.
+- **Live site:** `/api/status` on the live site at 08:18 UTC showed the same run, 8.3 h old, quality ok.
+- **The hours before:**
+  - cron-job.org started a run every hour from 20:05 UTC on 13 Nov. All succeeded.
+  - Up to 07:05 UTC each found nothing new ("unchanged"; at 07:05 ECMWF's 14 Nov run was not yet complete).
+- **GitHub's own timer (verified):**
+  - After D-033 it started **one** run, at 21:58:35 UTC on 13 Nov, which is the 20:17 slot about 1 h 41 min late.
+    It found nothing new.
+  - No other timed run has appeared. So it does work, but late and unreliably.
+  - cron-job.org stays the main timer; GitHub's timer stays as a backup.
+- **README:** "pending" replaced with this result.
